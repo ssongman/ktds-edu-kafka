@@ -1,0 +1,16 @@
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: grafana-kafka-route
+  namespace: kafka
+  labels:
+    app: strimzi
+spec:
+  host: grafana.kafka.35.209.207.26.nip.io
+  to:
+    kind: Service
+    name: grafana
+    weight: 100
+  port:
+    targetPort: grafana
+  wildcardPolicy: None
