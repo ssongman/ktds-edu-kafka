@@ -239,6 +239,32 @@ C:\githubrepo\ktds-edu-kafka-redis\README.md
 
 
 
+강미혜(Genie서비스팀) <MI-HYE.KANG@KT.COM>;
+강정현(미디어플랫폼팀) <JEONGHYEON.KANG@KT.COM>;
+김경호(보안정책팀) <GYEONG-HO.KIM@KT.COM>;
+김나경(플랫폼CoE팀) <NA_KYOUNG.KIM@KT.COM>;
+김무한(미디어서비스팀) <MOOHAN.KIM@KT.COM>;
+김민수(아키텍처팀) <MINSU74@KT.COM>;
+김지훈(경영인프라팀) <JIHUN094.KIM@KT.COM>;
+박승섭(데이터DX개발팀) <SEUNGSEOB.PARK@KT.COM>;
+백연희(플랫폼CoE팀) <YH.BAEK@KT.COM>;
+양동기(환경DX플랫폼팀) <DONG_GI.YANG@KT.COM>;
+여준영(미디어플랫폼팀) <JUNYEONG.YEO@KT.COM>;
+우예원(플랫폼CoE팀) <YW.WOO@KT.COM>;
+유광선(플랫폼컨설팅팀) <KSYOO@KT.COM>;
+이은석(에듀DX플랫폼팀) <ES.LEE@KT.COM>;
+이화경(DX인프라팀) <HWAKYUNG.LEE@KT.COM>;
+장진호(데이터DX개발팀) <JINHOSS.JANG@KT.COM>;
+조민정(고객DX솔루션팀) <HS-CHO@KT.COM>;
+조은하(플랫폼인프라팀) <EUNHA.CHO@KT.COM>;
+최정우(SI개발팀) <JWOO.CHOI@KT.COM>
+
+
+
+
+
+
+
 
 
 ## 3.2 ssh (Mobaxterm) 실행
