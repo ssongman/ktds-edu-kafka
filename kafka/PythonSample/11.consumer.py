@@ -11,6 +11,7 @@ def consumer(topicName):
     group_id='edu-group' + topicName[-2:]   # topicName에서 마지막 두자리만 이용하여 groupName 으로 사용한다.
 
 
+    print(f"KafkaConsumer...")
     consumer = KafkaConsumer(bootstrap_servers=bootstrap_servers,
                             security_protocol="SASL_PLAINTEXT",
                             sasl_mechanism='SCRAM-SHA-512',
@@ -23,8 +24,10 @@ def consumer(topicName):
 
     # 사용할 topic 지정(구독)
     consumer.subscribe(topic_name)
+    print(f"topicName[{topic_name}] subscribe 완료")
 
     # 메세지 읽기
+    print(f"Consuming...")
     for message in consumer:
         print("topic=%s partition=%d offset=%d: key=%s value=%s" %
                 (message.topic,
