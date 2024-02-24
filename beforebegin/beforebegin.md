@@ -22,8 +22,8 @@ CMD / PowerShell / putty 와 같은 기본 터미널을 이용해도 되지만 �
 
 
 
-- download 위치
-  - 링크: https://download.mobatek.net/2312023031823706/MobaXterm_Installer_v23.1.zip
+- 다운로드 위치
+  - 링크: https://download.mobatek.net/2362023122033030/MobaXterm_Installer_v23.6.zip
 
 - mobaxterm 실행
 
@@ -39,8 +39,10 @@ CMD / PowerShell / putty 와 같은 기본 터미널을 이용해도 되지만 �
 
 교육문서를 다운로드 받으려면 Git Command 가 필요하다. Windows 에서는 기본 제공되지 않아 별도 설치 해야 한다.
 
-- 다운로드 주소 : https://github.com/git-for-windows/git/releases/download/v2.40.1.windows.1/Git-2.40.1-64-bit.exe
 - 참조 링크 : https://git-scm.com/
+- 다운로드 위치 
+  - 링크 : https://github.com/git-for-windows/git/releases/download/v2.44.0.windows.1/Git-2.44.0-64-bit.exe
+
 
 
 
@@ -54,16 +56,12 @@ CMD / PowerShell / putty 와 같은 기본 터미널을 이용해도 되지만 �
 
 ### (1) 설치
 
-- download 위치
-  - 다운로드주소 : https://download.typora.io/windows/typora-setup-x64.exe
-
-
-- [참고] 링크: https://typora.io/
+- 참조 링크: https://typora.io/
+- 다운로드 위치
+  - 링크 : https://download.typora.io/windows/typora-setup-x64.exe
 
 
 - Typora 실행
-
-
 
 
 
@@ -95,24 +93,26 @@ CMD / PowerShell / putty 와 같은 기본 터미널을 이용해도 되지만 �
 
 ### (1) STS 설치
 
-- download 링크
-  - https://download.springsource.com/release/STS4/4.19.1.RELEASE/dist/e4.28/spring-tool-suite-4-4.19.1.RELEASE-e4.28.0-win32.win32.x86_64.self-extracting.jar
+- 참조 링크: https://spring.io/tools
+- 다운로드 주소
+  - 링크: https://cdn.spring.io/spring-tools/release/STS4/4.21.1.RELEASE/dist/e4.30/spring-tool-suite-4-4.21.1.RELEASE-e4.30.0-win32.win32.x86_64.self-extracting.jar
 
 - 설치
   - 적당한 위치에 설치하자.
-
 - Workspace 설정
-  - 위치 : C:\workspace_STS4.18.1
-- [참고] STS링크 : https://spring.io/tools
+  - 위치 : C:\workspace_STS4.21.1
 
 
 
 
 ### (2) [참고] java 설치
 
-- java 설치가 필요한 경우 아래 링크 참고
-  - https://download.oracle.com/java/17/latest/jdk-17_windows-x64_bin.msi
-- [참고] oracle.com 링크 : https://www.oracle.com/java/technologies/downloads/#jdk17-windows
+java 설치가 필요한 경우 아래 링크 참고
+
+* 참고 : oracle.com 링크 : https://www.oracle.com/java/technologies/downloads/#jdk17-windows
+
+- jdk 다운로드 주소
+  - 링크: https://download.oracle.com/java/17/latest/jdk-17_windows-x64_bin.msi
 
 
 
@@ -144,18 +144,19 @@ $ mkdir -p /c/githubrepo
  
 $ cd /c/githubrepo
 
-$ git clone https://github.com/ssongman/ktds-edu-kafka-redis.git
-Cloning into 'ktds-edu-kafka-redis'...
-remote: Enumerating objects: 590, done.
-remote: Counting objects: 100% (41/41), done.
-remote: Compressing objects: 100% (26/26), done.
-remote: Total 590 (delta 17), reused 28 (delta 13), pack-reused 549
-Receiving objects: 100% (590/590), 8.70 MiB | 9.77 MiB/s, done.
-Resolving deltas: 100% (259/259), done.
+$ git clone https://github.com/ssongman/ktds-edu-kafka.git
+Cloning into 'ktds-edu-kafka'...
+remote: Enumerating objects: 181, done.
+remote: Counting objects: 100% (181/181), done.
+remote: Compressing objects: 100% (119/119), done.
+remote: Total 181 (delta 33), reused 175 (delta 30), pack-reused 0
+Receiving objects: 100% (181/181), 7.84 MiB | 6.34 MiB/s, done.
+Resolving deltas: 100% (33/33), done.
+
 
 
 $ ll /c/githubrepo
-drwxr-xr-x 1 ssong 197609 0 Jun 11 14:27 ktds-edu-kafka-redis/
+drwxr-xr-x 1 ssong 197609 0 Feb 24 12:02 ktds-edu-kafka/
 
 ```
 
@@ -164,7 +165,7 @@ drwxr-xr-x 1 ssong 197609 0 Jun 11 14:27 ktds-edu-kafka-redis/
 만약 교육중 (오타 변경 등의 사유로) 자료가 변경되어 다시 받아야 하는 경우 가 있을 경우 해당 위치에서 git pull 만 다시 받도록 하자.
 
 ```sh
-$ cd /c/githubrepo/ktds-edu-kafka-redis
+$ cd /c/githubrepo/ktds-edu-kafka
 
 $ git pull
 
@@ -176,7 +177,6 @@ $ git pull
 $ git stash
 
 $ git pull
-
 ```
 
 
@@ -194,7 +194,7 @@ $ git pull
 ```
 ## typora 에서 아래 파일 오픈
 
-C:\githubrepo\ktds-edu-kafka-redis\README.md
+C:\githubrepo\ktds-edu-kafka\README.md
 ```
 
 ![image-20220702160433029](beforebegin.assets/image-20220702160433029.png)
@@ -292,7 +292,7 @@ Mobaxterm 을 실행하여 VM 접속정보를 위한 신규 sesion 을 생성하
 
 - Port : 22
 - Advanced SSH settings
-  - Use private key : C:\githubrepo\ktds-edu-kafka-redis\gcp-vm-key\ktdseduuser
+  - Use private key : C:\githubrepo\ktds-edu-kafka\gcp-vm-key\ktdseduuser
     - 교육자료 Download 되는 자료에 위 key가 포함되어 있음
 
 
@@ -310,7 +310,7 @@ Mobaxterm 을 실행하여 VM 접속정보를 위한 신규 sesion 을 생성하
 
 # 최신 데이터를 한번 더 받는다.
 
-$ cd ~/githubrepo/ktds-edu-kafka-redis
+$ cd ~/githubrepo/ktds-edu-kafka
 $ git pull
 
 
@@ -320,13 +320,13 @@ $ git pull
 # 만약 pull일 잘 안되는 경우는 모두 삭제후 다시 git clone 받자.
 
 # 삭제
-$ rm -rf ~/githubrepo/ktds-edu-kafka-redis/
+$ rm -rf ~/githubrepo/ktds-edu-kafka/
 
 $ cd ~/githubrepo
 
 ## git clone 수행
-$ git clone https://github.com/ssongman/ktds-edu-kafka-redis.git
-Cloning into 'ktds-edu-kafka-redis'...
+$ git clone https://github.com/ssongman/ktds-edu-kafka.git
+Cloning into 'ktds-edu-kafka'...
 remote: Enumerating objects: 320, done.
 remote: Counting objects: 100% (320/320), done.
 remote: Compressing objects: 100% (220/220), done.
@@ -336,9 +336,9 @@ Resolving deltas: 100% (95/95), done.
 
 
 # 확인
-$ cd  ~/githubrepo/ktds-edu-kafka-redis
+$ cd  ~/githubrepo/ktds-edu-kafka
 
-$ ll ~/githubrepo/ktds-edu-kafka-redis
+$ ll ~/githubrepo/ktds-edu-kafka
 drwxrwxr-x 8 ktdseduuser ktdseduuser 4096 Sep  3 12:27 .git/
 -rw-rw-r-- 1 ktdseduuser ktdseduuser  382 Sep  2 13:45 .gitignore
 -rw-rw-r-- 1 ktdseduuser ktdseduuser 4006 Sep  2 13:45 README.md
