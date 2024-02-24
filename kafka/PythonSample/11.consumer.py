@@ -24,7 +24,7 @@ def consumer(topicName):
 
     # 사용할 topic 지정(구독)
     consumer.subscribe(topic_name)
-    print(f"topicName[{topic_name}] subscribe 완료")
+    print(f"topicName[{topic_name}] subscribed!")
 
     # 메세지 읽기
     print(f"Consuming...")

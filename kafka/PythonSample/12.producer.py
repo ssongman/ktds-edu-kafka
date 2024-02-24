@@ -11,6 +11,7 @@ def producer(topicName):
     topic_name=topicName     # <-- 본인 타픽명으로 지정
 
 
+    print(f"KafkaProducer...")
     producer = KafkaProducer(bootstrap_servers=bootstrap_servers,
                             security_protocol="SASL_PLAINTEXT",
                             sasl_mechanism='SCRAM-SHA-512',
@@ -18,12 +19,9 @@ def producer(topicName):
                             sasl_plain_username=sasl_plain_username,
                             sasl_plain_password=sasl_plain_password)
 
-    # 아래 명령 부터 Consumer 수신을 관찰하면서 수행하자.
-    producer.send(topic_name, b'python test1')
-    producer.send(topic_name, b'python test2')
-    producer.send(topic_name, b'{"eventName":"a","num":%d,"title":"a", "writeId":"", "writeName": "", "writeDate":"" }' % 1)
-
     # 10000건을 0.5초에 한번씩 발송해보자.
+    print(f"topicName[{topic_name}] subscribed!")
+    print(f"Producing...")
     for i in range(10000):
         print(i)
         sleep(0.5)
