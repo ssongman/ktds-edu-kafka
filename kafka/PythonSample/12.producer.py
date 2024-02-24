@@ -2,7 +2,7 @@ import sys
 from kafka import KafkaProducer
 from time import sleep
 
-def consumer(topicName):
+def producer(topicName):
 
     # 개인환경으로 변경
     bootstrap_servers='my-cluster.kafka.43.203.62.69.nip.io:32100'
@@ -32,5 +32,5 @@ def consumer(topicName):
     # 테스트를 끝내려면 Ctrl + C 로 중지하자.
         
 if __name__ == '__main__':
-    consumer(sys.argv[1])
+    producer(sys.argv[1])
 
