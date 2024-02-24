@@ -91,28 +91,83 @@ CMD / PowerShell / putty 와 같은 기본 터미널을 이용해도 되지만 �
 
 ## 1.4 STS 설치
 
-### (1) STS 설치
 
-- 참조 링크: https://spring.io/tools
-- 다운로드 주소
-  - 링크: https://cdn.spring.io/spring-tools/release/STS4/4.21.1.RELEASE/dist/e4.30/spring-tool-suite-4-4.21.1.RELEASE-e4.30.0-win32.win32.x86_64.self-extracting.jar
+### (1) java 17 설치
 
-- 설치
-  - 적당한 위치에 설치하자.
-- Workspace 설정
-  - 위치 : C:\workspace_STS4.21.1
+java 17이 설치되어 있지 않은 경우에만 수행한다.
 
-
-
-
-### (2) [참고] java 설치
-
-java 설치가 필요한 경우 아래 링크 참고
-
-* 참고 : oracle.com 링크 : https://www.oracle.com/java/technologies/downloads/#jdk17-windows
+* 참고링크
+  * oracle.com 링크 : https://www.oracle.com/java/technologies/downloads/#jdk17-windows
+  * 설치관련 문서 : https://jiurinie.tistory.com/131
 
 - jdk 다운로드 주소
   - 링크: https://download.oracle.com/java/17/latest/jdk-17_windows-x64_bin.msi
+- 설치완료후 확인
+
+```sh
+# CMD 명령 프롬프트 windows에서 ...
+
+C:\Users\ssong>java -version
+openjdk version "17.0.5" 2022-10-18
+OpenJDK Runtime Environment Temurin-17.0.5+8 (build 17.0.5+8)
+OpenJDK 64-Bit Server VM Temurin-17.0.5+8 (build 17.0.5+8, mixed mode, sharing)
+
+```
+
+
+
+
+
+### (2) STS 설치
+
+- 참고 링크
+
+  - STS 참조 링크: https://spring.io/tools
+  - 설치관련 문서 : https://kjchoi.co.kr/17
+
+- 다운로드 주소
+
+  - 링크: https://cdn.spring.io/spring-tools/release/STS4/4.21.1.RELEASE/dist/e4.30/spring-tool-suite-4-4.21.1.RELEASE-e4.30.0-win32.win32.x86_64.self-extracting.jar
+
+- 설치
+  - 적당한 위치에 압축 해제 하자.
+
+    - [참고]
+
+      - 다운로드된 파일은 jar 파일이므로 일반적으로 더블클릭만 하면 실행파일로 압축해제 됨
+
+      - 아래와 같은 명령으로 압축해지 해도 된다.
+
+        - ```sh
+          # 압축해제 전
+          $ dir      .
+          2024-02-24  오후 01:00       648,346,802 spring-tool-suite-4-4.21.1.RELEASE-e4.30.0-win32.win32.x86_64.self-extracting.jar
+          
+          # 압축해제
+          $ java -jar spring-tool-suite-4-4.21.1.RELEASE-e4.30.0-win32.win32.x86_64.self-extracting.jar
+          
+          # 압축해제 후
+          $ dir      .
+          2024-02-24  오후 01:00       648,346,802 spring-tool-suite-4-4.21.1.RELEASE-e4.30.0-win32.win32.x86_64.self-extracting.jar
+          2024-02-24  오후 01:02    <DIR>          sts-4.21.1.RELEASE
+          ```
+
+- STS 설정
+
+  - Workspace 설정
+    - STS 시작시 위치 변경
+    - 위치 : C:\workspace\sts-4.21.1 
+
+  - JRE 설정
+    - STS 메뉴 :  [Window] - [Prefernces] - [Java] - [Installed JREs]
+    - STS 내장된 JRE 에서 jdk-17.x  로 변경 후 apply
+    - 없으면 Add 버튼으로 추가
+  - Compiler 설정
+    - STS 메뉴 :  [Window] - [Prefernces] - [Java] - [Compiler]
+    - Compiler complicance level : 17 로 변경
+  - 인코딩 변경
+    - STS 메뉴 :  [Window] - [Prefernces] - [General] - [Workspace] - [Text file encoding]
+    - UTF-8로 변경
 
 
 
@@ -246,7 +301,7 @@ C:\githubrepo\ktds-edu-kafka\README.md
 
 ## 3.2 ssh (Mobaxterm) 실행
 
-Mobaxterm 을 실행하여 VM 접속정보를 위한 신규 sesion 을 생성하자.
+Mobaxterm 을 실행하여 VM 접속정보를 위한 신규 session 을 생성하자.
 
 - 메뉴
   - Session  : 상단 좌측아이콘 클릭
@@ -265,11 +320,11 @@ Mobaxterm 을 실행하여 VM 접속정보를 위한 신규 sesion 을 생성하
 
 - User
   - Specify username 에 Check
-  - User : ktdseduuser  입력
+  - User : ubuntu 입력
 
 - Port : 22
 - Advanced SSH settings
-  - Use private key : C:\githubrepo\ktds-edu-kafka\gcp-vm-key\ktdseduuser
+  - Use private key : C:\githubrepo\ktds-edu-kafka\vm-key\ktdseduuser
     - 교육자료 Download 되는 자료에 위 key가 포함되어 있음
 
 
@@ -286,11 +341,8 @@ Mobaxterm 을 실행하여 VM 접속정보를 위한 신규 sesion 을 생성하
 ```sh
 
 # 최신 데이터를 한번 더 받는다.
-
 $ cd ~/githubrepo/ktds-edu-kafka
 $ git pull
-
-
 
 
 
