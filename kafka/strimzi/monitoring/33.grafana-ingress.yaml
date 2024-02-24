@@ -5,7 +5,7 @@ metadata:
 spec:
   ingressClassName: traefik
   rules:
-  - host: "prometheus.kafka.43.203.62.69.nip.io"
+  - host: "grafana.kafka.43.203.62.69.nip.io"
     http:
       paths:
       - path: /

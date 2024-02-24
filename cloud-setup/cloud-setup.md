@@ -10,10 +10,6 @@
 
 
 
-
-
-
-
 # 1. K3S 구성(Single mode)
 
 
@@ -229,6 +225,11 @@ alias kii='kubectl -n istio-ingress'
 alias kubectl -n kafka='kubectl -n kafka'
 alias krs='kubectl -n redis-system'
 
+#export KUBECONFIG=~/.kube/config-ktdseducluster
+export KUBECONFIG=~/.kube/config-localcluster
+
+---
+
 ## alias 를 적용하려면 source 명령 수행
 $ source ~/env
 
@@ -414,10 +415,6 @@ OS/Arch:      linux/amd64
 
 
 
-
-
-
-
 # < Kafka Setup >
 
 Strimzi Kafka 를 Setup 한다.
@@ -447,7 +444,7 @@ kafka             Active   11s
 
 
 # alias 설정
-$ alias kubectl -n kafka='kubectl -n kafka'
+$ alias kkf='kubectl -n kafka'
 ```
 
 
@@ -462,22 +459,60 @@ $ alias kubectl -n kafka='kubectl -n kafka'
 
 ```sh
 $ mkdir -p ~/temp/strimzi
-
-$ cd ~/temp/strimzi
+  cd ~/temp/strimzi
 
 # download
-$ wget https://github.com/strimzi/strimzi-kafka-operator/releases/download/0.35.0/strimzi-0.35.0.zip
+$ wget https://github.com/strimzi/strimzi-kafka-operator/releases/download/0.39.0/strimzi-0.39.0.zip
+# $ wget https://github.com/strimzi/strimzi-kafka-operator/releases/download/0.36.1/strimzi-0.36.1.zip
+
 
 $ ll
--rw-rw-r-- 1 ktdseduuser ktdseduuser 5568819 May 15 15:10 strimzi-0.35.0.zip
+-rw-rw-r-- 1 ubuntu ubuntu 5649439 Dec 20 19:54 strimzi-0.39.0.zip
 
 
-$ unzip strimzi-0.35.0.zip
+$ unzip strimzi-0.39.0.zip
 #unzip 이 없으면 설치
 # apt install unzip
 
-$ cd  ~/temp/strimzi/strimzi-0.35.0
+
+$ cd  ~/temp/strimzi/strimzi-0.39.0/
+
+
+$ ll
+-rw-r--r--  1 ubuntu ubuntu 62045 Dec 20 17:14 CHANGELOG.md
+drwxr-xr-x  4 ubuntu ubuntu  4096 Dec 20 17:15 docs/
+drwxr-xr-x 11 ubuntu ubuntu  4096 Dec 20 17:14 examples/
+drwxr-xr-x  8 ubuntu ubuntu  4096 Dec 20 17:14 install/
+
 ```
+
+
+
+* 제약사항
+  * Kubernetes 1.21 이상에 Strimzi 0.39.0 배포가능
+
+
+
+
+
+## 3) admin 관리자지정
+
+
+
+```sh
+
+$ cd  ~/temp/strimzi/strimzi-0.39.0/
+
+$ kubectl create -f install/strimzi-admin
+
+```
+
+- `strimzi-view`사용자가 Strimzi 리소스를 보고 나열할 수 있다.
+- `strimzi-admin`사용자는 Strimzi 리소스를 생성, 편집 또는 삭제할 수 있다.
+
+
+
+
 
 
 
@@ -490,7 +525,7 @@ $ cd  ~/temp/strimzi/strimzi-0.35.0
   - 그러므로 아래 중 Single namespace 설정에 해당한다.
 
 ```sh
-$ cd  ~/temp/strimzi/strimzi-0.35.0
+$ cd  ~/temp/strimzi/strimzi-0.39.0
 
 $ sed -i 's/namespace: .*/namespace: kafka/' ./install/cluster-operator/*RoleBinding*.yaml
 
@@ -505,34 +540,27 @@ $ sed -i 's/namespace: .*/namespace: kafka/' ./install/cluster-operator/*RoleBin
 - kafka namespace 를 watch 할 수 있는 권한 부여
 
 ```sh
-$ cd  ~/temp/strimzi/strimzi-0.35.0
+$ cd  ~/temp/strimzi/strimzi-0.39.0
 
-# kafka namespace 를 watch 할 수 있는 권한 부여
-# 1) [생략] operator 권한부여
-$ kubectl -n kafka create -f ./install/cluster-operator/020-RoleBinding-strimzi-cluster-operator.yaml
-
-# 2) [생략] entity-operator 권한부여
-$ kubectl -n kafka create -f ./install/cluster-operator/031-RoleBinding-strimzi-cluster-operator-entity-operator-delegation.yaml
-
-# 3) Deploy the CRDs
+# 1) Deploy the CRDs
 $ kubectl -n kafka create -f ./install/cluster-operator/
 
 
-# CRD 확인
+# 2) CRD 확인
 $ kubectl -n kafka get crd
-NAME                                    CREATED AT
+NAME                                       CREATED AT
 ...
-NAME                                    CREATED AT
-kafkas.kafka.strimzi.io                 2023-06-10T12:58:00Z
-kafkaconnects.kafka.strimzi.io          2023-06-10T12:58:01Z
-strimzipodsets.core.strimzi.io          2023-06-10T12:58:01Z
-kafkatopics.kafka.strimzi.io            2023-06-10T12:58:01Z
-kafkausers.kafka.strimzi.io             2023-06-10T12:58:01Z
-kafkamirrormakers.kafka.strimzi.io      2023-06-10T12:58:01Z
-kafkabridges.kafka.strimzi.io           2023-06-10T12:58:01Z
-kafkaconnectors.kafka.strimzi.io        2023-06-10T12:58:01Z
-kafkamirrormaker2s.kafka.strimzi.io     2023-06-10T12:58:01Z
-kafkarebalances.kafka.strimzi.io        2023-06-10T12:58:01Z
+kafkabridges.kafka.strimzi.io              2024-02-24T06:48:09Z
+kafkaconnectors.kafka.strimzi.io           2024-02-24T06:48:09Z
+kafkaconnects.kafka.strimzi.io             2024-02-24T06:48:08Z
+kafkamirrormaker2s.kafka.strimzi.io        2024-02-24T06:48:09Z
+kafkamirrormakers.kafka.strimzi.io         2024-02-24T06:48:09Z
+kafkanodepools.kafka.strimzi.io            2024-02-24T06:48:09Z
+kafkarebalances.kafka.strimzi.io           2024-02-24T06:48:09Z
+kafkas.kafka.strimzi.io                    2024-02-24T06:48:08Z
+kafkatopics.kafka.strimzi.io               2024-02-24T06:48:08Z
+kafkausers.kafka.strimzi.io                2024-02-24T06:48:08Z
+...
 
 #  *.*.strimzi.io 라는 CRD 가 생성되었다.
 
@@ -540,13 +568,12 @@ kafkarebalances.kafka.strimzi.io        2023-06-10T12:58:01Z
 # operator 설치 확인
 $ kubectl -n kafka get deploy
 NAME                       READY   UP-TO-DATE   AVAILABLE   AGE
-strimzi-cluster-operator   1/1     1            1           32s
-
+strimzi-cluster-operator   0/1     1            0           60s
 
 
 $ kubectl -n kafka get pod
-NAME                                       READY   STATUS    RESTARTS   AGE
-strimzi-cluster-operator-fd6fb56f6-f8d98   1/1     Running   0          41s
+NAME                                        READY   STATUS    RESTARTS   AGE
+strimzi-cluster-operator-7bb5468c59-qlb44   1/1     Running   0          74s
 
 
 # operator pod log 확인
@@ -564,11 +591,7 @@ $ kubectl -n kafka logs -f deploy/strimzi-cluster-operator
 
 
 
-
-
 # 2. Kafka Cluster 생성
-
-
 
 
 
@@ -584,9 +607,9 @@ $ kubectl -n kafka logs -f deploy/strimzi-cluster-operator
 
 ```sh
 $ mkdir -p ~/githubrepo
-$ cd ~/githubrepo
+  cd ~/githubrepo
 
-$ git clone https://github.com/ssongman/ktds-edu-kafka-redis.git
+$ git clone https://github.com/ssongman/ktds-edu-kafka.git
 
 ```
 
@@ -594,18 +617,22 @@ $ git clone https://github.com/ssongman/ktds-edu-kafka-redis.git
 
 #### kafka cluster 생성
 
+node pool이 없는 zookeeper 기반 kafka 클러스터를 생성한다.
+
+※ 노드 풀은 Kafka 노드 집합에 대한 구성을 제공한다. 노드 풀을 사용하면 동일한 Kafka 클러스터 내에서 노드가 서로 다른 구성을 가질 수 있다.
+
 ```sh
-$ cd ~/githubrepo/ktds-edu-kafka-redis
+$ cd ~/githubrepo/ktds-edu-kafka
 
 $ cat ./kafka/strimzi/kafka/12.kafka-ephemeral-auth.yaml
+
 apiVersion: kafka.strimzi.io/v1beta2
 kind: Kafka
 metadata:
   name: my-cluster
-  namespace: kafka
 spec:
   kafka:
-    version: 3.5.1
+    version: 3.6.1
     replicas: 3
     authorization:
       type: simple
@@ -621,12 +648,12 @@ spec:
         type: internal
         tls: true
     config:
-      offsets.topic.replication.factor: 3
-      transaction.state.log.replication.factor: 3
+      offsets.topic.replication.factor: 2
+      transaction.state.log.replication.factor: 2
       transaction.state.log.min.isr: 2
-      default.replication.factor: 3
+      default.replication.factor: 2
       min.insync.replicas: 1
-      inter.broker.protocol.version: "3.5"
+      inter.broker.protocol.version: "3.6"
     storage:
       type: ephemeral
   zookeeper:
@@ -641,10 +668,16 @@ spec:
 $ kubectl -n kafka apply -f ./kafka/strimzi/kafka/12.kafka-ephemeral-auth.yaml
 
 
+# log확인
 # strimzi operator 확인
 $ kubectl -n kafka  logs -f -l name=strimzi-cluster-operator
+...
+...
 2023-06-04 05:29:50 INFO  KafkaRoller:611 - Reconciliation #1(watch) Kafka(kafka/my-cluster): Dynamic update of pod my-cluster-kafka-0/0 was successful.
 
+
+
+# or 
 $ kubectl -n kafka  logs -f deploy/strimzi-cluster-operator
 
 
@@ -660,9 +693,10 @@ $ kubectl -n kafka  logs -f deploy/strimzi-cluster-operator
 ### (2) Kafka Cluster 확인
 
 ```sh
-$ kubectl -n kafka get pod -w
 
-$ kubectl -n kafka get pod
+$ kkf get pod -w
+
+$ kkf get pod
 NAME                                         READY   STATUS    RESTARTS   AGE
 my-cluster-entity-operator-d44f86494-cqp5b   3/3     Running   0          2m4s
 my-cluster-kafka-0                           1/1     Running   0          2m56s
@@ -678,7 +712,7 @@ strimzi-cluster-operator-fd6fb56f6-csrr4     1/1     Running   0          23h
 
 
 # Kafka Cluster 확인
-$ kubectl -n kafka get kafka
+$ kkf get kafka
 NAME         DESIRED KAFKA REPLICAS   DESIRED ZK REPLICAS   READY   WARNINGS
 my-cluster   3                        3                     True
 
@@ -694,7 +728,7 @@ my-cluster   3                        3                     True
 아래는 인증없이 접근 가능한 kafka cluster 를 생성하는 yaml 이므로 참고만 하자.
 
 ```sh
-$ cd ~/githubrepo/ktds-edu-kafka-redis
+$ cd ~/githubrepo/ktds-edu-kafka
 
 $ cat ./kafka/strimzi/kafka/11.kafka-ephemeral-no-auth.yaml
 apiVersion: kafka.strimzi.io/v1beta2
@@ -704,7 +738,7 @@ metadata:
   namespace: kafka
 spec:
   kafka:
-    version: 3.5.1
+    version: 3.4.0
     replicas: 3
     listeners:
       - name: plain
@@ -720,8 +754,8 @@ spec:
       transaction.state.log.replication.factor: 3
       transaction.state.log.min.isr: 2
       default.replication.factor: 3
-      min.insync.replicas: 1
-      inter.broker.protocol.version: "3.5"
+      min.insync.replicas: 2
+      inter.broker.protocol.version: "3.4"
     storage:
       type: ephemeral
   zookeeper:
@@ -779,7 +813,7 @@ order로 시작하는 모든 group을 Consume 가능
 #### KafkaUser 생성
 
 ```sh
-$ cd ~/githubrepo/ktds-edu-kafka-redis
+$ cd ~/githubrepo/ktds-edu-kafka
 
 $ cat ./kafka/strimzi/user/11.my-edu-admin.yaml
 ---
@@ -840,16 +874,253 @@ my-edu-admin   my-cluster   scram-sha-512    simple          True
 
   
 
+  
+
+#### password 확인
+
+```sh
+$ kubectl -n kafka get secret my-edu-admin
+NAME           TYPE     DATA   AGE
+my-edu-admin   Opaque   2      47s
+
+
+$ kubectl -n kafka get secret my-edu-admin -o yaml
+...
+
+
+$ kubectl -n kafka get secret my-edu-admin -o jsonpath='{.data.password}' | base64 -d
+OHN7HzcDIg9dDlF3NIwAoHRCgvP8oFoo
+WEFbBWUYalMFrcd9WLd8vWvsYCq5Mvdu
+boAjdSR2pb8fftkl2r9GgZN4vOO7kby9
+
+
+# user/pass 
+## Cloud 기준 : my-user / WEFbBWUYalMFrcd9WLd8vWvsYCq5Mvdu
+## Cloud 기준 : my-edu-admin / boAjdSR2pb8fftkl2r9GgZN4vOO7kby9
+
+```
+
+
+
+
+
+
 
 ### (3) my-user 생성
 
 #### KafkaUser 생성
 
 ```sh
-$ cd ~/githubrepo/ktds-edu-kafka-redis
+$ cd ~/githubrepo/ktds-edu-kafka
 
 $ cat ./kafka/strimzi/user/12.my-user.yaml
 ---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaUser
+metadata:
+  name: my-user
+  labels:
+    strimzi.io/cluster: my-cluster
+  namespace: kafka
+spec:
+  authentication:
+    type: scram-sha-512
+  authorization:
+    type: simple
+    acls:
+      - operations: All
+        resource:
+          type: topic
+          name: my
+          patternType: prefix
+      - operation: All
+        resource:
+          name: my
+          patternType: prefix
+          type: group
+---
+
+
+# KafkaUser 생성 명령 실행
+$ kubectl -n kafka apply -f ./kafka/strimzi/user/12.my-user.yaml
+
+# kafkauser 확인
+$ kubectl -n kafka get kafkauser
+NAME           CLUSTER      AUTHENTICATION   AUTHORIZATION   READY
+my-edu-admin   my-cluster   scram-sha-512    simple          True
+my-user        my-cluster   scram-sha-512    simple          True
+
+
+# Ready 상태가 True인것을 확인하자.
+```
+
+- ACL 권한설명
+
+  - my~  또는 edu 로 시작하는 topic 을 모두 처리가능
+  - ex) my-board-create,  my-board-update,  edu-topic
+
+  
+
+  
+
+#### password 확인
+
+```sh
+$ kubectl -n kafka get secret my-user
+NAME      TYPE     DATA   AGE
+my-user   Opaque   2      28s
+
+
+$ kubectl -n kafka get secret my-user -o jsonpath='{.data.password}' | base64 -d
+McUI8xslZvTgp9ApNWygNDLi0cJLblPD
+NYQN3Hn7W2PF4z5faR5LdJws40AXbLPt
+WQOq7MWlytkD6YItgoMRldW1HfCpuASt
+
+# user/pass 
+## Cloud 기준 : my-user / NYQN3Hn7W2PF4z5faR5LdJws40AXbLPt
+## Cloud 기준 : my-user / WQOq7MWlytkD6YItgoMRldW1HfCpuASt
+
+```
+
+
+
+
+
+### (4) edu-user 생성
+
+#### KafkaUser 생성
+
+```sh
+$ cd ~/githubrepo/ktds-edu-kafka
+
+$ cat ./kafka/strimzi/user/13.edu-user.yaml
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaUser
+metadata:
+  name: edu-user
+  labels:
+    strimzi.io/cluster: my-cluster
+  namespace: kafka
+spec:
+  authentication:
+    type: scram-sha-512
+  authorization:
+    type: simple
+    acls:
+      - operations: All
+        resource:
+          type: topic
+          name: edu
+          patternType: prefix
+      - operation: All
+        resource:
+          name: edu
+          patternType: prefix
+          type: group
+---
+
+
+# KafkaUser 생성 명령 실행
+$ kubectl -n kafka apply -f ./kafka/strimzi/user/13.edu-user.yaml
+
+# kafkauser 확인
+$ kubectl -n kafka get kafkauser
+NAME           CLUSTER      AUTHENTICATION   AUTHORIZATION   READY
+edu-user       my-cluster   scram-sha-512    simple          True
+my-edu-admin   my-cluster   scram-sha-512    simple          True
+my-user        my-cluster   scram-sha-512    simple          True
+
+
+
+# Ready 상태가 True인것을 확인하자.
+```
+
+- ACL 권한설명
+
+  - my~  또는 edu 로 시작하는 topic 을 모두 처리가능
+  - ex) my-board-create,  my-board-update,  edu-topic
+
+  
+
+  
+
+#### password 확인 - ★
+
+```sh
+$ kubectl -n kafka get secret edu-user
+NAME       TYPE     DATA   AGE
+edu-user   Opaque   2      21s
+
+
+
+$ kubectl -n kafka get secret edu-user -o jsonpath='{.data.password}' | base64 -d
+iUfOLiK9LM4QxwTMYnjOQHrG0gJiwQpa
+nxRcaiHkAOi9YhaFcm3zn6STlWyqivCf
+oXTjENLJMvdKV6CbQmU2NX0e87Rezxhc
+
+
+
+# user/pass 
+## Cloud 기준 : edu-user / oXTjENLJMvdKV6CbQmU2NX0e87Rezxhc
+
+```
+
+
+
+
+
+### (5) [참고] kafkauser Sample
+
+#### Sample1
+
+```yaml
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaUser
+metadata:
+  name: my-user
+  labels:
+    strimzi.io/cluster: my-cluster
+spec:
+  authentication:
+    type: tls
+  authorization:
+    type: simple
+    acls:
+      # Example consumer Acls for topic my-topic using consumer group my-group
+      - resource:
+          type: topic
+          name: my-topic
+          patternType: literal
+        operations:
+          - Describe
+          - Read
+        host: "*"
+      - resource:
+          type: group
+          name: my-group
+          patternType: literal
+        operations:
+          - Read
+        host: "*"
+      # Example Producer Acls for topic my-topic
+      - resource:
+          type: topic
+          name: my-topic
+          patternType: literal
+        operations:
+          - Create
+          - Describe
+          - Write
+        host: "*"
+
+```
+
+
+
+#### Sample2
+
+```yaml
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaUser
 metadata:
@@ -876,89 +1147,11 @@ spec:
           name: my
           patternType: prefix
           type: group
----
-
-
-# KafkaUser 생성 명령 실행
-$ kubectl -n kafka apply -f ./kafka/strimzi/user/12.my-user.yaml
-
-# kafkauser 확인
-$ kubectl -n kafka get kafkauser
-NAME           CLUSTER      AUTHENTICATION   AUTHORIZATION   READY
-my-edu-admin   my-cluster   scram-sha-512    simple          True
-my-user        my-cluster   scram-sha-512    simple          True
-
-# Ready 상태가 True인것을 확인하자.
 ```
 
-- ACL 권한설명
-
-  - my~  또는 edu 로 시작하는 topic 을 모두 처리가능
-  - ex) my-board-create,  my-board-update,  edu-topic
-
-  
 
 
-### (4) edu-user 생성
 
-#### KafkaUser 생성
-
-```sh
-$ cd ~/githubrepo/ktds-edu-kafka-redis
-
-$ cat ./kafka/strimzi/user/13.edu-user.yaml
----
-apiVersion: kafka.strimzi.io/v1beta2
-kind: KafkaUser
-metadata:
-  name: edu-user
-  labels:
-    strimzi.io/cluster: my-cluster
-  namespace: kafka
-spec:
-  authentication:
-    type: scram-sha-512
-  authorization:
-    type: simple
-    acls:
-      - operations:
-          - Describe
-          - Read
-          - Write
-        resource:
-          type: topic
-          name: edu
-          patternType: prefix
-      - operation: All
-        resource:
-          name: edu
-          patternType: prefix
-          type: group
----
-
-
-# KafkaUser 생성 명령 실행
-$ kubectl -n kafka apply -f ./kafka/strimzi/user/13.edu-user.yaml
-
-# kafkauser 확인
-$ kubectl -n kafka get kafkauser
-NAME           CLUSTER      AUTHENTICATION   AUTHORIZATION   READY
-edu-user       my-cluster   scram-sha-512    simple          True
-my-edu-admin   my-cluster   scram-sha-512    simple          True
-my-user        my-cluster   scram-sha-512    simple          True
-
-
-# Ready 상태가 True인것을 확인하자.
-```
-
-- ACL 권한설명
-
-  - my~  또는 edu 로 시작하는 topic 을 모두 처리가능
-  - ex) my-board-create,  my-board-update,  edu-topic
-
-  
-
-  
 
 
 
@@ -979,7 +1172,7 @@ my~  또는 edu 로 시작하는 topic 을 모두 처리가능하므로 my-topic
 ### (2) KafkaTopic 생성
 
 ```sh
-$ cd ~/githubrepo/ktds-edu-kafka-redis
+$ cd ~/githubrepo/ktds-edu-kafka
 
 $ cat ./kafka/strimzi/topic/11.kafka-topic.yaml
 ---
@@ -992,7 +1185,7 @@ metadata:
   namespace: kafka
 spec:
   partitions: 3
-  replicas: 3
+  replicas: 2
   config:
     #retention.ms: 7200000      # 2 hour
     retention.ms: 86400000      # 24 hours
@@ -1015,34 +1208,40 @@ my-topic   my-cluster   3            3                    True
 ### (3) Topic  상세 확인
 
 ```sh
+
 $ kubectl -n kafka get kafkatopic my-topic -o yaml
+---
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaTopic
 metadata:
   annotations:
     kubectl.kubernetes.io/last-applied-configuration: |
-      {"apiVersion":"kafka.strimzi.io/v1beta2","kind":"KafkaTopic","metadata":{"annotations":{},"labels":{"strimzi.io/cluster":"my-cluster"},"name":"my-topic","namespace":"kafka"},"spec":{"config":{"retention.ms":86400000,"segment.bytes":1073741824},"partitions":3,"replicas":3}}
-  creationTimestamp: "2022-07-03T01:07:32Z"
+      {"apiVersion":"kafka.strimzi.io/v1beta2","kind":"KafkaTopic","metadata":{"annotations":{},"labels":{"strimzi.io/cluster":"my-cluster"},"name":"my-topic","namespace":"kafka"},"spec":{"config":{"retention.ms":86400000,"segment.bytes":1073741824},"partitions":3,"replicas":2}}
+  creationTimestamp: "2024-02-24T07:11:52Z"
+  finalizers:
+  - strimzi.io/topic-operator
   generation: 1
   labels:
     strimzi.io/cluster: my-cluster
   name: my-topic
   namespace: kafka
-  resourceVersion: "7214"
-  uid: 0888ea4d-f966-40cb-8d7c-9f25d10e16dc
+  resourceVersion: "626120"
+  uid: 9cebaf5f-241d-4f74-8679-003d4154ecb8
 spec:
   config:
     retention.ms: 86400000
     segment.bytes: 1073741824
   partitions: 3
-  replicas: 3
+  replicas: 2
 status:
   conditions:
-  - lastTransitionTime: "2022-07-03T01:07:33.321346Z"
+  - lastTransitionTime: "2024-02-24T07:11:53.031100599Z"
     status: "True"
     type: Ready
   observedGeneration: 1
   topicName: my-topic
+---
+
 
 
 ```
@@ -1051,13 +1250,1354 @@ status:
 
 
 
-# 3. Monitoring(Grafana)
+
+
+### [참고] ICIS-TR Topic Name 정책
+
+topiic 명칭을 어떻게 정하는지에 대해서 다양한 시나리오를 생각해 볼 수 있다. 아래 특정 프로젝트의 topic name 정책을 살펴보자.
+
+- topic 정책 및 샘플
+
+```
+# 정책
+[Part명]-[서비스명]-[서브도메인]-[사용자정의]
+
+
+# 샘플
+order-intl-board-create
+order-intl-board-update
+order-intl-board-delete
+
+bill-intl-board-create
+bill-intl-board-update
+bill-intl-board-delete
+
+rater-intl-board-create
+rater-intl-board-update
+rater-intl-board-delete
+```
+
+
+
+
+
+
+
+# 3. Accessing Kafka
+
+
+
+## 1) Internal Access
+
+
+
+### (1) Kafka Cluster Service 확인
+
+
+
+```sh
+$ kubectl -n kafka get svc
+NAME                          TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)                                        AGE
+my-cluster-kafka-bootstrap    ClusterIP   10.43.36.193   <none>        9091/TCP,9092/TCP,9093/TCP                     7m27s
+my-cluster-kafka-brokers      ClusterIP   None           <none>        9090/TCP,9091/TCP,8443/TCP,9092/TCP,9093/TCP   7m27s
+my-cluster-zookeeper-client   ClusterIP   10.43.185.61   <none>        2181/TCP                                       8m1s
+my-cluster-zookeeper-nodes    ClusterIP   None           <none>        2181/TCP,2888/TCP,3888/TCP                     8m1s
+
+
+
+$ kubectl -n kafka get pod
+NAME                                         READY   STATUS    RESTARTS   AGE
+my-cluster-entity-operator-d44f86494-cqp5b   3/3     Running   0          11m
+my-cluster-kafka-0                           1/1     Running   0          12m
+my-cluster-kafka-1                           1/1     Running   0          12m
+my-cluster-kafka-2                           1/1     Running   0          12m
+my-cluster-zookeeper-0                       1/1     Running   0          13m
+my-cluster-zookeeper-1                       1/1     Running   0          13m
+my-cluster-zookeeper-2                       1/1     Running   0          13m
+strimzi-cluster-operator-fd6fb56f6-csrr4     1/1     Running   0          23h
+
+
+$ kubectl -n kafka get pod -o wide
+NAME                                          READY   STATUS    RESTARTS   AGE     IP           NODE          NOMINATED NODE   READINESS GATES
+my-cluster-entity-operator-5cc7644697-2fvkc   2/2     Running   0          6m18s   10.42.8.5    worker03      <none>           <none>
+my-cluster-kafka-0                            1/1     Running   0          6m49s   10.42.8.4    worker03      <none>           <none>
+my-cluster-kafka-1                            1/1     Running   0          6m49s   10.42.7.4    worker02      <none>           <none>
+my-cluster-kafka-2                            1/1     Running   0          6m49s   10.42.6.4    worker01      <none>           <none>
+my-cluster-zookeeper-0                        1/1     Running   0          7m23s   10.42.8.3    worker03      <none>           <none>
+my-cluster-zookeeper-1                        1/1     Running   0          7m23s   10.42.7.3    worker02      <none>           <none>
+my-cluster-zookeeper-2                        1/1     Running   0          7m23s   10.42.1.28   master02.c1   <none>           <none>
+strimzi-cluster-operator-7bb5468c59-qlb44     1/1     Running   0          25m     10.42.6.3    worker01      <none>           <none>
+
+
+
+```
+
+- my-cluster-kafka-bootstrap 이 일반 kubernetes service 이며 POD 로 트래픽을 RR 방식으로 연결한다.
+- my-cluster-kafka-brokers 는 ip 가 없는 headless service 이다. 그러므로 pod 명을 붙여서 DNS 로 사용된다.
+  - headless service 사용예시
+    - my-cluster-kafka-0.my-cluster-kafka-brokers.kafka.svc
+    - my-cluster-kafka-1.my-cluster-kafka-brokers.kafka.svc
+    - my-cluster-kafka-2.my-cluster-kafka-brokers.kafka.svc
+
+- 우리는 Cluster 내에서  my-cluster-kafka-bootstrap:9092 로 접근을 시도할 것이다.
+
+
+
+
+
+### (2) kafkacat 로 확인
+
+Kubernetes Cluster 내에서 kafka 접근 가능여부를 확인하기 위해 kafka Client 용 app 인 kafkacat 을 설치하자.
+
+
+
+#### kafkacat 설치
+
+```sh
+# kafka cat 설치
+$ kubectl -n kafka create deploy kafkacat \
+    --image=confluentinc/cp-kafkacat:latest \
+    -- sleep 365d
+
+# 설치진행 확인
+$ kubectl -n kafka get pod
+NAME                                         READY   STATUS              RESTARTS   AGE
+kafkacat-5b845776c4-c7tmh                     0/1     ContainerCreating   0               4s
+
+
+## READY 상태가 1/1 로 변할때까지 대기...
+
+
+# pod 내부로 진입( bash 명령 수행)
+$ kubectl -n kafka exec -it deploy/kafkacat -- bash
+[appuser@kafkacat-7648db7f48-wg4hn ~]$
+
+
+
+```
+
+
+
+#### ※ 참고
+
+windows 환경의 gitbash 를 이용해 pod 내부명령을 수행한다면 prompt 가 보이지 않을수도 있다.
+
+이런경우 windows 에서 linux 체제와 호환이 되지 않아서 발생하는 이슈이다.
+
+아래와 같이 winpty 를 붙인다면 prompt 가 보이니 참고하자.
+
+```sh
+# pod 내부명령 수행
+$ winpty kubectl -n kafka exec -it deploy/kafkacat -- bash
+
+```
+
+
+
+
+
+#### pub/sub test
+
+id/pass 가 필요
+
+```sh
+
+# pod 내부로 진입( bash 명령 수행)
+$ kubectl -n kafka exec -it deploy/kafkacat -- bash
+
+
+export BROKERS=my-cluster-kafka-bootstrap:9092
+export KAFKAUSER=my-user
+export PASSWORD=WQOq7MWlytkD6YItgoMRldW1HfCpuASt        ## 개인별 passwrod 붙여넣자.   위 3.2 KafkaUser 를 참고하자. 
+export TOPIC=my-topic
+export GROUP=my-topic-group
+ 
+
+ 
+## topic 리스트
+kafkacat -b $BROKERS \
+  -X security.protocol=SASL_PLAINTEXT \
+  -X sasl.mechanisms=SCRAM-SHA-512 \
+  -X sasl.username=$KAFKAUSER \
+  -X sasl.password=$PASSWORD -L
+
+Metadata for all topics (from broker -1: sasl_plaintext://my-cluster-kafka-bootstrap:9092/bootstrap):
+ 3 brokers:
+  broker 0 at my-cluster-kafka-0.my-cluster-kafka-brokers.kafka.svc:9092
+  broker 2 at my-cluster-kafka-2.my-cluster-kafka-brokers.kafka.svc:9092
+  broker 1 at my-cluster-kafka-1.my-cluster-kafka-brokers.kafka.svc:9092 (controller)
+ 1 topics:
+  topic "my-topic" with 3 partitions:
+    partition 0, leader 1, replicas: 1,0, isrs: 1,0
+    partition 1, leader 0, replicas: 0,2, isrs: 0,2
+    partition 2, leader 2, replicas: 2,1, isrs: 2,1
+
+
+
+
+## 위 내용중 3개의 brokers 주소를 잘 이해하자.
+## 위주소는 headless service 이용한 pod dns 이다.
+
+
+## consumer
+kafkacat -b $BROKERS \
+  -X security.protocol=SASL_PLAINTEXT \
+  -X sasl.mechanisms=SCRAM-SHA-512 \
+  -X sasl.username=$KAFKAUSER \
+  -X sasl.password=$PASSWORD \
+  -X group.id=$GROUP \
+  -t $TOPIC -C -o -5
+
+
+## terminal 을 한개 더 실행하여 위 환경변수 인식후 아래 producer 를 실행하자.
+## producer
+kafkacat -b $BROKERS \
+  -X security.protocol=SASL_PLAINTEXT \
+  -X sasl.mechanisms=SCRAM-SHA-512 \
+  -X sasl.username=$KAFKAUSER \
+  -X sasl.password=$PASSWORD \
+  -t $TOPIC -P -X acks=1
+
+# 임의의 text 실행
+```
+
+
+
+- Consumer 결과확인
+
+```
+% Reached end of topic my-topic [2] at offset 0
+% Reached end of topic my-topic [0] at offset 0
+% Reached end of topic my-topic [1] at offset 0
+
+asdf
+% Reached end of topic my-topic [2] at offset 1
+asdf
+% Reached end of topic my-topic [2] at offset 2
+asdf
+asd
+% Reached end of topic my-topic [1] at offset 2
+fsad
+% Reached end of topic my-topic [2] at offset 3
+f
+% Reached end of topic my-topic [2] at offset 4
+sdf
+% Reached end of topic my-topic [1] at offset 3
+asdfasd
+% Reached end of topic my-topic [0] at offset 1
+fas
+% Reached end of topic my-topic [0] at offset 2
+fsda
+% Reached end of topic my-topic [0] at offset 3
+fsa
+% Reached end of topic my-topic [1] at offset 4
+
+```
+
+- offset 값이 partition 단위로 증가됨을 할 수 있다.
+
+
+
+
+
+#### [참고] kafkacat 추가명령
+
+```sh
+## consumer group
+kafkacat -b $BROKERS \
+  -X security.protocol=SASL_PLAINTEXT \
+  -X sasl.mechanisms=SCRAM-SHA-512 \
+  -X sasl.username=$KAFKAUSER \
+  -X sasl.password=$PASSWORD \
+  -t $TOPIC -C \
+  -X group.id=my-board-group
+
+
+
+
+## consumer group
+kafkacat -b $BROKERS \
+  -X security.protocol=SASL_PLAINTEXT \
+  -X sasl.mechanisms=SCRAM-SHA-512 \
+  -X sasl.username=$KAFKAUSER \
+  -X sasl.password=$PASSWORD \
+  -t $TOPIC -C \
+  -X group.id=order-intl-board-group -o -5
+
+
+
+## producer : 입력모드
+kafkacat -b $BROKERS \
+  -X security.protocol=SASL_PLAINTEXT \
+  -X sasl.mechanisms=SCRAM-SHA-512 \
+  -X sasl.username=$KAFKAUSER \
+  -X sasl.password=$PASSWORD \
+  -t $TOPIC -P -X acks=1
+ 
+
+
+## 대량 발송 모드
+$ cat > msg.txt
+---
+{"eventName":"a","num":1,"title":"a", "writeId":"", "writeName": "", "writeDate":"" }
+---
+
+## producer : file mode
+kafkacat -b $BROKERS \
+  -X security.protocol=SASL_PLAINTEXT \
+  -X sasl.mechanisms=SCRAM-SHA-512 \
+  -X sasl.username=$KAFKAUSER \
+  -X sasl.password=$PASSWORD \
+  -t $TOPIC -P ./msg.txt
+
+
+## producer : while
+while true; do kafkacat -b $BROKERS \
+  -X security.protocol=SASL_PLAINTEXT \
+  -X sasl.mechanisms=SCRAM-SHA-512 \
+  -X sasl.username=$KAFKAUSER \
+  -X sasl.password=$PASSWORD \
+  -t $TOPIC -P ./msg.txt; done;
+
+```
+
+
+
+
+
+
+
+
+
+### (3) python 확인
+
+Kubernetes Cluster 내에서 kafka 접근 가능여부를 확인하기 위해 python 을 설치후 kafka 에 connect 해 보자.
+
+
+
+#### python  설치
+
+```sh
+# bastion Serve 에서 수행
+
+# python deploy
+$ kubectl -n kafka create deploy python --image=python:3.9 -- sleep 365d
+
+
+# 설치진행 확인
+$ kubectl -n kafka get pod
+...
+python-fb57f7bd4-4w6pz                       1/1     Running   0              32s
+...
+
+## READY 상태가 1/1 로 변할때까지 대기...
+
+
+# python pod 내부로 진입( bash 명령 수행)
+$ kubectl -n kafka exec -it deploy/python -- bash
+
+
+```
+
+
+
+
+
+#### python library install
+
+kafka 에 접근하기 위해서 kafka-python 을 설치해야 한다.
+
+```bash
+# python pod 내부에서
+$ pip install kafka-python
+
+Collecting kafka-python
+  Downloading kafka_python-2.0.2-py2.py3-none-any.whl (246 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 246.5/246.5 KB 7.2 MB/s eta 0:00:00
+Installing collected packages: kafka-python
+Successfully installed kafka-python-2.0.2
+
+
+```
+
+
+
+
+
+#### kafka host 확인
+
+```sh
+## internal 접근을 위한 host 확인
+
+$ apt update 
+$ apt install netcat         <-- 이전버젼
+$ apt install netcat-openbsd
+
+nc -zv my-cluster-kafka-bootstrap.kafka.svc 9092
+nc -zv my-cluster-kafka-0.my-cluster-kafka-brokers.kafka.svc 9092
+nc -zv my-cluster-kafka-1.my-cluster-kafka-brokers.kafka.svc 9092
+nc -zv my-cluster-kafka-2.my-cluster-kafka-brokers.kafka.svc 9092
+
+```
+
+
+
+#### consumer
+
+consumer 실행을 위해서 python cli 환경으로 들어가자.
+
+```sh
+$ python
+
+Python 3.9.18 (main, Feb 13 2024, 10:54:04)
+[GCC 12.2.0] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+
+
+>>>
+
+```
+
+
+
+CLI 환경에서 아래  Python 명령을 하나씩 실행해 보자.
+
+```python
+
+from kafka import KafkaConsumer
+
+
+# 개인환경으로 변경
+bootstrap_servers='my-cluster-kafka-bootstrap:9092'
+sasl_plain_username='my-user'
+sasl_plain_password='WQOq7MWlytkD6YItgoMRldW1HfCpuASt'             ## 개인별 passwrod 붙여넣자.   위 3.2 KafkaUser 를 참고하자. 
+topic_name='my-topic' 
+group_id='my-topic-group'
+
+consumer = KafkaConsumer(bootstrap_servers=bootstrap_servers,
+                        security_protocol="SASL_PLAINTEXT",
+                        sasl_mechanism='SCRAM-SHA-512',
+                        sasl_plain_username=sasl_plain_username,
+                        sasl_plain_password=sasl_plain_password,
+                        auto_offset_reset='earliest',
+                        enable_auto_commit= True,
+                        group_id=group_id)
+
+
+
+# 접속한 계정으로 확인가능한 topic 목록들을 확인할 수 있다.
+consumer.topics()
+
+# 사용할 topic 지정(구독)
+consumer.subscribe(topic_name)
+
+# 구독 확인
+consumer.subscription()
+#{'my-topic'}            <-- 해당 Topic 이 출력되어야 한다.
+
+
+
+# 메세지 읽기
+for message in consumer:
+   print("topic=%s partition=%d offset=%d: key=%s value=%s" %
+        (message.topic,
+          message.partition,
+          message.offset,
+          message.key,
+          message.value))
+
+# 수신대기중....
+
+
+'''
+topic=my-topic partition=0 offset=38: key=None value=b'{"eventName":"a","num":88,"title":"a", "writeId":"", "writeName": "", "writeDate":"" }'
+topic=my-topic partition=0 offset=39: key=None value=b'{"eventName":"a","num":90,"title":"a", "writeId":"", "writeName": "", "writeDate":"" }'
+topic=my-topic partition=0 offset=40: key=None value=b'{"eventName":"a","num":96,"title":"a", "writeId":"", "writeName": "", "writeDate":"" }'
+'''
+```
+
+
+
+
+
+
+
+#### producer
+
+producer 실행을 위해서 별도의 terminal 을 실행한 후 python cli 환경으로 들어가자.
+
+```sh
+# python pod 내 진입(bash 실행)
+$ kubectl -n kafka exec -it deploy/python -- bash
+root@python-7d59455985-ml8vw:/#
+
+
+$ python
+Python 3.9.18 (main, Feb 13 2024, 10:54:04)
+[GCC 12.2.0] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+
+
+>>>
+
+```
+
+
+
+
+
+internal 에서 접근시에는 인증서가 없는  9092 port 접근이므로 사용되는 protocol은 SASL_PLAINTEXT 이다.CLI 환경에서 아래  Python 명령을 하나씩 실행해 보자.
+
+```python
+
+from kafka import KafkaProducer
+from time import sleep
+
+# 개인환경으로 변경
+bootstrap_servers='my-cluster-kafka-bootstrap:9092'
+sasl_plain_username='my-user'
+sasl_plain_password='WQOq7MWlytkD6YItgoMRldW1HfCpuASt'             ## 개인별 passwrod 붙여넣자.   위 3.2 KafkaUser 를 참고하자. 
+topic_name='my-topic'
+
+
+producer = KafkaProducer(bootstrap_servers=bootstrap_servers,
+                        security_protocol="SASL_PLAINTEXT",
+                        sasl_mechanism='SCRAM-SHA-512',
+                        sasl_plain_username=sasl_plain_username,
+                        sasl_plain_password=sasl_plain_password)
+
+# 아래 명령 부터 Consumer 수신을 관찰하면서 수행하자.
+producer.send(topic_name, b'python test1')
+producer.send(topic_name, b'python test2')
+producer.send(topic_name, b'{"eventName":"a","num":%d,"title":"a", "writeId":"", "writeName": "", "writeDate":"" }' % 1)
+
+# 10000건을 0.5초에 한번씩 발송해보자.
+for i in range(10000):
+    print(i)
+    sleep(0.5)
+    producer.send(topic_name, b'{"eventName":"a","num":%d,"title":"a", "writeId":"", "writeName": "", "writeDate":"" }' % i)
+
+    
+# 테스트를 끝내려면 Ctrl + C 로 중지하자.
+# POD Terminal 을 빠져나가려면 exit(Ctrl+D)
+```
+
+
+
+- 대량 발송(성능테스트)
+
+```python
+
+# 만건 테스트
+import time
+start_time = time.time() # 시작시간
+for i in range(10000):
+    print(i)
+    producer.send('my-topic', b'{"eventName":"a","num":%d,"title":"a", "writeId":"", "writeName": "", "writeDate":"" }' % i)
+
+end_time = time.time() # 종료시간
+print("duration time :", end_time - start_time)  # 현재시각 - 시작시간 = 실행 시간
+
+
+# 테스트 결과
+# duration time
+   # 1만건 : 3.686084747314453
+   # 1만건 : 4.461207389831543
+   # 10만건 : 36.04079532623291
+   # 10만건 : 44.05281901359558
+
+
+
+# 속도 : 약 2,000 TPS
+```
+
+
+
+- 참고
+
+```python
+# 2만건 테스트
+for i in range(10001, 20000):
+    print(i)
+    producer.send('my-topic', b'{"eventName":"a","num":%d,"title":"a", "writeId":"", "writeName": "", "writeDate":"" }' % i)
+    
+```
+
+
+
+- python 종료시 : Ctrl+D 
+
+
+
+
+
+
+
+## 2) External Access(Node Port)
+
+참고: https://strimzi.io/blog/2019/04/17/accessing-kafka-part-1/
+
+- Strimzi 는 외부에서 접근가능하도록  다양한 기능을 제공함
+
+- Strimzi 가 제공하는 외부 접근방식
+  - Node port
+  - Ingress
+  - Openshift Route
+  - Load Balancer
+
+
+
+
+그중 Node Port 접근 방식을 알아보자.
+
+
+
+### (1) GCP LB 확인
+
+#### Node IP 확인
+
+- 외부에 접근가능한 node port 를 인식할 수 있는 IP를 확인하자.
+- 이 IP 는 아래 Node Port 등록시 nip host 에 사용된다.
+- Cloud 에서는 Virtual Router IP 를 사용한다.
+
+```sh
+# GCP Cloud 에서 Load Balancer 셋팅 및 방화벽 설정 수행
+
+43.203.62.69 32100
+43.203.62.69 32200
+43.203.62.69 32201
+43.203.62.69 32202
+
+ubuntu@bastion01:~$ nc -zv 43.203.62.69 32100
+Connection to 43.203.62.69 32100 port [tcp/*] succeeded!
+ubuntu@bastion01:~$ nc -zv 43.203.62.69 32200
+Connection to 43.203.62.69 32200 port [tcp/*] succeeded!
+ubuntu@bastion01:~$ nc -zv 43.203.62.69 32201
+Connection to 43.203.62.69 32201 port [tcp/*] succeeded!
+ubuntu@bastion01:~$ nc -zv 43.203.62.69 32202
+Connection to 43.203.62.69 32202 port [tcp/*] succeeded!
+
+
+```
+
+
+
+
+
+#### NodePort Listener 등록
+
+- Kafka Cluster 를 수정모드로 변경하여 node port  listener 를 삽입하자.
+- node Port 를 직접 명시할 수 있다.
+- AdvertisedHost 필드에는 DNS 이름이나 IP 주소를 표기할 수 있다.
+
+```sh
+$ kubectl -n kafka edit kafka my-cluster
+
+apiVersion: kafka.strimzi.io/v1beta2
+kind: Kafka
+metadata:
+  name: my-cluster
+  namespace: kafka
+  ...
+spec:
+  ...
+    listeners:
+    - authentication:
+        type: scram-sha-512
+      name: plain
+      port: 9092
+      tls: false
+      type: internal
+    - name: tls
+      port: 9093
+      tls: true
+      type: internal
+    
+    ## nodeport type 등록 - 아래내용을 삽입 하자.
+    - name: external
+      port: 9094
+      type: nodeport
+      tls: false
+      authentication:
+        type: scram-sha-512
+      configuration:
+        bootstrap:
+          nodePort: 32100
+        brokers:
+        - broker: 0
+          advertisedHost: my-cluster.kafka.43.203.62.69.nip.io    # LB IP 사용
+          nodePort: 32200
+        - broker: 1
+          advertisedHost: my-cluster.kafka.43.203.62.69.nip.io    # LB IP 사용
+          nodePort: 32201
+        - broker: 2
+          advertisedHost: my-cluster.kafka.43.203.62.69.nip.io    # LB IP 사용
+          nodePort: 32202
+
+...
+---
+
+
+
+# 상태 확인
+# my-cluster-kafka-0
+# my-cluster-kafka-1
+# my-cluster-kafka-2 순서로 rolling 방식으로 재기동 될것이다.
+
+## broker pod 3개 가 모두 재기동 될때까지 대기한다.
+## 약 3분~5분 정도 소요된다.
+
+
+
+# strimzi operator 확인
+$ kubectl -n kafka  logs -f -l name=strimzi-cluster-operator
+$ kubectl -n kafka  logs -f deploy/strimzi-cluster-operator
+2023-06-04 06:07:25 INFO  StrimziPodSetController:313 - Reconciliation #93(watch) StrimziPodSet(kafka/my-cluster-kafka): StrimziPodSet will be reconciled
+2023-06-04 06:07:25 INFO  StrimziPodSetController:349 - Reconciliation #93(watch) StrimziPodSet(kafka/my-cluster-kafka): reconciled
+2023-06-04 06:07:25 INFO  StrimziPodSetController:313 - Reconciliation #94(watch) StrimziPodSet(kafka/my-cluster-kafka): StrimziPodSet will be reconciled
+2023-06-04 06:07:25 INFO  StrimziPodSetController:349 - Reconciliation #94(watch) StrimziPodSet(kafka/my-cluster-kafka): reconciled
+2023-06-04 06:07:26 INFO  StrimziPodSetController:313 - Reconciliation #95(watch) StrimziPodSet(kafka/my-cluster-kafka): StrimziPodSet will be reconciled
+2023-06-04 06:07:26 INFO  StrimziPodSetController:349 - Reconciliation #95(watch) StrimziPodSet(kafka/my-cluster-kafka): reconciled
+2023-06-04 06:07:29 INFO  StrimziPodSetController:313 - Reconciliation #96(watch) StrimziPodSet(kafka/my-cluster-kafka): StrimziPodSet will be reconciled
+2023-06-04 06:07:29 INFO  StrimziPodSetController:349 - Reconciliation #96(watch) StrimziPodSet(kafka/my-cluster-kafka): reconciled
+2023-06-04 06:07:31 INFO  StrimziPodSetController:313 - Reconciliation #97(watch) StrimziPodSet(kafka/my-cluster-kafka): StrimziPodSet will be reconciled
+2023-06-04 06:07:31 INFO  StrimziPodSetController:349 - Reconciliation #97(watch) StrimziPodSet(kafka/my-cluster-kafka): reconciled
+
+
+# strimzi pod 확인
+$ kubectl -n kafka get pod
+NAME                                         READY   STATUS    RESTARTS   AGE
+kafkacat-686d9c5977-bdsgw                    1/1     Running   0          26m
+my-cluster-entity-operator-d44f86494-cqp5b   3/3     Running   0          39m
+my-cluster-kafka-0                           1/1     Running   0          47s
+my-cluster-kafka-1                           1/1     Running   0          2m41s
+my-cluster-kafka-2                           1/1     Running   0          100s
+my-cluster-zookeeper-0                       1/1     Running   0          40m
+my-cluster-zookeeper-1                       1/1     Running   0          40m
+my-cluster-zookeeper-2                       1/1     Running   0          40m
+strimzi-cluster-operator-fd6fb56f6-csrr4     1/1     Running   0          24h
+
+# pod들이 재기동 되면서 node port 들이 적용된다.
+# 시간이 다소 소요됨. 약 5분 이내
+
+```
+
+
+
+
+
+
+#### Kafka Cluster 확인
+
+```sh
+# 확인
+$ kubectl -n kafka get kafka my-cluster
+NAME         DESIRED KAFKA REPLICAS   DESIRED ZK REPLICAS   READY   WARNINGS
+my-cluster   3                        3                     True
+
+
+$ kubectl -n kafka get kafka my-cluster -o yaml
+...
+status:
+...
+  - addresses:
+    - host: my-cluster.kafka.43.203.62.69.nip.io
+      port: 32100
+    bootstrapServers: my-cluster.kafka.43.203.62.69.nip.io:32100
+    name: external
+  observedGeneration: 2
+  operatorLastSuccessfulVersion: 0.39.0
+
+---
+
+## name: external 이 표기되어야 정상 반영 된 것이다.
+
+
+$ kubectl -n kafka get svc
+NAME                                  TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                                        AGE
+my-cluster-kafka-0                    NodePort    10.43.173.138   <none>        9094:32200/TCP                                 29m
+my-cluster-kafka-1                    NodePort    10.43.250.0     <none>        9094:32201/TCP                                 29m
+my-cluster-kafka-2                    NodePort    10.43.230.147   <none>        9094:32202/TCP                                 29m
+my-cluster-kafka-bootstrap            ClusterIP   10.43.36.193    <none>        9091/TCP,9092/TCP,9093/TCP                     62m
+my-cluster-kafka-brokers              ClusterIP   None            <none>        9090/TCP,9091/TCP,8443/TCP,9092/TCP,9093/TCP   62m
+my-cluster-kafka-external-bootstrap   NodePort    10.43.146.76    <none>        9094:32100/TCP                                 29m
+my-cluster-zookeeper-client           ClusterIP   10.43.185.61    <none>        2181/TCP                                       63m
+my-cluster-zookeeper-nodes            ClusterIP   None            <none>        2181/TCP,2888/TCP,3888/TCP                     63
+
+
+```
+
+- 외부에서 접근시 아래 주소로 cluster내부에 있는 kafka 에 접근 할 수 있다.
+
+  ```
+  bootstrap  : my-cluster.kafka.localhost.43.203.62.69.nip.io:32100
+  broker0    : my-cluster.kafka.localhost.43.203.62.69.nip.io:32200
+  broker1    : my-cluster.kafka.localhost.43.203.62.69.nip.io:32201
+  broker2    : my-cluster.kafka.localhost.43.203.62.69.nip.io:32202
+  ```
+
+
+
+
+
+
+#### Port  검사
+
+* Cluster node 에 접근할 수 있는 곳에서 검사
+
+```sh
+# bastion server 에서 확인
+
+NAME          STATUS   ROLES                       AGE     VERSION        INTERNAL-IP     EXTERNAL-IP   OS-IMAGE             KERNEL-VERSION   CONTAINER-RUNTIME
+master01.c1   Ready    control-plane,etcd,master   6d6h    v1.28.6+k3s2   172.31.14.177   <none>        Ubuntu 22.04.3 LTS   6.2.0-1018-aws   containerd://1.7.11-k3s2
+master02.c1   Ready    control-plane,etcd,master   6d6h    v1.28.6+k3s2   172.31.13.98    <none>        Ubuntu 22.04.3 LTS   6.2.0-1018-aws   containerd://1.7.11-k3s2
+master03.c1   Ready    control-plane,etcd,master   6d6h    v1.28.6+k3s2   172.31.8.197    <none>        Ubuntu 22.04.3 LTS   6.2.0-1018-aws   containerd://1.7.11-k3s2
+worker01      Ready    <none>                      3h45m   v1.28.6+k3s2   172.31.2.193    <none>        Ubuntu 22.04.3 LTS   6.2.0-1018-aws   containerd://1.7.11-k3s2
+worker02      Ready    <none>                      3h45m   v1.28.6+k3s2   172.31.4.202    <none>        Ubuntu 22.04.3 LTS   6.2.0-1018-aws   containerd://1.7.11-k3s2
+worker03      Ready    <none>                      3h45m   v1.28.6+k3s2   172.31.3.53     <none>        Ubuntu 22.04.3 LTS   6.2.0-1018-aws   containerd://1.7.11-k3s2
+
+
+# port 가 살아 있는지 master01 node 로 connect test 하여 검사해보자.
+$ nc -zv 172.31.14.177 32100
+$ nc -zv 172.31.14.177 32200
+$ nc -zv 172.31.14.177 32201
+$ nc -zv 172.31.14.177 32202
+Connection to 10.128.0.35 32200 port [tcp/*] succeeded
+
+# 존재하지 않는 port 는 아래와 같이 refused 된다.
+$ nc -zv 172.31.14.177 32203
+nc: connect to 10.128.0.35 port 32203 (tcp) failed: Connection refused
+
+
+```
+
+
+
+* 외부에서 검사
+
+```sh
+# local pc에서 확인
+
+# port 가 살아 있는지 master01 node 로 connect test 하여 검사해보자.
+$ nc -zv 43.203.62.69 32100
+
+# 존재하지 않는 port 는 아래와 같이 refused 된다.
+$ nc -zv 43.203.62.69 32203
+nc: connect to 10.128.0.35 port 32203 (tcp) failed: Connection refused
+
+
+```
+
+
+
+
+
+
+
+### (2) kafkacat 로 확인
+
+Local PC(Cluster 외부) 에서  kafka 접근 가능여부를 확인하기 위해 kafkacat 을 docker 로 PC 에 설치하자.
+
+#### docker run
+
+kafkacat 을 docker 로 설치한다.
+
+docker CLI terminal 에서 수행한다.
+
+```sh
+# 실행
+$ docker run --name kafkacat -d --user root confluentinc/cp-kafkacat:latest sleep 365d
+
+
+# 확인
+$ docker ps -a
+CONTAINER ID   IMAGE                             COMMAND                  CREATED          STATUS                      PORTS     NAMES
+3a0ae7a699ad   confluentinc/cp-kafkacat:latest   "sleep 365d"             2 weeks ago      Up 2 seconds                          kafkacat
+
+
+# docker 내부로 진입( bash 명령 수행)
+$ docker exec -it kafkacat bash
+[root@3a0ae7a699ad appuser]#
+
+```
+
+
+
+#### pub/sub 확인
+
+password  와 주소를 확인한 후 변경하자.
+
+```sh
+
+# docker 내부로 진입( bash 명령 수행)
+$ docker exec -it kafkacat bash
+
+export BROKERS=my-cluster.kafka.43.203.62.69.nip.io:32100,\
+my-cluster.kafka.43.203.62.69.nip.io:32200,\
+my-cluster.kafka.43.203.62.69.nip.io:32201,\
+my-cluster.kafka.43.203.62.69.nip.io:32202
+
+or
+
+export BROKERS=my-cluster.kafka.43.203.62.69.nip.io:32100
+export KAFKAUSER=my-user
+export PASSWORD=WQOq7MWlytkD6YItgoMRldW1HfCpuASt        ## passwrod 붙여넣자.   위 3.2 KafkaUser 를 참고하자. 
+export TOPIC=my-topic
+export GROUP=my-topic-group
+
+
+
+
+## topic 리스트
+kafkacat -b $BROKERS \
+  -X security.protocol=SASL_PLAINTEXT \
+  -X sasl.mechanisms=SCRAM-SHA-512 \
+  -X sasl.username=$KAFKAUSER \
+  -X sasl.password=$PASSWORD -L
+---
+Metadata for all topics (from broker -1: sasl_plaintext://my-cluster.kafka.43.203.62.69.nip.io:32100/bootstrap):
+ 3 brokers:
+  broker 0 at my-cluster.kafka.43.203.62.69.nip.io:32200
+  broker 2 at my-cluster.kafka.43.203.62.69.nip.io:32202
+  broker 1 at my-cluster.kafka.43.203.62.69.nip.io:32201 (controller)
+ 1 topics:
+  topic "my-topic" with 3 partitions:
+    partition 0, leader 0, replicas: 0,1,2, isrs: 0,1,2
+    partition 1, leader 2, replicas: 2,0,1, isrs: 0,1,2
+    partition 2, leader 1, replicas: 1,2,0, isrs: 0,1,2
+---
+Metadata for all topics (from broker -1: sasl_plaintext://my-cluster.kafka.43.203.62.69.nip.io:32100/bootstrap):
+ 3 brokers:
+  broker 0 at my-cluster.kafka.43.203.62.69.nip.io:32200
+  broker 2 at my-cluster.kafka.43.203.62.69.nip.io:32202 (controller)
+  broker 1 at my-cluster.kafka.43.203.62.69.nip.io:32201
+ 1 topics:
+  topic "my-topic" with 3 partitions:
+    partition 0, leader 1, replicas: 1,0, isrs: 0,1
+    partition 1, leader 0, replicas: 0,2, isrs: 0,2
+    partition 2, leader 2, replicas: 2,1, isrs: 2,1
+
+
+# 3개의 brokers 를 확인하자.
+# Internal 에서 확인했을때와 주소가 다른 것을 확인할 수 있다.
+# local PC 에서 접근가능한 3개의 nodeport 주소가 kafka discovery 에 의해 반환되었다.
+# kafka discovery protocol 임을 이해하자.
+
+
+## consumer
+kafkacat -b $BROKERS \
+  -X security.protocol=SASL_PLAINTEXT \
+  -X sasl.mechanisms=SCRAM-SHA-512 \
+  -X sasl.username=$KAFKAUSER \
+  -X sasl.password=$PASSWORD \
+  -X group.id=$GROUP \
+  -t $TOPIC -C \
+  -o -5
+  
+
+# -o -5 <-- 현재 offset 에서 5번째 이전 부터 보여줌(partition별)
+
+
+## terminal 을 한개 더 실행하여 위 환경변수 인식후 아래 producer 를 실행하자.
+## producer : 입력모드
+kafkacat -b $BROKERS \
+  -X security.protocol=SASL_PLAINTEXT \
+  -X sasl.mechanisms=SCRAM-SHA-512 \
+  -X sasl.username=$KAFKAUSER \
+  -X sasl.password=$PASSWORD \
+  -t $TOPIC -P -X acks=1
+  
+
+```
+
+
+
+### (3) python 확인
+
+#### Container run
+
+python image 를 Container 로 설치한다.
+
+##### docker
+
+```sh
+## docker 실행
+$ docker run --name python --user root --rm -d python:3.9 sleep 365d
+
+# python 확인
+$ docker ps -a
+CONTAINER ID   IMAGE                             COMMAND                  CREATED          STATUS          PORTS     NAMES
+a225dc4c3dd7   python:3.9                        "sleep 365d"             4 weeks ago      Up 20 seconds             python
+
+
+# Container 내부로 진입( bash 명령 수행)
+$ docker exec -it python bash
+root@a225dc4c3dd7:/#
+
+```
+
+
+
+##### podman
+
+```sh
+## podman 실행
+$ podman run --name python --user root -d python:3.9 sleep 365d
+
+# python 확인
+$ podman ps -a
+CONTAINER ID  IMAGE                         COMMAND     CREATED        STATUS            PORTS       NAMES
+fb231e23f9f1  docker.io/library/python:3.9  sleep 365d  2 seconds ago  Up 2 seconds ago              python
+
+
+# Container 내부로 진입( bash 명령 수행)
+$ podman exec -it python bash
+root@a225dc4c3dd7:/#
+
+```
+
+
+
+
+
+
+
+#### python library install
+
+python 을 이용해서 kafka 에 접근하기 위해서는 kafka 가아닌 kafka-python 을 설치해야 한다.
+
+```bash
+$ pip install kafka-python
+```
+
+
+
+#### kafka host 확인
+
+```sh
+## external 접근을 위한 host (nodeport 기준)
+
+$ apt update
+  apt install netcat-openbsd
+
+nc -zv my-cluster.kafka.43.203.62.69.nip.io 32100
+nc -zv my-cluster.kafka.43.203.62.69.nip.io 32200
+nc -zv my-cluster.kafka.43.203.62.69.nip.io 32201
+nc -zv my-cluster.kafka.43.203.62.69.nip.io 32202
+
+
+```
+
+
+
+
+
+
+
+#### consumer
+
+consumer 실행을 위해서 python cli 환경으로 들어가자.
+
+```sh
+$ python
+Python 3.9.18 (main, Feb 13 2024, 10:54:04)
+[GCC 12.2.0] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+
+>>>
+
+```
+
+
+
+CLI 환경에서 아래  Python 명령을 하나씩 실행해 보자.
+
+```python
+from kafka import KafkaConsumer
+
+# 개인환경으로 변경
+bootstrap_servers='my-cluster.kafka.43.203.62.69.nip.io:32100'
+sasl_plain_username='my-user'
+sasl_plain_password='WQOq7MWlytkD6YItgoMRldW1HfCpuASt'             ## 개인별 passwrod 붙여넣자.   위 3.2 KafkaUser 를 참고하자. 
+topic_name='my-topic'
+group_id='my-topic-group'
+
+
+consumer = KafkaConsumer(bootstrap_servers=bootstrap_servers,
+                        security_protocol="SASL_PLAINTEXT",
+                        sasl_mechanism='SCRAM-SHA-512',
+                        sasl_plain_username=sasl_plain_username,
+                        sasl_plain_password=sasl_plain_password,
+                        ssl_check_hostname=True,
+                        auto_offset_reset='earliest',
+                        enable_auto_commit= True,
+                        group_id=group_id)
+
+# 접속한 계정으로 확인가능한 topic 목록들을 확인할 수 있다.
+consumer.topics()
+
+# 사용할 topic 지정(구독)
+consumer.subscribe(topic_name)
+
+# 구독 확인
+consumer.subscription()
+#{'my-topic'}            <-- 해당 Topic 이 출력되어야 한다.
+
+
+# 메세지 읽기
+for message in consumer:
+   print("topic=%s partition=%d offset=%d: key=%s value=%s" %
+        (message.topic,
+          message.partition,
+          message.offset,
+          message.key,
+          message.value))
+
+# 수신대기중....
+
+'''
+---
+topic=my-topic partition=0 offset=38: key=None value=b'{"eventName":"a","num":88,"title":"a", "writeId":"", "writeName": "", "writeDate":"" }'
+topic=my-topic partition=0 offset=39: key=None value=b'{"eventName":"a","num":90,"title":"a", "writeId":"", "writeName": "", "writeDate":"" }'
+topic=my-topic partition=0 offset=40: key=None value=b'{"eventName":"a","num":96,"title":"a", "writeId":"", "writeName": "", "writeDate":"" }'
+'''
+```
+
+
+
+
+
+
+
+#### producer
+
+producer 실행을 위해서 별도의 terminal 을 실행한 후 python cli 환경으로 들어가자.
+
+```sh
+# Container 내부로 진입( bash 명령 수행)
+$ docker exec -it python bash
+root@a225dc4c3dd7:/#
+
+
+$ python
+Python 3.9.18 (main, Feb 13 2024, 10:54:04)
+[GCC 12.2.0] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+
+>>>
+
+```
+
+
+
+
+
+CLI 환경에서 아래  Python 명령을 하나씩 실행해 보자.
+
+```python
+from kafka import KafkaProducer
+from time import sleep
+
+# 개인환경으로 변경
+bootstrap_servers='my-cluster.kafka.43.203.62.69.nip.io:32100'
+sasl_plain_username='my-user'
+sasl_plain_password='WQOq7MWlytkD6YItgoMRldW1HfCpuASt'             ## 개인별 passwrod 붙여넣자.   위 3.2 KafkaUser 를 참고하자. 
+topic_name='my-topic'
+
+
+producer = KafkaProducer(bootstrap_servers=bootstrap_servers,
+                        security_protocol="SASL_PLAINTEXT",
+                        sasl_mechanism='SCRAM-SHA-512',
+                        ssl_check_hostname=True,
+                        sasl_plain_username=sasl_plain_username,
+                        sasl_plain_password=sasl_plain_password)
+
+# 아래 명령 부터 Consumer 수신을 관찰하면서 수행하자.
+producer.send(topic_name, b'python test1')
+producer.send(topic_name, b'python test2')
+producer.send(topic_name, b'{"eventName":"a","num":%d,"title":"a", "writeId":"", "writeName": "", "writeDate":"" }' % 1)
+
+# 10000건을 1초에 한번씩 발송해보자.
+for i in range(10000):
+    print(i)
+    sleep(0.5)
+    producer.send(topic_name, b'{"eventName":"a","num":%d,"title":"a", "writeId":"", "writeName": "", "writeDate":"" }' % i)
+
+# 테스트를 끝내려면 Ctrl + C 로 중지하자.
+
+```
+
+
+
+- 대량 발송(성능테스트)
+
+```python
+# 만건 테스트
+import time
+start_time = time.time() # 시작시간
+for i in range(10000):
+    print(i)
+    producer.send(topic_name, b'{"eventName":"a","num":%d,"title":"a", "writeId":"", "writeName": "", "writeDate":"" }' % i)
+
+end_time = time.time() # 종료시간
+print("duration time :", end_time - start_time)  # 현재시각 - 시작시간 = 실행 시간
+
+
+# duration time
+   # 1만건 : 7.333464860916138
+   # 1만건 : 7.20307469367981
+   # 10만건 :  65.2125780582428
+   # 10만건 :  80.76845932006836
+
+# 속도 : 약 1,538 TPS  ( = 100,000 / 65)
+
+```
+
+- 결론
+  - 일반적으로 External 이 Internal 보다 network 부하가 심해서 속도가 훨씬 느리다.
+  - 하지만 우리가 테스트한 환경은 동일 PC 에서 실행하므로 속도가 거의 동일한 점을 참고하자.
+
+
+
+- 참고
+
+```python
+# 2만건 테스트
+for i in range(10001, 20000):
+    print(i)
+    producer.send(topic_name, b'{"eventName":"a","num":%d,"title":"a", "writeId":"", "writeName": "", "writeDate":"" }' % i)
+    
+```
+
+
+
+- python 종료시 : Ctrl+D 
+
+
+
+
+
+
+
+
+
+# 3. Strimzi Clean up
+
+Bastion Server 에서의 Strimzi 실습이 완료되었다. 불필요한 리소스 사용을 없애기 위해서 깨끗히 삭제하도록 하자.
+
+필요시 추후 삭제하도록 하자.
+
+
+
+## 1) Strimzi All Clean Up
+
+```sh
+# bastion Server 에서...
+
+# 1) client tool clean up
+$ kubectl -n kafka delete deploy kafkacat
+  kubectl -n kafka delete deploy python
+
+
+# 2) 확인
+$ kubectl -n kafka get kafkauser
+  kubectl -n kafka get kafkatopic
+  kubectl -n kafka get all
+
+
+# 3) kafka resource clean up
+$ kubectl -n kafka delete kafkauser my-edu-admin
+  kubectl -n kafka delete kafkauser edu-user
+  kubectl -n kafka delete kafkauser my-user
+  
+  kubectl -n kafka delete kafkatopic my-topic  
+    kubectl -n kafka delete kafkatopic edu-topic01  
+    kubectl -n kafka delete kafkatopic edu-topic01-0
+    kubectl -n kafka delete kafkatopic edu-topic014 
+    kubectl -n kafka delete kafkatopic edu-topic02  
+    kubectl -n kafka delete kafkatopic edu-topic03  
+    kubectl -n kafka delete kafkatopic edu-topic04  
+    kubectl -n kafka delete kafkatopic edu-topic05  
+    kubectl -n kafka delete kafkatopic edu-topic06  
+    kubectl -n kafka delete kafkatopic edu-topic07  
+    kubectl -n kafka delete kafkatopic edu-topic08  
+    kubectl -n kafka delete kafkatopic edu-topic09  
+    kubectl -n kafka delete kafkatopic edu-topic10  
+    kubectl -n kafka delete kafkatopic edu-topic11  
+    kubectl -n kafka delete kafkatopic edu-topic12  
+    kubectl -n kafka delete kafkatopic edu-topic13  
+    kubectl -n kafka delete kafkatopic edu-topic14  
+    kubectl -n kafka delete kafkatopic edu-topic15  
+    kubectl -n kafka delete kafkatopic edu-topic16  
+    kubectl -n kafka delete kafkatopic edu-topic17  
+    kubectl -n kafka delete kafkatopic edu-topic18  
+    kubectl -n kafka delete kafkatopic edu-topic19  
+    kubectl -n kafka delete kafkatopic edu-topic20  
+    kubectl -n kafka delete kafkatopic edu-topic21 
+    
+  kubectl -n kafka delete kafka my-cluster
+
+
+# 4) strimzi clean up
+$ cd ~/githubrepo/ktds-edu-kafka
+$ kubectl -n kafka delete -f ./kafka/strimzi/install/cluster-operator
+
+# 5) kafka namespace clean up
+$ kubectl delete namespace kafka
+
+# 6) 확인
+$ kubectl -n kafka get kafkauser
+  kubectl -n kafka get kafkatopic
+  kubectl -n kafka get all
+
+# 7) strimzi directory
+$ cd
+$ rm -rf ~/temp/strimzi
+
+```
+
+
+
+
+
+## 2) Container Clean up
+
+```sh
+# bastion Server 에서
+
+# 확인
+$ docker ps -a
+CONTAINER ID  IMAGE                                      COMMAND     CREATED         STATUS             PORTS       NAMES
+598840f3a513  docker.io/library/python:3.9               sleep 365d  49 minutes ago  Up 49 minutes ago              python
+add15a7fd413  docker.io/confluentinc/cp-kafkacat:latest  sleep 365d  22 minutes ago  Up 22 minutes ago              kafkacat
+
+
+# 1) Container 삭제
+$ docker rm -f python
+  docker rm -f kafkacat
+
+$ docker ps -a
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+# 4. Monitoring(Grafana)
 
 모니터링이 필요할 경우 exporter 를 설치후 promtheus와 연동할 수 있다. 
 
 
 
-![img](assets/1ztl7ii-FrK0GOL8mxwVFFQ.png)
+![img](4.Kafka-Setup.assets/1ztl7ii-FrK0GOL8mxwVFFQ.png)
 
 
 
@@ -1134,7 +2674,7 @@ exporter service 는 자동으로 생성되지 않는다.
 아래와 같이 수동으로 추가해야 한다.
 
 ```sh
-$ cd ~/githubrepo/ktds-edu-kafka-redis
+$ cd ~/githubrepo/ktds-edu-kafka
 
 $ cat ./kafka/strimzi/monitoring/11.my-cluster-kafka-exporter-service.yaml
 ---
@@ -1167,7 +2707,7 @@ $ kubectl -n kafka apply -f ./kafka/strimzi/monitoring/11.my-cluster-kafka-expor
 - 확인
 
 ```sh
-$ kubectl -n kafka get svc my-cluster-kafka-exporter
+$ kkf get svc my-cluster-kafka-exporter
 NAME                        TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE
 my-cluster-kafka-exporter   ClusterIP   10.43.131.199   <none>        80/TCP    14s
 
@@ -1181,7 +2721,7 @@ my-cluster-kafka-exporter   ClusterIP   10.43.131.199   <none>        80/TCP    
 
 ```sh
 # my-cluster-kafka-exporter POD 내로 진입(bash 실행)
-$ kubectl -n kafka exec -it deploy/my-cluster-kafka-exporter -- bash
+$ kkf exec -it deploy/my-cluster-kafka-exporter -- bash
 
 
 # metric 이 유효한지 조회
@@ -1213,7 +2753,7 @@ $ curl my-cluster-kafka-exporter.kafka.svc/metrics
 
 
 
-## 2) prometheus - helm방식
+## 3) prometheus - helm방식
 
 
 
@@ -1238,33 +2778,46 @@ oc adm policy remove-scc-from-user anyuid  -z prometheus-server -n kafka
 # repo추가
 $ helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 $ helm repo list
+$ helm repo update
 
 
 # 설치전 기설치여부 확인
 $ helm -n kafka list
 
+$ helm search repo prometheus
+...
+prometheus-community/prometheus                         25.13.0         v2.49.1         Prometheus is a monitoring system and time seri...
+...
 
 
 
 
 # Fetch
 $ mkdir -p ~/temp/helm/charts/
-$ cd ~/temp/helm/charts/
+  cd ~/temp/helm/charts/
+
+
 $ helm fetch prometheus-community/prometheus
 
 $ ll
 -rw-r--r-- 1 ktdseduuser ktdseduuser 59331 Jun  4 12:39 prometheus-22.6.2.tgz
+-rw-r--r-- 1 ktdseduuser ktdseduuser 69825 Sep  2 16:34 prometheus-23.4.0.tgz
+-rw-r--r-- 1 ubuntu ubuntu 75037 Feb 24 08:45 prometheus-25.13.0.tgz
 
-$ tar -zxvf prometheus-22.6.2.tgz
+
+
+$ tar -zxvf prometheus-25.13.0.tgz
+
 $ cd ~/temp/helm/charts/prometheus
 
+# helm 실행 dry-run
 $ helm -n kafka install prometheus . \
   --set configmapReload.prometheus.enabled=true \
   --set server.enabled=true \
   --set server.image.repository=quay.io/prometheus/prometheus \
   --set server.namespaces[0]=kafka \
   --set server.ingress.enabled=true \
-  --set server.ingress.hosts[0]=prometheus.kafka.35.209.207.26.nip.io \
+  --set server.ingress.hosts[0]=prometheus.kafka.43.203.62.69.nip.io \
   --set server.persistentVolume.enabled=false \
   --set alertmanager.enabled=false \
   --set kube-state-metrics.enabled=false \
@@ -1273,10 +2826,23 @@ $ helm -n kafka install prometheus . \
   --dry-run=true > dry-run.yaml
 
 
+# helm 실행
+
+
+
+
 # 확인
 $ helm -n kafka list
 NAME            NAMESPACE       REVISION        UPDATED                                 STATUS          CHART                   APP VERSION
 prometheus      kafka           1               2023-06-04 12:35:18.418462244 +0000 UTC deployed        prometheus-22.6.2       v2.44.0
+
+NAME            NAMESPACE       REVISION        UPDATED                                 STATUS          CHART                   APP VERSION
+prometheus      kafka           1               2023-09-02 16:35:39.831272244 +0000 UTC deployed        prometheus-23.4.0       v2.46.0
+
+NAME            NAMESPACE       REVISION        UPDATED                                 STATUS          CHART                   APP VERSION
+prometheus      kafka           1               2024-02-24 08:48:00.012127268 +0000 UTC deployed        prometheus-25.13.0      v2.49.1
+
+
 
 
 ## 확인
@@ -1315,6 +2881,8 @@ roleRef:
   name: prometheus-server
 EOF
 
+
+$ kubectl -n kafka get ClusterRoleBinding | grep prometheus
 ```
 
 
@@ -1327,30 +2895,37 @@ EOF
 
 ```sh
 # pod 확인
-$ kubectl -n kafka get pod 
+$ kkf get pod 
 NAME                                          READY   STATUS    RESTARTS      AGE
 prometheus-server-5b5d787f8d-rb8zz            1/1     Running   0             4m36s
+---
+prometheus-server-6676478584-cdqlc            2/2     Running   0          87s
+
 
 # pod log 확인
-$ kubectl -n kafka logs -f deploy/prometheus-server
+$ kkf logs -f deploy/prometheus-server
 
 
 
 # svc 확인
-$ kubectl -n kafka get svc
+$ kkf get svc
 NAME                                  TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                               AGE
 ...
 prometheus-server                     ClusterIP   10.43.124.104   <none>        80/TCP                                117s
+---
+prometheus-server                     ClusterIP   10.43.3.91      <none>        80/TCP                                         118s
 
 
 
 
 # ClusterRoleBinding 확인
-$ kubectl -n kafka get ClusterRoleBinding prometheus-server
+$ kkf get ClusterRoleBinding prometheus-server
 NAME                ROLE                            AGE
 prometheus-server   ClusterRole/prometheus-server   36s
 
 
+$ kubectl -n kafka get ClusterRoleBinding | grep prometheus
+prometheus                                             ClusterRole/prometheus                                             6d5h
 
 
 ```
@@ -1362,7 +2937,7 @@ prometheus-server   ClusterRole/prometheus-server   36s
 ### (4) ingress
 
 ````sh
-$ cd ~/githubrepo/ktds-edu-kafka-redis
+$ cd ~/githubrepo/ktds-edu-kafka
 
 $ cat ./kafka/strimzi/monitoring/21.prometheus-ingress.yaml
 ---
@@ -1370,11 +2945,10 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: prometheus-ingress
-  annotations:
-    kubernetes.io/ingress.class: "traefik"
 spec:
+  ingressClassName: traefik
   rules:
-  - host: "prometheus.kafka.35.209.207.26.nip.io"
+  - host: "prometheus.kafka.43.203.62.69.nip.io"
     http:
       paths:
       - path: /
@@ -1387,15 +2961,15 @@ spec:
 
 
 
+
 $ kubectl -n kafka apply -f ./kafka/strimzi/monitoring/21.prometheus-ingress.yaml
 
 ````
 
 - 확인
-  - URL : http://prometheus.kafka.ktcloud.211.254.212.105.nip.io
+  - URL : http://prometheus.kafka.43.203.62.69.nip.io
 
-
-![image-20220626124323035](assets/image-20220626124323035.png)
+![image-20220626124323035](./assets/image-20220626124323035.png)
 
 
 
@@ -1404,7 +2978,7 @@ $ kubectl -n kafka apply -f ./kafka/strimzi/monitoring/21.prometheus-ingress.yam
 openshift 환경일때는 route 를 생성한다.
 
 ````sh
-$ cd ~/githubrepo/ktds-edu-kafka-redis
+$ cd ~/githubrepo/ktds-edu-kafka
 
 $ cat ./kafka/strimzi/monitoring/22.prometheus-route.yaml
 ---
@@ -1421,7 +2995,7 @@ metadata:
     heritage: Helm
     release: prometheus
 spec:
-  host: prometheus-kafka.apps.211-34-231-82.nip.io
+  host: prometheus.kafka.43.203.62.69.nip.io
   to:
     kind: Service
     name: prometheus-server
@@ -1480,18 +3054,18 @@ data:
 - 추가후 prometheus server 재기동
 
 ```sh
-$ kubectl -n kafka get pod
+$ kkf get pod
 NAME                                          READY   STATUS    RESTARTS      AGE
 ...
 prometheus-server-5dc67b6855-cdm54            1/1     Running   0             24m
 ...
 
 
-$ kubectl -n kafka delete pod prometheus-server-5dc67b6855-cdm54
+$ kkf delete pod prometheus-server-5dc67b6855-cdm54
 pod "prometheus-server-5dc67b6855-cdm54" deleted
 
 
-$ kubectl -n kafka get pod
+$ kkf get pod
 NAME                                          READY   STATUS    RESTARTS      AGE
 my-cluster-kafka-exporter-79b8c986f8-wg259    1/1     Running   1 (60m ago)   60m
 prometheus-server-5dc67b6855-67xts            0/1     Running   0             9s
@@ -1501,10 +3075,10 @@ prometheus-server-5dc67b6855-67xts            0/1     Running   0             9s
 
 
 - target 확인 
-  - URL : http://prometheus.kafka.ktcloud.211.254.212.105.nip.io
+  - URL : http://prometheus.kafka.43.203.62.69.nip.io
   - 메뉴 : status / target 에서 아래와 같이 kafka-exporter 가 추가된것을 확인한다.
 
-![image-20220626124700665](assets/image-20220626124700665.png)
+![image-20220626124700665](./assets/image-20220626124700665.png)
 
 
 
@@ -1519,6 +3093,8 @@ kafka_topic_partition_current_offset
 
 
 ```
+sum(rate(kafka_topic_partition_current_offset{topic="my-topic"}[1m])) by (topic)
+
 sum(rate(kafka_topic_partition_current_offset{topic="edu-topic-01"}[1m])) by (topic)
 ```
 
@@ -1529,7 +3105,8 @@ sum(rate(kafka_topic_partition_current_offset{topic="edu-topic-01"}[1m])) by (to
 ### (6) clean up
 
 ```sh
-## 삭제
+## 삭제시...
+
 $ helm -n kafka delete prometheus 
 
 $ helm -n kafka list
@@ -1540,12 +3117,12 @@ $ helm -n kafka list
 
 
 
-## 3) Grafana deploy
+## 4) Grafana deploy
 
 - deploy
 
 ```sh
-$ cd ~/githubrepo/ktds-edu-kafka-redis
+$ cd ~/githubrepo/ktds-edu-kafka
 
 $ cat ./kafka/strimzi/monitoring/31.grafana-deployment.yaml
 ---
@@ -1568,7 +3145,7 @@ spec:
     spec:
       containers:
       - name: grafana
-        image: docker.io/grafana/grafana:7.3.7
+        image: docker.io/grafana/grafana:10.2.4
         ports:
         - name: grafana
           containerPort: 3000
@@ -1595,7 +3172,9 @@ spec:
         emptyDir: {}
       - name: grafana-logs
         emptyDir: {}
-        
+
+
+
 $ kubectl -n kafka apply -f ./kafka/strimzi/monitoring/31.grafana-deployment.yaml
 deployment.apps/grafana created
 
@@ -1607,7 +3186,7 @@ deployment.apps/grafana created
 - service
 
 ```sh
-$ cd ~/githubrepo/ktds-edu-kafka-redis
+$ cd ~/githubrepo/ktds-edu-kafka
 
 $ cat ./kafka/strimzi/monitoring/32.grafana-svc.yaml
 ---
@@ -1627,6 +3206,7 @@ spec:
   selector:
     name: grafana
   type: ClusterIP
+
 
 $ kubectl -n kafka apply -f ./kafka/strimzi/monitoring/32.grafana-svc.yaml
 service/grafana created
@@ -1652,7 +3232,7 @@ metadata:
     kubernetes.io/ingress.class: "traefik"
 spec:
   rules:
-  - host: "grafana.kafka.35.209.207.26.nip.io"
+  - host: "grafana.kafka.43.203.62.69.nip.io"
     http:
       paths:
       - path: /
@@ -1685,7 +3265,7 @@ metadata:
   labels:
     app: strimzi
 spec:
-  host: grafana.kafka.35.209.207.26.nip.io
+  host: grafana.kafka.43.203.62.69.nip.io
   to:
     kind: Service
     name: grafana
@@ -1706,11 +3286,11 @@ $ kubectl -n kafka apply -f ./kafka/strimzi/monitoring/34.grafana-route.yaml
 
  
 
-## 4) Grafana Monitoring
+## 5) Grafana Monitoring
 
 ### (1) Grafana 접속
 
-- URL : http://grafana.kafka.35.209.207.26.nip.io
+- URL : http://grafana.kafka.43.203.62.69.nip.io
 
 - User : admin
 
@@ -1722,9 +3302,7 @@ $ kubectl -n kafka apply -f ./kafka/strimzi/monitoring/34.grafana-route.yaml
 
 - 메뉴 : Data Sources / Promehteus 
 - URL
-  - prometheus-server:80  
-  - or
-  - prometheus-operated:9090
+  - prometheus-server:80
 
 
 
@@ -1747,17 +3325,17 @@ http://grafana.kafka.ktcloud.211.254.212.105.nip.io/d/jwPKIsniz/strimzi-kafka-ex
 
 - 메뉴 위치 : Dashboards > Manage > Strimzi Kafka Exporter
 
-![image-20220626111254872](assets/image-20220626111254872.png)
+![image-20220626111254872](./assets/image-20220626111254872.png)
 
 
 
 
 
-## 5) Clean Up
+## 6) Clean Up
 
 ```sh
 ## 1) Grafana 삭제
-cd ~/githubrepo/ktds-edu-kafka-redis
+cd ~/githubrepo/ktds-edu-kafka
 kubectl -n kafka delete -f ./kafka/strimzi/monitoring/31.grafana-deployment.yaml
 kubectl -n kafka delete -f ./kafka/strimzi/monitoring/33.grafana-ingress.yaml
 
@@ -1770,7 +3348,11 @@ kubectl -n kafka delete ClusterRoleBinding prometheus-server
 
 
 
-# 4. Monitoring(Kafdrop)
+
+
+
+
+# 5. Monitoring(Kafdrop)
 
 참조링크 : https://ricardo-aires.github.io/helm-charts/charts/kafdrop/
 
@@ -1783,22 +3365,31 @@ kubectl -n kafka delete ClusterRoleBinding prometheus-server
 #### kafka-my-cluster.properties
 
 ```sh
-# user / password 확인
-$ kubectl -n kafka get secret my-edu-admin -o jsonpath='{.data.sasl.jaas.config}' | base64 -d
 
-$ echo b3JnLmFwYWNoZS5rYWZrYS5jb21tb24uc2VjdXJpdHkuc2NyYW0uU2NyYW1Mb2dpbk1vZHVsZSByZXF1aXJlZCB1c2VybmFtZT0ibXktZWR1LWFkbWluIiBwYXNzd29yZD0iT0hON0h6Y0RJZzlkRGxGM05Jd0FvSFJDZ3ZQOG9Gb28iOw== | base64 -d
-org.apache.kafka.common.security.scram.ScramLoginModule required username="my-edu-admin" password="OHN7HzcDIg9dDlF3NIwAoHRCgvP8oFoo";
+# 1) user / password 확인
+$ kubectl -n kafka get secret my-edu-admin -o jsonpath='{.data.sasl\.jaas\.config}' | base64 -d
 
-$ cd ~/temp/kafka
+org.apache.kafka.common.security.scram.ScramLoginModule required username="my-edu-admin" password="boAjdSR2pb8fftkl2r9GgZN4vOO7kby9";
 
+
+
+
+
+#
+$ mkdir -p ~/temp/kafka
+  cd ~/temp/kafka
+
+# 2) kafka-my-edu-admin.properties 생성
 $ cat > kafka-my-edu-admin.properties
 security.protocol=SASL_PLAINTEXT
 sasl.mechanism=SCRAM-SHA-512
-sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required username="my-edu-admin" password="OHN7HzcDIg9dDlF3NIwAoHRCgvP8oFoo";
+sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required username="my-edu-admin" password="boAjdSR2pb8fftkl2r9GgZN4vOO7kby9";
 
----
 
-# kafka_properties
+
+
+
+# 3) kafka_properties base64 암호화
 $ export kafka_properties_base64_enc=$(cat kafka-my-edu-admin.properties | base64)
 $ echo $kafka_properties_base64_enc
 
@@ -1819,13 +3410,21 @@ $ cd ~/temp/kafka/kafdrop/chart
 
 
 # dry-run
-$ helm -n kafka install kafdrop .\
+# $ helm -n kafka install kafdrop .\
+$ helm -n kafka upgrade --install kafdrop .\
     --set kafka.brokerConnect=my-cluster-kafka-bootstrap:9092 \
     --set kafka.properties="$kafka_properties_base64_enc" \
     --set server.servlet.contextPath="/" \
     --set cmdArgs="--topic.deleteEnabled=true --topic.createEnabled=true" \
     --set jvm.opts="-Xms32M -Xmx64M" \
+    --set ingress.enabled="true" \
+    --set ingress.apiVersion="networking.k8s.io/v1" \
+    --set ingress.ingressClassName="traefik" \
+    --set ingress.hosts[0]="kafdrop.kafka.43.203.62.69.nip.io" \
+    --set ingress.path="/" \
+    --set ingress.pathType="Prefix" \
     --dry-run=true
+
 
 
 
@@ -1834,10 +3433,39 @@ $ helm -n kafka install kafdrop .\
     --set cmdArgs="--message.format=AVRO --schemaregistry.connect=http://localhost:8080" \ #optional
     
 
-# 삭제
-$ helm -n kafka uninstall kafdrop
+# helm 설치
 
+
+NAME: kafdrop
+LAST DEPLOYED: Sat Feb 24 09:24:39 2024
+NAMESPACE: kafka
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NOTES:
+1. Get the application URL by running these commands:
+  export NODE_PORT=$(kubectl get --namespace kafka -o jsonpath="{.spec.ports[0].nodePort}" services kafdrop)
+  export NODE_IP=$(kubectl get nodes --namespace kafka -o jsonpath="{.items[0].status.addresses[0].address}")
+  echo http://$NODE_IP:$NODE_PORT
+
+---
+
+1. Get the application URL by running these commands:
+  http://kafdrop.kafka.43.203.62.69.nip.io/
+
+
+
+
+# 확인
 $ helm -n kafka ls
+
+NAME            NAMESPACE       REVISION        UPDATED                                 STATUS          CHART                   APP VERSION
+kafdrop         kafka           1               2024-02-24 09:24:39.6500492 +0000 UTC   deployed        kafdrop-0.1.0           3.x
+kafdrop         kafka           3               2024-02-24 09:35:33.089752637 +0000 UTC deployed        kafdrop-0.1.0           3.x
+
+
+# 삭제시...
+$ helm -n kafka uninstall kafdrop
 
 ```
 
@@ -1846,6 +3474,7 @@ $ helm -n kafka ls
 ####  확인
 
 ```sh
+
 # log 확인
 $ kubectl -n kafka logs -f deploy/kafdrop
 
@@ -1880,13 +3509,11 @@ Writing Kafka properties into kafka.properties
 
 
 
-# curl 확인
-$ curl localhost:9000/actuator/health
+
+# health check
+$ kubectl -n kafka exec -it deploy/kafdrop -- curl localhost:9000/actuator/health
 {"status":"UP","groups":["liveness","readiness"]}
 
-
-$ curl localhost:9000 -i
-HTTP/1.1 200 OK
 
 ```
 
@@ -1912,7 +3539,7 @@ metadata:
   name: kafdrop-ingress
 spec:
   rules:
-  - host: kafdrop.kafka.35.209.207.26.nip.io
+  - host: kafdrop.kafka.43.203.62.69.nip.io
     http:
       paths:
       - backend:
@@ -1931,425 +3558,11 @@ $ kubectl -n kafka apply -f 11.kafdrop-ingress.yaml
 
 $ kubectl -n kafka get ingress
 NAME                CLASS     HOSTS                                   ADDRESS                                                                 PORTS   AGE
-kafdrop-ingress     <none>    kafdrop.kafka.35.209.207.26.nip.io      10.128.0.35,10.128.0.36,10.128.0.38,10.128.0.39,10.208.0.2,10.208.0.3   80      12s
-...
-
-```
-
-
-
-
-
-# < Redis Setup >
-
-Redis 및 Redis Cluster / P3X Redis UI tool  을 Setup 한다.
-
-
-
-
-
-# 1. Install 준비
-
-
-
-## 1) namespace 생성
-
-```sh
-$ kubectl create ns redis-system
-
-$ alias krs='kubectl -n redis-system'
-
-```
-
-
-
-# 2. Redis Cluster Install
-
-kubernetes 기반에서 Redis 를 설치해보자.
-
-참조link : https://github.com/bitnami/charts/tree/master/bitnami/redis-cluster
-
-
-
-## 1) helm chart download
-
-
-
-### (1) Repo add
-
-redis-cluster chart 를 가지고 있는 bitnami repogistory 를  helm repo 에 추가한다.
-
-```sh
-$ helm repo add bitnami https://charts.bitnami.com/bitnami
-$ helm repo list
-```
-
-
-
-### (2) Helm Search
-
-추가된 bitnami repo에서 redis-cluster 를 찾는다.
-
-```sh
-$ helm search repo redis
-NAME                                            CHART VERSION   APP VERSION     DESCRIPTION
-bitnami/redis                                   17.11.2         7.0.11          Redis(R) is an open source, advanced key-value ...
-bitnami/redis-cluster                           8.6.1           7.0.11          Redis(R) is an open source, scalable, distribut...
-prometheus-community/prometheus-redis-exporter  5.3.2           v1.44.0         Prometheus exporter for Redis metrics
-
-
-```
-
-우리가 사용할 redis-cluster 버젼은 chart version 8.6.1( app version: 7.0.11) 이다.
-
-
-
-### (3) Helm Fetch
-
-helm chart 를 fetch 받는다.
-
-```sh
-# chart 를 저장할 적당한 위치로 이동
-$ cd ~/temp/helm/charts
-
-$ helm fetch bitnami/redis-cluster
-
-$ ls
-redis-cluster-8.6.1.tgz
-
-$ tar -xzvf redis-cluster-8.6.1.tgz
-...
-
-$ cd redis-cluster
-
-$ ls -ltr
--rw-r--r-- 1 ktdseduuser ktdseduuser   333 May 17 09:27 .helmignore
--rw-r--r-- 1 ktdseduuser ktdseduuser   225 May 17 09:27 Chart.lock
--rw-r--r-- 1 ktdseduuser ktdseduuser   747 May 17 09:27 Chart.yaml
--rw-r--r-- 1 ktdseduuser ktdseduuser 75295 May 17 09:27 README.md
-drwxrwxr-x 3 ktdseduuser ktdseduuser  4096 Jun  4 15:32 charts/
-drwxrwxr-x 2 ktdseduuser ktdseduuser  4096 Jun  4 15:32 img/
-drwxrwxr-x 2 ktdseduuser ktdseduuser  4096 Jun  4 15:32 templates/
--rw-r--r-- 1 ktdseduuser ktdseduuser 42469 May 17 09:27 values.yaml
-
-```
-
-
-
-
-
-## 2) Install
-
-> without pv
-
-
-
-### (1) helm install
-
-```sh
-$ cd  ~/temp/helm/charts/redis-cluster
-
-## dry-run 으로 실행
-$ helm -n redis-system install my-release . \
-    --set password=new1234 \
-    --set persistence.enabled=false \
-    --set metrics.enabled=true \
-    --set cluster.nodes=6 \
-    --set cluster.replicas=1 \
-    --debug --dry-run=true > dry-run_1.yaml
-
-## 실행
-$ helm -n redis-system install my-release . \
-    --set password=new1234 \
-    --set persistence.enabled=false \
-    --set metrics.enabled=false \
-    --set cluster.nodes=6 \
-    --set cluster.replicas=1 
-    
-    
-    # node port 접속시 - redis cluster  에서는 의미 없다.
-    --set service.type=NodePort \
-    --set service.nodePorts.redis=32300 \
-
-
-
-
-To get your password run:
-    export REDIS_PASSWORD=$(kubectl get secret --namespace "redis-system" my-release-redis-cluster -o jsonpath="{.data.redis-password}" | base64 -d)
-
-You have deployed a Redis&reg; Cluster accessible only from within you Kubernetes Cluster.INFO: The Job to create the cluster will be created.To connect to your Redis&reg; cluster:
-
-1. Run a Redis&reg; pod that you can use as a client:
-kubectl run --namespace redis-system my-release-redis-cluster-client --rm --tty -i --restart='Never' \
- --env REDIS_PASSWORD=$REDIS_PASSWORD \
---image docker.io/bitnami/redis-cluster:6.2.7-debian-11-r3 -- bash
-
-2. Connect using the Redis&reg; CLI:
-
-redis-cli -c -h my-release-redis-cluster -a $REDIS_PASSWORD
-
-
-## 확인
-$ helm -n redis-system ls
-NAME            NAMESPACE       REVISION        UPDATED                                 STATUS          CHART                   APP VERSION
-my-release      redis-system    1               2022-06-26 05:45:14.961024747 +0000 UTC deployed        redis-cluster-7.6.3     6.2.7     
-
-
-
-
-$ helm -n redis-system status my-release
-NAME: my-release
-LAST DEPLOYED: Sun Jun 26 05:45:14 2022
-NAMESPACE: redis-system
-STATUS: deployed
-REVISION: 1
-TEST SUITE: None
-NOTES:
-CHART NAME: redis-cluster
-CHART VERSION: 7.6.3
-APP VERSION: 6.2.7** Please be patient while the chart is being deployed **
-
-
-To get your password run:
-    export REDIS_PASSWORD=$(kubectl get secret --namespace "redis-system" my-release-redis-cluster -o jsonpath="{.data.redis-password}" | base64 -d)
-
-You have deployed a Redis&reg; Cluster accessible only from within you Kubernetes Cluster.INFO: The Job to create the cluster will be created.To connect to your Redis&reg; cluster:
-
-1. Run a Redis&reg; pod that you can use as a client:
-kubectl run --namespace redis-system my-release-redis-cluster-client --rm --tty -i --restart='Never' \
- --env REDIS_PASSWORD=$REDIS_PASSWORD \
---image docker.io/bitnami/redis-cluster:6.2.7-debian-11-r3 -- bash
-
-2. Connect using the Redis&reg; CLI:
-
-redis-cli -c -h my-release-redis-cluster -a $REDIS_PASSWORD
-
-```
-
-
-
-
-
-### (2) pod/svc 확인
-
-```sh
-## redis cluster 를 구성하고 있는 pod 를 조회
-$ kubectl -n redis-system get pod -o wide
-NAME                            READY   STATUS    RESTARTS   AGE     IP            NODE       NOMINATED NODE   READINESS GATES
-my-release-redis-cluster-0      1/1     Running   0          12m     10.42.1.108   master02   <none>           <none>
-my-release-redis-cluster-1      1/1     Running   0          12m     10.42.4.131   worker02   <none>           <none>
-my-release-redis-cluster-2      1/1     Running   0          12m     10.42.2.160   master03   <none>           <none>
-my-release-redis-cluster-3      1/1     Running   0          12m     10.42.5.114   worker03   <none>           <none>
-my-release-redis-cluster-4      1/1     Running   0          12m     10.42.0.121   master01   <none>           <none>
-my-release-redis-cluster-5      1/1     Running   0          12m     10.42.3.126   worker01   <none>           <none>
+kafdrop-ingress     <none>    kafdrop.kafka.43.203.62.69.nip.io      10.128.0.35,10.128.0.36,10.128.0.38,10.128.0.39,10.208.0.2,10.208.0.3   80      12s
 ...
 
 
 
-$ kubectl -n redis-system get svc
-NAME                                TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)              AGE
-my-release-redis-cluster            ClusterIP   10.43.102.114   <none>        6379/TCP             2m8s
-my-release-redis-cluster-headless   ClusterIP   None            <none>        6379/TCP,16379/TCP   2m8s
-my-release-redis-cluster-metrics    ClusterIP   10.43.33.250    <none>        9121/TCP             2m8s
-
-
-
-```
-
-
-
-
-
-## 3) Internal Access
-
-redis client를 cluster 내부에서 실행후 접근하는 방법을 알아보자.
-
-### (1) Redis client 실행
-
-먼저 아래와 같이 동일한 Namespace 에 redis-client 를 실행한다.
-
-```sh
-## redis-client 용도로 deployment 를 실행한다.
-$ kubectl -n redis-system create deploy redis-client --image=docker.io/bitnami/redis-cluster:7.0.11-debian-11-r3 -- sleep 365d
-deployment.apps/redis-client created
-
-
-## redis client pod 확인
-$ kubectl -n redis-system get pod
-NAME                            READY   STATUS    RESTARTS   AGE
-redis-client-7cdd56bb6c-njjls   1/1     Running   0          5s     <--- redis client pod
-
-
-## redis-client pod 내부로 접근한다.
-$ kubectl -n redis-system exec -it deploy/redis-client -- bash
-
-```
-
-
-
-### (2) Redis-cluster 상태 확인
-
-```sh
-## redis-client pod 내부
-## service 명으로 cluster mode 접근
-$ redis-cli -h my-release-redis-cluster -c -a new1234
-
-## cluster node 를 확인
-$ my-release-redis-cluster:6379> cluster nodes
-e813d075698b45761acc779090e36c6f98db1cbd 10.42.4.8:6379@16379 master - 0 1685893925419 2 connected 5461-10922
-bb927c4a19bad6d232cfb71b1ae24c3920620a9b 10.42.0.12:6379@16379 myself,slave e813d075698b45761acc779090e36c6f98db1cbd 0 1685893925000 2 connected
-997b209bdc77e4a25cb0fd158a2e797edd322723 10.42.5.7:6379@16379 slave 8b35d87da909a7cc46a4dee24e6e4711c14caee6 0 1685893926000 3 connected
-8b35d87da909a7cc46a4dee24e6e4711c14caee6 10.42.1.13:6379@16379 master - 0 1685893927281 3 connected 10923-16383
-cf2ec83e6c76aa972204664b41f9515df29f3ff6 10.42.2.13:6379@16379 slave 0b27530df5d4257362a99b8db6dfc006127035dc 0 1685893926276 1 connected
-0b27530df5d4257362a99b8db6dfc006127035dc 10.42.3.16:6379@16379 master - 0 1685893925000 1 connected 0-5460
-## master 3개, slave가 3개 사용하는 모습을 볼 수가 있다.
-
-
-## cluster info 확인
-my-release-redis-cluster:6379> cluster info
-cluster_state:ok
-cluster_slots_assigned:16384
-cluster_slots_ok:16384
-cluster_slots_pfail:0
-cluster_slots_fail:0
-cluster_known_nodes:6
-cluster_size:3
-cluster_current_epoch:6
-cluster_my_epoch:2
-cluster_stats_messages_ping_sent:541
-cluster_stats_messages_pong_sent:556
-cluster_stats_messages_meet_sent:1
-cluster_stats_messages_sent:1098
-cluster_stats_messages_ping_received:556
-cluster_stats_messages_pong_received:542
-cluster_stats_messages_received:1098
-total_cluster_links_buffer_limit_exceeded:0
-## cluster state 가 OK 인 것을 확인할 수 있다.
-
-```
-
-
-
-### (3) set / get 확인
-
-```sh
-## service 명으로 cluster mode 접근
-$ redis-cli -h my-release-redis-cluster -c -a new1234
-
-
-## set 명령 수행
-my-release-redis-cluster:6379> set a 1
--> Redirected to slot [15495] located at 10.42.1.13:6379
-sOK
-(0.59s)
-10.42.1.13:6379> set b 2
--> Redirected to slot [3300] located at 10.42.3.16:6379
-OK
-10.42.3.16:6379> set c 3
--> Redirected to slot [7365] located at 10.42.4.8:6379
-OK
-10.42.4.8:6379> set d 4
--> Redirected to slot [11298] located at 10.42.1.13:6379
-OK
-10.42.1.13:6379> set e 5
-OK
-## Set 명령수행시 master node 를 변경하면서 set 하는 모습을 확인할 수 있다.
-
-
-
-# get 명령 수행
-10.42.1.13:6379> get a
-"1"
-10.42.1.13:6379> get b
--> Redirected to slot [3300] located at 10.42.3.16:6379
-"2"
-10.42.3.16:6379> get c
--> Redirected to slot [7365] located at 10.42.4.8:6379
-"3"
-10.42.4.8:6379> get d
--> Redirected to slot [11298] located at 10.42.1.13:6379
-"4"
-10.42.1.13:6379> get e
-"5"
-10.42.1.13:6379> get d
-"4"
-## get 명령을 실행하면 해당 데이터가 존재하는 master pod 로 redirectred 되는 것을 확인할 수 있다.
-
-```
-
-
-
-
-
-## 4) External Access
-
-redis cluster 를  외부에서 접근할 수 있는 방법을 알아보자.
-
-
-
-### (1) redis-cluster-proxy 
-
-* 참조링크
-  * 링크1 : https://github.com/RedisLabs/redis-cluster-proxy
-  * 링크2: https://yoonbh2714.blogspot.com/2021/01/k8s-redis-cluster.html
-
-
-
-```sh
-$ mkdir -p ~/temp/redis
-$ cd ~/temp/redis
-
-$ cat > 11.redis-cluster-proxy.yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  labels:
-    app: redis-cluster-proxy
-  name: redis-cluster-proxy
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: redis-cluster-proxy
-  template:
-    metadata:
-      labels:
-        app: redis-cluster-proxy
-    spec:
-      containers:
-        - name: redis-cluster-proxy
-          image: ysoftman/redis_cluster_proxy:latest
-          imagePullPolicy: Always
-          command: ["/bin/sh"]
-          args: ["-c",  "/redis-cluster-proxy/src/redis-cluster-proxy --auth new1234 my-release-redis-cluster-0.my-release-redis-cluster-headless.redis-system.svc:6379 my-release-redis-cluster-1.my-release-redis-cluster-headless.redis-system.svc:6379 my-release-redis-cluster-2.my-release-redis-cluster-headless.redis-system.svc:6379 my-release-redis-cluster-3.my-release-redis-cluster-headless.redis-system.svc:6379 my-release-redis-cluster-4.my-release-redis-cluster-headless.redis-system.svc:6379 my-release-redis-cluster-5.my-release-redis-cluster-headless.redis-system.svc:6379"]
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: redis-cluster-proxy
-  labels:
-    app: redis-cluster-proxy
-spec:
-  # type: ClusterIP
-  type: NodePort
-  ports:
-    - port: 7777
-      targetPort: 7777
-      nodePort: 32300 # The range of valid ports is 30000-32767
-      name: redis-cluster-proxy
-  selector:
-    app: redis-cluster-proxy
----
-
-
-# k8s service(+pod) 반영
-$ kubectl -n redis-system apply -f 11.redis-cluster-proxy.yaml
-
-
-# 삭제
-$ kubectl -n redis-system delete -f 11.redis-cluster-proxy.yaml
-
 
 ```
 
@@ -2359,997 +3572,19 @@ $ kubectl -n redis-system delete -f 11.redis-cluster-proxy.yaml
 
 
 
-### (2) GCP LB 확인
-
-#### LB 셋팅
-
-설명 생략
-
-
-
-#### 방화벽 셋팅
-
-설명 생략
-
-* 확인
-
-```sh
-$ nc -zv 35.209.207.26 32300
-$ nc -zv 35.209.207.26 32310
-```
-
-
-
-
-
-### (3) Redis client 확인
-
-#### docker redis client
-
-local pc 에서 access 테스트를 위해 docker redis client 를 설치하자.
-
-```sh
-## redis-client 용도로 docker client 를 실행한다.
-$ docker run --name redis-client -d --rm --user root docker.io/bitnami/redis-cluster:7.0.11-debian-11-r3 sleep 365d
-
-## docker 내에 진입후
-$ docker exec -it redis-client bash
-
-## Local PC IP로 cluster mode 접근
-$ redis-cli -h 35.209.207.26 -a new1234 -c -p 32300
-
-
-```
-
-
-
-### (4) set/get 확인
-
-```
-35.209.207.26:32300> get a
-"1"
-35.209.207.26:32300> get b
-"2"
-35.209.207.26:32300> get c
-"3"
-35.209.207.26:32300> get d
-"4"
-35.209.207.26:32300> get e
-"5"
-35.209.207.26:32300> get f
-(nil)
-35.209.207.26:32300> set f 6
-OK
-35.209.207.26:32300> get f
-"6"
-
-```
-
-
-
-* 결론
-  * redis-cluster-proxy 를 이용하니 local 에서 접속이 가능하다.
-  * 하지만 proxy pod 가 core dump 를 남기면서 죽는 현상이 빈번하게 발생한다.
-  * 아직 좀 불안하다.
-
-
-
-
-
-## 4) Helm Update
-
-
-
-node 추가와 같은 helm 기반 update 가 필요할때는 아래와 같은 방식으로 update 를 수행한다.
-
-```sh
-## update sample 1
-$ helm3 upgrade --timeout 600s my-release \
-    --set "password=${REDIS_PASSWORD},cluster.nodes=7,cluster.update.addNodes=true,cluster.update.currentNumberOfNodes=6" bitnami/redis-cluster
-
-## update sample 2
-$ helm upgrade <release> \
-  --set "password=${REDIS_PASSWORD}
-  --set cluster.externalAccess.enabled=true
-  --set cluster.externalAccess.service.type=LoadBalancer
-  --set cluster.externalAccess.service.loadBalancerIP[0]=<loadBalancerip-0>
-  --set cluster.externalAccess.service.loadBalancerIP[1]=<loadbalanacerip-1>
-  --set cluster.externalAccess.service.loadBalancerIP[2]=<loadbalancerip-2>
-  --set cluster.externalAccess.service.loadBalancerIP[3]=<loadbalancerip-3>
-  --set cluster.externalAccess.service.loadBalancerIP[4]=<loadbalancerip-4>
-  --set cluster.externalAccess.service.loadBalancerIP[5]=<loadbalancerip-5>
-  --set cluster.externalAccess.service.loadBalancerIP[6]=
-  --set cluster.nodes=7
-  --set cluster.init=false bitnami/redis-cluster
-
----
-
-$ cd  ~/temp/helm/charts/redis-cluster
-
-## 실행
-$ helm -n redis-system upgrade my-release . \
-    --set password=new1234 \
-    
-    --set service.type.redis=NodePort \
-    --set service.nodePorts.redis=32300 \
-    
-    --set persistence.enabled=false \
-    --set metrics.enabled=true \
-    --set cluster.nodes=6 \
-    --set cluster.replicas=1 
-    
-
-```
-
-
-
-
-
-
-
-
-
-## 5) Clean Up
-
-helm chart 로 설치된 모든 리소스가 한꺼번에 삭제된다.
-
-```sh
-## redis cluster helm 삭제
-$ helm -n redis-system delete my-release
-$ helm -n redis-system ls
-
-
-## redis-client 삭제
-$ kubectl -n redis-system delete deploy/redis-client
-$ kubectl -n redis-system get all
-
-
-
-## redis-cluster-proxy
-$ cd ~/temp/redis
-$ kubectl -n redis-system delete -f 11.redis-cluster-proxy.yaml
-
-
-
-```
-
-
-
-
-
-
-
-
-
-# 3. Redis Install
-
-External (Cluster 외부) 에서 access 하기 위해서 node port 를 이용해야 한다.
-
-하지만 Redis Cluster 의 경우 접근해야 할 Master Node 가 두개 이상이며 해당 데이터가 저장된 위치를 찾아 redirect 된다.
-
-이때 redirect 가 정확히 이루어지려면 Client 가 인식가능한 Node 주소를 알아야 한다.
-
-하지만 Redis Cluster 는 원격지 Client 가 인식가능한 Node 들의 DNS를 지원하지 않는다.
-
-결국 Redis Cluster 는 PRD환경과 같이 Kubernetes Cluster 내에서는 사용가능하지만 
-
-개발자 PC에서 연결이 필요한 DEV환경에서는 적절치 않다.
-
-그러므로 redis-cluster 가 아닌 redis 로 설치 하여 테스트를 진행한다.
-
-
-
-
-
-## 1) helm chart download
-
-
-
-### (1)  Redis Install
-
-
-
-#### helm Search
-
-추가된 bitnami repo에서 redis-cluster 를 찾는다.
-
-```sh
-$ helm search repo redis
-NAME                                            CHART VERSION   APP VERSION     DESCRIPTION
-bitnami/redis                                   17.11.2         7.0.11          Redis(R) is an open source, advanced key-value ...
-bitnami/redis-cluster                           8.6.1           7.0.11          Redis(R) is an open source, scalable, distribut...
-prometheus-community/prometheus-redis-exporter  5.3.2           v1.44.0         Prometheus exporter for Redis metrics
-
-```
-
-bitnami/redis
-
-
-
-#### helm Fetch
-
-```sh
-$ cd ~/temp/helm/charts/
-
-$ helm fetch bitnami/redis
-$ tar -xzvf redis-17.11.2.tgz
-$ cd redis/
-
-$ ll
-total 232
-drwxrwxr-x 5 ktdseduuser ktdseduuser   4096 Jun  4 16:02 ./
-drwxrwxr-x 5 ktdseduuser ktdseduuser   4096 Jun  4 16:02 ../
--rw-r--r-- 1 ktdseduuser ktdseduuser    333 May 18 09:09 .helmignore
--rw-r--r-- 1 ktdseduuser ktdseduuser    225 May 18 09:09 Chart.lock
--rw-r--r-- 1 ktdseduuser ktdseduuser    723 May 18 09:09 Chart.yaml
--rw-r--r-- 1 ktdseduuser ktdseduuser 115978 May 18 09:09 README.md
-drwxrwxr-x 3 ktdseduuser ktdseduuser   4096 Jun  4 16:02 charts/
-drwxrwxr-x 2 ktdseduuser ktdseduuser   4096 Jun  4 16:02 img/
-drwxrwxr-x 5 ktdseduuser ktdseduuser   4096 Jun  4 16:02 templates/
--rw-r--r-- 1 ktdseduuser ktdseduuser   4483 May 18 09:09 values.schema.json
--rw-r--r-- 1 ktdseduuser ktdseduuser  76405 May 18 09:09 values.yaml
-
-
-```
-
-my-release-redis-master 는 read/write 용도로 사용되며 my-release-redis-replicas 는 read-only 용도로 사용된다.
-
-
-
-
-
-
-
-
-
-## 2) Redis(Single Master) Install
-
-
-
-### (1) helm install
-
-```sh
-# helm install
-
-$ cd ~/temp/helm/charts/redis/
-
-# master 1, slave 3 실행
-$ helm -n redis-system install my-release . \
-    --set global.redis.password=new1234 \
-    --set master.count=1 \
-    --set master.persistence.enabled=false \
-    --set master.service.type=NodePort \
-    --set master.service.nodePorts.redis=32300 \
-    --set replica.replicaCount=3 \
-    --set replica.persistence.enabled=false \
-    --set replica.service.type=NodePort \
-    --set replica.service.nodePorts.redis=32310 \
-    --set metrics.enabled=false
-
-    
-    
-##
-
-    my-release-redis-master.redis-system.svc.cluster.local for read/write operations (port 6379)
-    my-release-redis-replicas.redis-system.svc.cluster.local for read-only operations (port 6379)
-
-
-
-To get your password run:
-
-    export REDIS_PASSWORD=$(kubectl get secret --namespace redis-system my-release-redis -o jsonpath="{.data.redis-password}" | base64 -d)
-
-To connect to your Redis&reg; server:
-
-1. Run a Redis&reg; pod that you can use as a client:
-
-   kubectl run --namespace redis-system redis-client --restart='Never'  --env REDIS_PASSWORD=$REDIS_PASSWORD  --image docker.io/bitnami/redis:7.0.11-debian-11-r7 --command -- sleep infinity
-
-   Use the following command to attach to the pod:
-
-   kubectl exec --tty -i redis-client \
-   --namespace redis-system -- bash
-
-2. Connect using the Redis&reg; CLI:
-   REDISCLI_AUTH="$REDIS_PASSWORD" redis-cli -h my-release-redis-master
-   REDISCLI_AUTH="$REDIS_PASSWORD" redis-cli -h my-release-redis-replicas
-
-To connect to your database from outside the cluster execute the following commands:
-
-    export NODE_IP=$(kubectl get nodes --namespace redis-system -o jsonpath="{.items[0].status.addresses[0].address}")
-    export NODE_PORT=$(kubectl get --namespace redis-system -o jsonpath="{.spec.ports[0].nodePort}" services my-release-redis-master)
-    REDISCLI_AUTH="$REDIS_PASSWORD" redis-cli -h $NODE_IP -p $NODE_PORT
-
-
-# 확인
-$ helm -n redis-system ls
-NAME            NAMESPACE       REVISION        UPDATED                                 STATUS          CHART           APP VERSION
-my-release      redis-system    1               2023-06-04 16:12:27.966182264 +0000 UTC deployed        redis-17.11.2   7.0.11
-
-
-```
-
-my-release-redis-master 는 read/write 용도로 사용되며 my-release-redis-replicas 는 read-only 용도로 사용된다.
-
-
-
-
-
-### (2) pod / svc 확인
-
-```sh
-$ krs get pod
-NAME                          READY   STATUS    RESTARTS   AGE
-my-release-redis-master-0     2/2     Running   0          8m54s
-my-release-redis-replicas-0   2/2     Running   0          8m54s
-my-release-redis-replicas-1   2/2     Running   0          8m18s
-my-release-redis-replicas-2   2/2     Running   0          7m52s
-
-
-
-$ krs get svc
-NAME                        TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)          AGE
-my-release-redis-headless   ClusterIP   None           <none>        6379/TCP         9m15s
-my-release-redis-master     NodePort    10.43.215.74   <none>        6379:32300/TCP   9m15s
-my-release-redis-metrics    ClusterIP   10.43.8.0      <none>        9121/TCP         9m15s
-my-release-redis-replicas   NodePort    10.43.29.243   <none>        6379:32310/TCP   9m15s
-
-
-# metric 이 유효한지 확인 ( metric=true 일때만 )
-$ kubectl -n yjsong exec -it curltest -- curl my-release-redis-metrics.redis-system.svc:9121/metrics
-
-
-# my-release-redis-master 가 유효한 서비스인지 확인
-$ kubectl -n yjsong exec -it curltest -- nc -zv my-release-redis-master.redis-system.svc 6379
-my-release-redis-master.redis-system.svc (10.43.215.74:6379) open
-
-
-```
-
-
-
-## 3) Internal Access
-
-redis client를 cluster 내부에서 실행후 접근해 보자.
-
-### (1) Redis client 실행
-
-먼저 아래와 같이 동일한 Namespace 에 redis-client 를 실행한다.
-
-```sh
-## redis-client 용도로 deployment 를 실행한다.
-$ kubectl -n redis-system create deploy redis-client --image=docker.io/bitnami/redis-cluster:7.0.11-debian-11-r3 -- sleep 365d
-deployment.apps/redis-client created
-
-
-## redis client pod 확인
-$ kubectl -n redis-system get pod
-NAME                            READY   STATUS    RESTARTS   AGE
-redis-client-7cdd56bb6c-njjls   1/1     Running   0          5s     <--- redis client pod
-
-
-## redis-client pod 내부로 접근한다.
-$ kubectl -n redis-system exec -it deploy/redis-client -- bash
-
-```
-
-
-
-### (2) Redis Info
-
-```sh
-## redis-client pod 내부에서
-$ redis-cli -h my-release-redis-master -a new1234
-
-# redis info 
-$ my-release-redis-master:6379> info
-# Server
-redis_version:7.0.11
-redis_git_sha1:00000000
-redis_git_dirty:0
-redis_build_id:2626b293ca250e47
-redis_mode:standalone
-os:Linux 5.19.0-1025-gcp x86_64
-arch_bits:64
-monotonic_clock:POSIX clock_gettime
-multiplexing_api:epoll
-atomicvar_api:c11-builtin
-gcc_version:10.2.1
-process_id:1
-process_supervised:no
-run_id:58b382f41a4448751d0a8a88ccc61aa29469425d
-tcp_port:6379
-server_time_usec:1686021965069930
-uptime_in_seconds:126809
-uptime_in_days:1
-hz:10
-configured_hz:10
-lru_clock:8300365
-executable:/redis-server
-config_file:
-io_threads_active:0
-...
-...
-
-
-$ my-release-redis-master:6379> Ctrl+D
-```
-
-
-
-
-
-
-
-### (3) set / get 확인
-
-```sh
-## redis-client pod 내부에서
-$ redis-cli -h my-release-redis-master -a new1234
-
-## set 명령 수행
-my-release-redis-master:6379> set a 1
-OK
-my-release-redis-master:6379> set b 2
-OK
-my-release-redis-master:6379> set c 3
-OK
-my-release-redis-master:6379> set d 4
-OK
-my-release-redis-master:6379> set e 5
-OK
-
-
-# get 명령 수행
-my-release-redis-master:6379> get a
-"1"
-my-release-redis-master:6379> get b
-"2"
-my-release-redis-master:6379> get c
-"3"
-my-release-redis-master:6379> get d
-"4"
-my-release-redis-master:6379> get e
-"5"
-
-# keys 조회
-$ keys *
-1) "e"
-2) "c"
-3) "f"
-4) "aa"
-5) "d"
-6) "g"
-7) "b"
-8) "a"
-
-# del 
-$ del aa
-
-```
-
-
-
-
-
-## 4) External Access
-
-redis client를 cluster 내부에서 실행후 접근하는 방법을 알아보자.
-
-
-
-### (1) GCP LB 확인
-
-#### LB 셋팅
-
-#### 방화벽 셋팅
-
-* 확인
-
-```sh
-$ nc -zv 35.209.207.26 32300
-$ nc -zv 35.209.207.26 32310
-
-```
-
-
-
-
-
-
-
-### (2) Redis client 확인
-
-#### docker redis client
-
-local pc 에서 access 테스트를 위해 docker redis client 를 설치하자.
-
-```sh
-## redis-client 용도로 docker client 를 실행한다.
-$ docker run --name redis-client -d --rm --user root docker.io/bitnami/redis-cluster:7.0.11-debian-11-r3 sleep 365d
-
-## docker 내에 진입후
-$ docker exec -it redis-client bash
-
-## Local PC IP로 cluster mode 접근
-$ redis-cli -h 35.209.207.26 -a new1234 -p 32300
-
-
-```
-
-
-
-### (3) set/get 확인
-
-```
-35.209.207.26:32300> get a
-"1"
-35.209.207.26:32300> get b
-"2"
-35.209.207.26:32300> get c
-"3"
-35.209.207.26:32300> get d
-"4"
-35.209.207.26:32300> get e
-"5"
-35.209.207.26:32300> get f
-(nil)
-35.209.207.26:32300> set f 6
-OK
-35.209.207.26:32300> get f
-"6"
-
-```
-
-
-
-
-
-## 5) Clean Up
-
-```sh
-# 삭제시
-$ helm -n redis-system delete my-release
-
-```
-
-
-
-
-
-
-
-
-
-# 4. Web UI
-
-
-
-
-
-## 1) P3X Redis UI
-
-참고링크 : https://github.com/patrikx3/redis-ui/blob/master/k8s/manifests/service.yaml
-
-Redis DB 관리를 위한  편리한 데이터베이스 GUI app이며  WEB  UI 와 Desktop App 에서 작동한다.
-
-P3X Web UI 를 kubernetes 에 설치해 보자.
-
-
-
-### (1) p3x deploy
-
-아래 yaml  manifest file을 활용하여 configmap, deployment, service, ingress 를 실행한다.
-
-#### configmap(connection 정보) 설정
-
-```sh
-$ mkdir -p ~/temp/redis/redisui/p3x
-$ cd ~/temp/redis/redisui/p3x
-
-$ cat > 11.p3xredisui-cm.yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: p3x-redis-ui-settings
-data:
-  .p3xrs-conns.json: |
-    {
-      "list": [
-        {
-          "name": "my-release-redis-master",
-          "host": "my-release-redis-master",
-          "port": 6379,
-          "password": "new1234",
-          "id": "unique"
-        }
-      ],
-      "license": ""
-    }
----
-
-# 설치
-$ kubectl -n redis-system apply -f 11.p3xredisui-cm.yaml
-
-# 확인
-$ kubectl -n redis-system get cm
-
-
-# 삭제시
-$ kubectl -n redis-system delete -f 11.p3xredisui-cm.yaml
-
-
-```
-
-
-
-#### deploy/svc 생성
-
-```sh
-$ cd ~/temp/redis/redisui/p3x
-
-$ cat > 12.p3xredisui-deploy-svc.yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: p3x-redis-ui
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: p3x-redis-ui
-  template:
-    metadata:
-      labels:
-        app.kubernetes.io/name: p3x-redis-ui
-    spec:
-      containers:
-      - name: p3x-redis-ui
-        image: patrikx3/p3x-redis-ui:2023.4.102
-        ports:
-        - name: p3x-redis-ui
-          containerPort: 7843
-        volumeMounts:
-        - name: p3x-redis-ui-settings
-          mountPath: /settings/.p3xrs-conns.json
-          subPath: .p3xrs-conns.json
-      volumes:
-      - name: p3x-redis-ui-settings
-        configMap:
-          defaultMode: 420
-          name: p3x-redis-ui-settings
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: p3x-redis-ui-service
-  labels:
-    app.kubernetes.io/name: p3x-redis-ui-service
-spec:
-  ports:
-  - port: 7843
-    targetPort: p3x-redis-ui
-    name: p3x-redis-ui
-  selector:
-    app.kubernetes.io/name: p3x-redis-ui
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: p3x-redis-ui-ingress
-  annotations:
-    # kubernetes.io/ingress.class: nginx
-    kubernetes.io/ingress.class: traefik
-    # cert-manager support
-    # cert-manager.io/cluster-issuer: letsencrypt
-    # oauth2-proxy support
-    # nginx.ingress.kubernetes.io/auth-url: "https://$host/oauth2/auth"
-    # nginx.ingress.kubernetes.io/auth-signin: "https://$host/oauth2/start?rd=$escaped_request_uri"
-spec:
-  # tls:
-  # - hosts: [p3x-redis-ui.example.com]
-  #   secretName: p3x-redis-ui-tls
-  rules:
-  - host: p3x.redis-system.35.209.207.26.nip.io
-    http:
-      paths:
-      - backend:
-          service:
-            name: p3x-redis-ui-service
-            port:
-              number: 7843
-        path: /
-        pathType: Prefix
----
-
-# install
-$ kubectl -n redis-system apply -f 12.p3xredisui-deploy-svc.yaml
-
-# 확인
-$ kubectl -n redis-system get all
-
-
-# 삭제시
-$ kubectl -n redis-system delete -f 12.p3xredisui-deploy-svc.yaml
-
-
-```
-
-
-
-
-
-#### [참고] connection 정보 추가 및 수정
-
-configmap 을 수정하여 재기동 한다.
+## 3) Clean Up
 
 ```sh
 
+
+# 1) kafdrop 삭제
+$ helm -n kafka uninstall kafdrop
+
+
+# 2) delete kafdrop-ingress 
+$ kubectl -n kafka delete ingress kafdrop-ingress
+
+# 3) 
+$ rm -rf ~/temp/kafka
+  
 ```
-
-
-
-
-
-#### [참고] p3x-redis-ui reconnect 현상
-
-```sh
-# 
-## 아래 메세지와 함께서 30초에 한번씩 reconnect 되는 오류가 있는듯... 
-
-[P3XRS] [PID: 000009]  socket.p3xrs.connectionId unique
-[P3XRS] [PID: 000009]  shared disconnectRedisIo try
-[P3XRS] [PID: 000009]  shared disconnectRedisIo executed
-[P3XRS] [PID: 000009]  socket.io disconnected %s G4NtFObUeq7ABR0YAAeu
-[P3XRS] [PID: 000009]  socket.io connected KKi0opa2RuUBbFQyAAew
-[P3XRS] [PID: 000009]  shared disconnectRedisIo try
-[P3XRS] [PID: 000009]  socket.io connection-connect added new socket.id KKi0opa2RuUBbFQyAAew to unique name with my-release-redis-master
-[P3XRS] [PID: 000009]  socket.io connection-connect unique my-release-redis-master connected
-[P3XRS] [PID: 000009]  my-release-redis-master instance successfully works the database listing
-[P3XRS] [PID: 000009]  my-release-redis-master databases got 16
-[P3XRS] [PID: 000009]  my-release-redis-master instance command listing is available
-
-
-```
-
-
-
-#### [참고] p3x-redis-ui image
-
-```sh
-#
-# patrikx3/p3x-redis-ui:2023.4.102
-# patrikx3/p3x-redis-ui:2022.10.111
-# patrikx3/p3x-redis-ui:2022.4.126
-# patrikx3/p3x-redis-ui:2022.4.116
-# patrikx3/p3x-redis-ui:
-# patrikx3/p3x-redis-ui:
-
-
-
-```
-
-
-
-
-
-
-
-
-
-
-
-
-
-#### Clean Up
-
-```sh
-$ cd ~/temp/redis/redisui/p3x
-
-# Configmap 삭제
-$ kubectl -n redis-system delete -f 11.p3xredisui-cm.yaml
-
-# Deploy/svc
-$ kubectl -n redis-system delete -f 12.p3xredisui-deploy-svc.yaml
-
-```
-
-
-
-
-
-### (2) UI확인
-
-http://p3x.redis-system.35.209.207.26.nip.io/
-
-![image-20220626181624749](assets/image-20220626181624749.png)
-
-
-
-
-
-
-
-## 2) RedisInsight
-
-[참고] 
-
-* 설치링크1 : https://developer.redis.com/explore/redisinsight/usinghelm
-* 설치링크2 : https://docs.redis.com/latest/ri/installing/install-k8s/
-
-
-
-
-
-### (1) RedisInsight deploy
-
-
-
-```sh
-$ mkdir -p ~/temp/redisui/redisinsight
-$ cd ~/temp/redisui/redisinsight
-
-$ cat > 11.redisinsight.yaml
-# RedisInsight service with name 'redisinsight-service'
-apiVersion: v1
-kind: Service
-metadata:
-  name: redisinsight-service       # name should not be 'redisinsight'
-                                   # since the service creates
-                                   # environment variables that
-                                   # conflicts with redisinsight
-                                   # application's environment
-                                   # variables `REDISINSIGHT_HOST` and
-                                   # `REDISINSIGHT_PORT`
-spec:
-  type: ClusterIP   # LoadBalancer
-  ports:
-    - port: 80
-      targetPort: 8001
-  selector:
-    app: redisinsight
----
-# RedisInsight deployment with name 'redisinsight'
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: redisinsight #deployment name
-  labels:
-    app: redisinsight #deployment label
-spec:
-  replicas: 1 #a single replica pod
-  selector:
-    matchLabels:
-      app: redisinsight #which pods is the deployment managing, as defined by the pod template
-  template: #pod template
-    metadata:
-      labels:
-        app: redisinsight #label for pod/s
-    spec:
-      containers:
-
-      - name:  redisinsight #Container name (DNS_LABEL, unique)
-        image: redislabs/redisinsight:latest #repo/image
-        imagePullPolicy: IfNotPresent #Always pull image
-        volumeMounts:
-        - name: db #Pod volumes to mount into the container's filesystem. Cannot be updated.
-          mountPath: /db
-        ports:
-        - containerPort: 8001 #exposed container port and protocol
-          protocol: TCP
-      volumes:
-      - name: db
-        emptyDir: {} # node-ephemeral volume https://kubernetes.io/docs/concepts/storage/volumes/#emptydir
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  annotations:
-    kubernetes.io/ingress.class: traefik
-  name: redisinsight-ingress
-  labels:
-    helm.sh/chart: redisinsight-chart-0.1.0
-    app.kubernetes.io/name: redisinsight-chart
-    app.kubernetes.io/instance: redisinsight
-    app.kubernetes.io/managed-by: Helm
-spec:
-  rules:
-  - host: redisinsight.redis-system.35.209.207.26.nip.io
-    http:
-      paths:
-      - backend:
-          service:
-            name: redisinsight-service
-            port:
-              number: 80
-        path: /
-        pathType: Prefix
----
-
-
-
-# install
-$ kubectl -n redis-system apply -f ./11.redisinsight.yaml
-
-
-# 확인
-$ kubectl -n redis-system get pod
-
-
-# 삭제시
-$ kubectl -n redis-system delete -f ./11.redisinsight.yaml
-
-
-
-```
-
-
-
-
-
-
-
-### (2) UI확인
-
-http://http://redisinsight.redis-system.35.209.207.26.nip.io/
-
-![image-20230606124309092](assets/image-20230606124309092.png)
-
-
-
-
-
-### (3) [참고] helm install
-
-```sh
-$ cd ~/temp/helm/charts
-
-
-$ wget https://docs.redis.com/latest/pkgs/redisinsight-chart-0.1.0.tgz
-$ ll
--rw-rw-r-- 1 ktdseduuser ktdseduuser   3658 Jun  3 01:22 redisinsight-chart-0.1.0.tgz
-
-$ tar -xzvf redisinsight-chart-0.1.0.tgz
-
-$ cd redisinsight-chart/
-
-
-# without ingress
-$ helm -n redis-system install redisinsight . \
-    --set service.type=ClusterIP \
-    --dry-run=true
-
-NAME: redisinsight
-LAST DEPLOYED: Tue Jun  6 02:54:17 2023
-NAMESPACE: redis-system
-STATUS: deployed
-REVISION: 1
-NOTES:
-1. Get the application URL by running these commands:
-  export POD_NAME=$(kubectl get pods --namespace redis-system -l "app.kubernetes.io/name=redisinsight-chart,app.kubernetes.io/instance=redisinsight" -o jsonpath="{.items[0].metadata.name}")
-  echo "Visit http://127.0.0.1:8001 to use your application"
-  kubectl --namespace redis-system port-forward $POD_NAME 8001:8001
-
-
-# [참고] with ingress
-$ helm -n redis-system install redisinsight . \
-    --set service.type=ClusterIP \
-    --set ingress.enabled=true \
-    --set ingress.hosts[0].host=redisinsight.redis-system.35.209.207.26.nip.io \
-    --set ingress.hosts[0].paths=/ \
-    --dry-run=true
-    
-    
-$ helm -n redis-system list
-
-NAME            NAMESPACE       REVISION        UPDATED                                 STATUS          CHART                           APP VERSION
-redisinsight    redis-system    1               2023-06-06 02:54:17.804212167 +0000 UTC deployed        redisinsight-chart-0.1.0
-..
-
-
-# 삭제시
-$ helm -n redis-system delete redisinsight
-
-
-```
-
