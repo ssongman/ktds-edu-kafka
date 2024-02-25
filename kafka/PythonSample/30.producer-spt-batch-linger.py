@@ -9,13 +9,13 @@ from time import sleep
 import time
 
 config  = configparser.ConfigParser()  ## 클래스 객체 생성
-config.read('./kafka/PythonSample/config.ini', encoding='utf-8')
+config.read('./config.ini', encoding='utf-8')
 
-def producer(range_cnt=10000, batch_size=16384, linger_ms=0):
+def producer(topic_name, range_cnt=10000, batch_size=16384, linger_ms=0):
     bootstrap_servers=config["KAFKAINFO"]["bootstrap_servers"]
     sasl_plain_username=config["KAFKAINFO"]["sasl_plain_username"]
     sasl_plain_password=config["KAFKAINFO"]["sasl_plain_password"]
-    topic_name=config["KAFKAINFO"]["topic_name_b"]
+    topic_name=topic_name
     """
     ex) topic_name : edu-topic01
     """
@@ -49,6 +49,6 @@ def producer(range_cnt=10000, batch_size=16384, linger_ms=0):
         
 if __name__ == '__main__':
     # range, batch, linger을 아규먼트로 입력 받는다.
-    producer(int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]))
+    producer(sys.argv[1], int(sys.argv[2]), int(sys.argv[3]), int(sys.argv[4]))
     # producer()
 
