@@ -42,11 +42,12 @@ def producer(range_cnt=10000, ackValue='0'):
                             sasl_mechanism='SCRAM-SHA-512',
                             ssl_check_hostname=True,
                             sasl_plain_username=sasl_plain_username,
-                            sasl_plain_password=sasl_plain_password)
+                            sasl_plain_password=sasl_plain_password,
+                            acks=1)
     
 
 
-    
+
     # 10000건을 1초에 한번씩 발송
     print(f"topicName[{topic_name}] range_cnt[{range_cnt}] ack[{ackValue}] Producing...")
     for i in range(range_cnt):
