@@ -11,7 +11,7 @@ config  = configparser.ConfigParser()  ## 클래스 객체 생성
 config.read('./config.ini', encoding='utf-8')
 
 
-def consumer(topic_name, group_id='edu-topic01-a1-cg', auto_offset_reset='latest'):
+def consumer(topic_name='edu-topic01-a', group_id='edu-topic01-a1-cg', auto_offset_reset='latest'):
     bootstrap_servers=config["KAFKAINFO"]["bootstrap_servers"]
     sasl_plain_username=config["KAFKAINFO"]["sasl_plain_username"]
     sasl_plain_password=config["KAFKAINFO"]["sasl_plain_password"]
