@@ -43,39 +43,39 @@ def consumer(group_id='edu-topic01-b-cg', auto_offset_reset='latest'):
     consumer.subscribe(topic_name)
     print(f"topicName[{topic_name}] subscribed!")
 
-    # 메세지 읽기
-    # print(f"Consuming...")
-    # for message in consumer:
-    #     print("topic=%s partition=%d offset=%d: key=%s value=%s" %
-    #             (message.topic,
-    #             message.partition,
-    #             message.offset,
-    #             message.key,
-    #             message.value))
-    # # end for
+    메세지 읽기
+    print(f"Consuming...")
+    for message in consumer:
+        print("topic=%s partition=%d offset=%d: key=%s value=%s" %
+                (message.topic,
+                message.partition,
+                message.offset,
+                message.key,
+                message.value))
+    # end for
 
 
     
-    # 메세지 읽기
-    print(f"Consuming...")
-    while True:
-        message = consumer.poll()
-        if len(message) == 0: 
-            time.sleep(1)
-        for topic_partition, records in message.items():
-            kmsgs = []
-            for record in records:
-                msg = record.value
-                dt_rcv = datetime.fromtimestamp(record.timestamp / 1000).strftime("%H%M%S.%f")[:-3]
-                dt_cre = datetime.now().strftime("%H%M%S.%f")[:-3]
-                # msg['rcvDt'] = dt_rcv
-                # msg['creDt'] = dt_cre
-                #db.demo.insert_one(msg)
-                kmsgs.append(msg)
+    # # 메세지 읽기
+    # print(f"Consuming...")
+    # while True:
+    #     message = consumer.poll()
+    #     if len(message) == 0: 
+    #         time.sleep(1)
+    #     for topic_partition, records in message.items():
+    #         kmsgs = []
+    #         for record in records:
+    #             msg = record.value
+    #             dt_rcv = datetime.fromtimestamp(record.timestamp / 1000).strftime("%H%M%S.%f")[:-3]
+    #             dt_cre = datetime.now().strftime("%H%M%S.%f")[:-3]
+    #             # msg['rcvDt'] = dt_rcv
+    #             # msg['creDt'] = dt_cre
+    #             #db.demo.insert_one(msg)
+    #             kmsgs.append(msg)
 
-            print(topic_partition, len(kmsgs))
-            # db.demo.insert_many(kmsgs)
-    # end while
+    #         print(topic_partition, len(kmsgs))
+    #         # db.demo.insert_many(kmsgs)
+    # # end while
 
 
 if __name__ == '__main__':
