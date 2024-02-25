@@ -43,7 +43,7 @@ def producer(range_cnt=10000, ackValue='0'):
                             ssl_check_hostname=True,
                             sasl_plain_username=sasl_plain_username,
                             sasl_plain_password=sasl_plain_password,
-                            acks=1)
+                            acks='1')
     
 
 
