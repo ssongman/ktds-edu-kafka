@@ -49,6 +49,6 @@ def producer(range_cnt=10000, batch_size=16384, linger_ms=0):
         
 if __name__ == '__main__':
     # range, batch, linger을 아규먼트로 입력 받는다.
-    producer(sys.argv[1], sys.argv[2], sys.argv[3])
+    producer(int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]))
     # producer()
 
