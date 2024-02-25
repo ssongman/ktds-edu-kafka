@@ -32,7 +32,7 @@ def producer(range_cnt=10000, batch_size=16384, linger_ms=0):
                             linger_ms=linger_ms)
 
     # 30000건 테스트
-    print(f"topicName[{topic_name}] batch_size[{batch_size}] linger_ms[{linger_ms}] Producing...")
+    print(f"topicName[{topic_name}] range_cnt[{range_cnt}] batch_size[{batch_size}] linger_ms[{linger_ms}] Producing...")
     start_time = time.time() # 시작시간
     for i in range(range_cnt):
         # print(i)
