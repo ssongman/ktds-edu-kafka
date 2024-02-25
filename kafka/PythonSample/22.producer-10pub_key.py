@@ -34,7 +34,7 @@ def producer(keyName):
     for i in range(10):
         print(i)
         sleep(1)
-        producer.send(topic=topic_name, value=b'{"eventName":"a","num":%d,"title":"a", "writeId":"", "writeName": "", "writeDate":"" }' % i, key=keyName)
+        producer.send(topic_name, b'{"eventName":"a","num":%d,"title":"a", "writeId":"", "writeName": "", "writeDate":"" }' % i, keyName)
 
     # 테스트를 끝내려면 Ctrl + C 로 중지하자.
         
