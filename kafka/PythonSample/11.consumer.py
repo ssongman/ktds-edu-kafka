@@ -8,7 +8,7 @@ from kafka import KafkaConsumer
 import configparser
 
 config  = configparser.ConfigParser()  ## 클래스 객체 생성
-config.read('./kafka/PythonSample/config.ini', encoding='utf-8')
+config.read('./config.ini', encoding='utf-8')
 
 
 def consumer(topic_name, group_id):
