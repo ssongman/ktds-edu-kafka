@@ -12,10 +12,17 @@ config  = configparser.ConfigParser()  ## 클래스 객체 생성
 config.read('./kafka/PythonSample/config.ini', encoding='utf-8')
 
 def producer(range_cnt=10000, ackValue='0'):
-    bootstrap_servers=config["KAFKAINFO"]["bootstrap_servers"]
-    sasl_plain_username=config["KAFKAINFO"]["sasl_plain_username"]
-    sasl_plain_password=config["KAFKAINFO"]["sasl_plain_password"]
-    topic_name=config["KAFKAINFO"]["topic_name_b"]
+    # bootstrap_servers=config["KAFKAINFO"]["bootstrap_servers"]
+    # sasl_plain_username=config["KAFKAINFO"]["sasl_plain_username"]
+    # sasl_plain_password=config["KAFKAINFO"]["sasl_plain_password"]
+    # topic_name=config["KAFKAINFO"]["topic_name_b"]
+    
+
+    
+    bootstrap_servers='my-cluster.kafka.43.203.62.69.nip.io:32100'
+    sasl_plain_username='edu-user'
+    sasl_plain_password='oXTjENLJMvdKV6CbQmU2NX0e87Rezxhc'
+    topic_name='edu-topic01-b'
     """
     ex) topic_name : edu-topic01
     """
