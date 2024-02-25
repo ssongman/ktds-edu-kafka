@@ -1,14 +1,19 @@
 import sys
 from kafka import KafkaProducer
+import configparser
 from time import sleep
 
-def producer(topicName):
+config  = configparser.ConfigParser()  ## 클래스 객체 생성
+config.read('./kafka/PythonSample/config.ini', encoding='utf-8')
 
-    # 개인환경으로 변경
-    bootstrap_servers='my-cluster.kafka.43.203.62.69.nip.io:32100'
-    sasl_plain_username='edu-user'
-    sasl_plain_password='oXTjENLJMvdKV6CbQmU2NX0e87Rezxhc'
-    topic_name=topicName
+def producer(topicName):
+    bootstrap_servers=config["KAFKAINFO"]["bootstrap_servers"]
+    sasl_plain_username=config["KAFKAINFO"]["sasl_plain_username"]
+    sasl_plain_password=config["KAFKAINFO"]["sasl_plain_password"]
+    topic_name=config["KAFKAINFO"]["topic_name"]
+    """
+    ex) topic_name : edu-topic01
+    """
 
 
     print(f"KafkaProducer...")
@@ -19,17 +24,18 @@ def producer(topicName):
                             sasl_plain_username=sasl_plain_username,
                             sasl_plain_password=sasl_plain_password)
 
-    # 10000건을 0.5초에 한번씩 발송해보자.
+    # 10000건을 1초에 한번씩 발송해보자.
     print(f"topicName[{topic_name}] subscribed!")
     print(f"Producing...")
     for i in range(10000):
         print(i)
-        sleep(0.5)
+        sleep(1)
         producer.send(topic_name, b'{"eventName":"a","num":%d,"title":"a", "writeId":"", "writeName": "", "writeDate":"" }' % i)
 
     # 테스트를 끝내려면 Ctrl + C 로 중지하자.
         
 if __name__ == '__main__':
     # 타픽명을 아규먼트 로 입력 받는다.
-    producer(sys.argv[1])
+    # producer(sys.argv[1])
+    producer()
 
