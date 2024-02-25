@@ -30,7 +30,7 @@ def consumer():
                             sasl_plain_password=sasl_plain_password,
                             ssl_check_hostname=True,
                             auto_offset_reset='earliest',
-                            enable_auto_commit= True,
+                            enable_auto_commit=True,
                             group_id=group_id)
 
     # 사용할 topic 지정(구독)
