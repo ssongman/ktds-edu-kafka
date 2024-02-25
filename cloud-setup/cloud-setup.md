@@ -2597,7 +2597,7 @@ $ docker ps -a
 
 
 
-![img](4.Kafka-Setup.assets/1ztl7ii-FrK0GOL8mxwVFFQ.png)
+![img](cloud-setup.assets/1ztl7ii-FrK0GOL8mxwVFFQ.png)
 
 
 
@@ -2753,7 +2753,7 @@ $ curl my-cluster-kafka-exporter.kafka.svc/metrics
 
 
 
-## 3) prometheus - helm방식
+## 2) prometheus - helm방식
 
 
 
@@ -2969,7 +2969,7 @@ $ kubectl -n kafka apply -f ./kafka/strimzi/monitoring/21.prometheus-ingress.yam
 - 확인
   - URL : http://prometheus.kafka.43.203.62.69.nip.io
 
-![image-20220626124323035](./assets/image-20220626124323035.png)
+![image-20220626124323035](./cloud-setup.assets/image-20220626124323035.png)
 
 
 
@@ -3078,7 +3078,7 @@ prometheus-server-5dc67b6855-67xts            0/1     Running   0             9s
   - URL : http://prometheus.kafka.43.203.62.69.nip.io
   - 메뉴 : status / target 에서 아래와 같이 kafka-exporter 가 추가된것을 확인한다.
 
-![image-20220626124700665](./assets/image-20220626124700665.png)
+![image-20220626124700665](./cloud-setup.assets/image-20220626124700665.png)
 
 
 
@@ -3117,7 +3117,7 @@ $ helm -n kafka list
 
 
 
-## 4) Grafana deploy
+## 3) Grafana deploy
 
 - deploy
 
@@ -3286,7 +3286,7 @@ $ kubectl -n kafka apply -f ./kafka/strimzi/monitoring/34.grafana-route.yaml
 
  
 
-## 5) Grafana Monitoring
+## 4) Grafana Monitoring
 
 ### (1) Grafana 접속
 
@@ -3325,13 +3325,13 @@ http://grafana.kafka.ktcloud.211.254.212.105.nip.io/d/jwPKIsniz/strimzi-kafka-ex
 
 - 메뉴 위치 : Dashboards > Manage > Strimzi Kafka Exporter
 
-![image-20220626111254872](./assets/image-20220626111254872.png)
+![image-20220626111254872](./cloud-setup.assets/image-20220626111254872.png)
 
 
 
 
 
-## 6) Clean Up
+## 5) Clean Up
 
 ```sh
 ## 1) Grafana 삭제

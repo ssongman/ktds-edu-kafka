@@ -94,15 +94,32 @@
 
 
 
-# 4. Kafka Hands-in ( [가이드 문서 보기](kafka/3.kafka-hands-in2.md) )
+# 4. Kafka Hands-in 2 ( [가이드 문서 보기](kafka/3.kafka-hands-in2.md) )
 
-## 1) Producer 실습
+## 1) 테스트 환경준비
+
+* Bastion server 준비
+* Ptyhon Container 준비
+
+## 2) Rebalancing Round
+
+* Stop The World 내용 확인
+* Rebalancing 시나리오
+* 시나리오 테스트 수행
+
+## 3) Producer 실습
 
 * Producer 관련 실습
+* key 와 partition 관계 이해
+* 전송보장과  ack
+* Sender 동작
 
-## 2) Consumer 실습
+## 4) Consumer 실습
 
 * Consumer 관련 실습
+* auto.offset.reset
+* poll method
+* Auto / Manual Commit
 
 
 
