@@ -28,7 +28,7 @@ def producer(topic_name='edu-topic01'):
                             sasl_plain_username=sasl_plain_username,
                             sasl_plain_password=sasl_plain_password)
 
-    # 10000건을 1초에 한번씩 발송해보자.
+    # 10건을 1초에 한번씩 발송해보자.
     print(f"topicName[{topic_name}] Producing...")
     for i in range(10):
         print(i)
