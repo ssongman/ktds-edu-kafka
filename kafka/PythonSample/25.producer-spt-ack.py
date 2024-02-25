@@ -1,16 +1,17 @@
 ################################################################
-# 초당 1회 send
+# ack에 따른 성능측정
 ################################################################
 
 import sys
 from kafka import KafkaProducer
 import configparser
 from time import sleep
+import time
 
 config  = configparser.ConfigParser()  ## 클래스 객체 생성
 config.read('./kafka/PythonSample/config.ini', encoding='utf-8')
 
-def producer():
+def producer(ackValue=-1):
     bootstrap_servers=config["KAFKAINFO"]["bootstrap_servers"]
     sasl_plain_username=config["KAFKAINFO"]["sasl_plain_username"]
     sasl_plain_password=config["KAFKAINFO"]["sasl_plain_password"]
@@ -26,19 +27,27 @@ def producer():
                             sasl_mechanism='SCRAM-SHA-512',
                             ssl_check_hostname=True,
                             sasl_plain_username=sasl_plain_username,
-                            sasl_plain_password=sasl_plain_password)
+                            sasl_plain_password=sasl_plain_password,
+                            acks=ackValue)
 
-    # 10000건을 1초에 한번씩 발송해보자.
-    print(f"topicName[{topic_name}] Producing...")
+    # 10000건 테스트
+    print(f"topicName[{topic_name}] ack[{ackValue}] Producing...")
+    start_time = time.time() # 시작시간
     for i in range(10000):
-        print(i)
-        sleep(1)
+        # print(i)
         producer.send(topic_name, b'{"eventName":"a","num":%d,"title":"a", "writeId":"", "writeName": "", "writeDate":"" }' % i)
 
-    # 테스트를 끝내려면 Ctrl + C 로 중지하자.
+    end_time = time.time() # 종료시간
+    print("duration time :", end_time - start_time)  # 현재시각 - 시작시간 = 실행 시간
+
+
+
+# 1만건 테스트
+# duration time : 9.254887104034424
+# duration time : 10.304309129714966    
         
 if __name__ == '__main__':
     # 타픽명을 아규먼트 로 입력 받는다.
-    # producer(sys.argv[1])
-    producer()
+    producer(sys.argv[1])
+    # producer()
 

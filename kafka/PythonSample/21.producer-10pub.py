@@ -29,8 +29,7 @@ def producer():
                             sasl_plain_password=sasl_plain_password)
 
     # 10000건을 1초에 한번씩 발송해보자.
-    print(f"topicName[{topic_name}] ")
-    print(f"Producing...")
+    print(f"topicName[{topic_name}] Producing...")
     for i in range(10):
         print(i)
         sleep(1)
