@@ -6,7 +6,7 @@ from time import sleep
 config  = configparser.ConfigParser()  ## 클래스 객체 생성
 config.read('./kafka/PythonSample/config.ini', encoding='utf-8')
 
-def producer(topicName):
+def producer():
     bootstrap_servers=config["KAFKAINFO"]["bootstrap_servers"]
     sasl_plain_username=config["KAFKAINFO"]["sasl_plain_username"]
     sasl_plain_password=config["KAFKAINFO"]["sasl_plain_password"]
