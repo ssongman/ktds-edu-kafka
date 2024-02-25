@@ -6,6 +6,7 @@
 import sys
 from kafka import KafkaConsumer
 import configparser
+import time
 
 config  = configparser.ConfigParser()  ## 클래스 객체 생성
 config.read('./kafka/PythonSample/config.ini', encoding='utf-8')
