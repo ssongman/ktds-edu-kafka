@@ -39,7 +39,7 @@ def producer(range_cnt=10000):
     print(f"topicName[{topic_name}] range_cnt[{range_cnt}] Producing...")
     start_time = time.time() # 시작시간
     for i in range(range_cnt):
-        print(i)
+        # print(i)
         producer.send(topic_name, b'{"eventName":"a","num":%d,"title":"a", "writeId":"", "writeName": "", "writeDate":"" }' % i)
 
     end_time = time.time() # 종료시간
