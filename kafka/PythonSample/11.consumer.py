@@ -22,7 +22,7 @@ def consumer():
         group_id   : edu-topic01-cg
     """
 
-    print(f"KafkaConsumer...")
+    print(f"KafkaConsumer group_id[{group_id}] ...")
     consumer = KafkaConsumer(bootstrap_servers=bootstrap_servers,
                             security_protocol="SASL_PLAINTEXT",
                             sasl_mechanism='SCRAM-SHA-512',

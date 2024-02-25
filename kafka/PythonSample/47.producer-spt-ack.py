@@ -30,15 +30,24 @@ def producer(range_cnt=10000, ackValue='0'):
                             sasl_plain_password=sasl_plain_password,
                             acks=ackValue)
 
-    # 30000건 테스트
+    # 10000건을 1초에 한번씩 발송
     print(f"topicName[{topic_name}] range_cnt[{range_cnt}] ack[{ackValue}] Producing...")
-    start_time = time.time() # 시작시간
     for i in range(range_cnt):
         print(i)
+        sleep(1)
         producer.send(topic_name, b'{"eventName":"a","num":%d,"title":"a", "writeId":"", "writeName": "", "writeDate":"" }' % i)
 
-    end_time = time.time() # 종료시간
-    print("duration time :", end_time - start_time)  # 현재시각 - 시작시간 = 실행 시간
+
+
+    # # 30000건 테스트
+    # print(f"topicName[{topic_name}] range_cnt[{range_cnt}] ack[{ackValue}] Producing...")
+    # start_time = time.time() # 시작시간
+    # for i in range(range_cnt):
+    #     print(i)
+    #     producer.send(topic_name, b'{"eventName":"a","num":%d,"title":"a", "writeId":"", "writeName": "", "writeDate":"" }' % i)
+
+    # end_time = time.time() # 종료시간
+    # print("duration time :", end_time - start_time)  # 현재시각 - 시작시간 = 실행 시간
 
         
 if __name__ == '__main__':
