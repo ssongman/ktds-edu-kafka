@@ -98,6 +98,20 @@
 
 
 
+## 4. Kafka Hands-in ( [가이드 문서 보기](kafka/3.kafka-hands-in2.md) )
+
+### 1) Producer 실습
+
+* Producer 관련 실습
+
+### 2) Consumer 실습
+
+* Consumer 관련 실습
+
+
+
+
+
 ## 별첨. Cloud Setup ( [가이드 문서 보기](cloud-setup/cloud-setup.md) )
 
 ### 1) Bastion Server Setup

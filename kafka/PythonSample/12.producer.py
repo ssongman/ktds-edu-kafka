@@ -8,7 +8,7 @@ def producer(topicName):
     bootstrap_servers='my-cluster.kafka.43.203.62.69.nip.io:32100'
     sasl_plain_username='edu-user'
     sasl_plain_password='oXTjENLJMvdKV6CbQmU2NX0e87Rezxhc'
-    topic_name=topicName     # <-- 본인 타픽명으로 지정
+    topic_name=topicName
 
 
     print(f"KafkaProducer...")
@@ -30,5 +30,6 @@ def producer(topicName):
     # 테스트를 끝내려면 Ctrl + C 로 중지하자.
         
 if __name__ == '__main__':
+    # 타픽명을 아규먼트 로 입력 받는다.
     producer(sys.argv[1])
 

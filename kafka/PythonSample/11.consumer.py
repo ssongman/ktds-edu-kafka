@@ -1,15 +1,22 @@
 
 import sys
 from kafka import KafkaConsumer
+import configparser
+
+config  = configparser.ConfigParser()  ## 클래스 객체 생성
+config.read('./kafka/PythonSample/config.ini', encoding='utf-8')
 
 
-def consumer(topicName):
-    bootstrap_servers='my-cluster.kafka.43.203.62.69.nip.io:32100'
-    sasl_plain_username='edu-user'
-    sasl_plain_password='oXTjENLJMvdKV6CbQmU2NX0e87Rezxhc'
-    topic_name=topicName                    # <-- 본인 topic명으로 지정
-    group_id='edu-group' + topicName[-2:]   # topicName에서 마지막 두자리만 이용하여 groupName 으로 사용한다.
-
+def consumer():
+    bootstrap_servers=config["KAFKAINFO"]["bootstrap_servers"]
+    sasl_plain_username=config["KAFKAINFO"]["sasl_plain_username"]
+    sasl_plain_password=config["KAFKAINFO"]["sasl_plain_password"]
+    topic_name=config["KAFKAINFO"]["topic_name"]
+    group_id=config["KAFKAINFO"]["group_id"]
+    """
+    ex) topic_name : edu-topic01
+        group_id   : edu-topic01-cg
+    """
 
     print(f"KafkaConsumer...")
     consumer = KafkaConsumer(bootstrap_servers=bootstrap_servers,
@@ -37,4 +44,6 @@ def consumer(topicName):
                 message.value))
         
 if __name__ == '__main__':
-    consumer(sys.argv[1])
+    # 타픽명을 아규먼트 로 입력 받는다.
+    #consumer(sys.argv[1])
+    consumer()
