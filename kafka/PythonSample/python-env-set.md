@@ -33,6 +33,99 @@ $ Scripts\activate.bat
 
 
 
+# 2. python dockerizing
+
+
+
+## 1) docker run
+
+```sh
+# bastion Server 에서
+## docker 실행이 안되었을 경우만 ....
+$ docker run --name python --user root -d python:3.9 sleep 365d
+
+
+# python 확인
+$ docker ps -a
+CONTAINER ID  IMAGE                         COMMAND     CREATED        STATUS            PORTS       NAMES
+fb231e23f9f1  docker.io/library/python:3.9  sleep 365d  2 seconds ago  Up 2 seconds ago              python
+
+
+# 1) python Container 내부로 진입( bash 명령 수행)
+$ docker exec -it python bash
+root@a225dc4c3dd7:/#           <-- 이런 prompt 가 표기 되어야 정상
+
+```
+
+
+
+## 2) githubrepo 셋팅
+
+```sh
+$ mkdir -p ~/githubrepo
+  cd ~/githubrepo
+
+$ git clone https://github.com/ssongman/ktds-edu-kafka.git
+    
+$ cd ~/githubrepo/ktds-edu-kafka
+
+$ git pull
+    
+```
+
+
+
+## 3) tool 설치
+
+
+
+설치
+
+```
+
+apt update
+
+apt install vim
+
+apt install netcat
+
+.bashrc 셋팅
+
+
+```
+
+
+
+
+
+## 4) pip install
+
+
+
+설치
+
+```
+apt update
+
+apt install vim
+
+.bashrc 셋팅
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
 # 2. python 배포
 
 
