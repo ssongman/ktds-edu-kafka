@@ -3,6 +3,7 @@
 # Consumer 기본
 ################################################################
 
+import datetime
 import sys
 from kafka import KafkaConsumer
 import configparser
