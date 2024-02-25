@@ -31,9 +31,10 @@ def consumer(group_id='edu-topic01-b-cg', auto_offset_reset='latest'):
                             ssl_check_hostname=True,
                             auto_offset_reset=auto_offset_reset,
                             enable_auto_commit= True,
-                            group_id=group_id
-                            max_poll_records=500, # default 500)
-                            max_poll_interval_ms=300000, # default 300000)
+                            group_id=group_id,
+                            max_poll_records=500, # default 500
+                            max_poll_interval_ms=300000 # default 300000
+                            )
 
     # 사용할 topic 지정(구독)
     consumer.subscribe(topic_name)
