@@ -43,7 +43,7 @@ def consumer(group_id='edu-topic01-b-cg', auto_offset_reset='latest'):
     consumer.subscribe(topic_name)
     print(f"topicName[{topic_name}] subscribed!")
 
-    메세지 읽기
+    # 메세지 읽기
     print(f"Consuming...")
     for message in consumer:
         print("topic=%s partition=%d offset=%d: key=%s value=%s" %
