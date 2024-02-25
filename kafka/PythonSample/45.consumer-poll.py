@@ -13,7 +13,7 @@ config  = configparser.ConfigParser()  ## 클래스 객체 생성
 config.read('./config.ini', encoding='utf-8')
 
 
-def consumer(topic_name, group_id='edu-topic01-b-cg', auto_offset_reset='latest'):
+def consumer(topic_name='edu-topic01-b', group_id='edu-topic01-b-cg', auto_offset_reset='latest'):
     bootstrap_servers=config["KAFKAINFO"]["bootstrap_servers"]
     sasl_plain_username=config["KAFKAINFO"]["sasl_plain_username"]
     sasl_plain_password=config["KAFKAINFO"]["sasl_plain_password"]
@@ -61,18 +61,19 @@ def consumer(topic_name, group_id='edu-topic01-b-cg', auto_offset_reset='latest'
         if len(message) == 0: 
             time.sleep(1)
         for topic_partition, records in message.items():
-            kmsgs = []
+            recOutputs = []
             for record in records:
                 msg = record.value
-                dt_rcv = datetime.fromtimestamp(record.timestamp / 1000).strftime("%H%M%S.%f")[:-3]
-                dt_cre = datetime.now().strftime("%H%M%S.%f")[:-3]
+                # Data 처리
+                # dt_rcv = datetime.fromtimestamp(record.timestamp / 1000).strftime("%H%M%S.%f")[:-3]
+                # dt_cre = datetime.now().strftime("%H%M%S.%f")[:-3]
                 # msg['rcvDt'] = dt_rcv
                 # msg['creDt'] = dt_cre
                 #db.demo.insert_one(msg)
-                kmsgs.append(msg)
+                recOutputs.append(msg)
 
-            print(topic_partition, len(kmsgs))
-            # db.demo.insert_many(kmsgs)
+            print(topic_partition, len(recOutputs))
+            # db.demo.insert_many(recOutputs)
     # end while
 
 
