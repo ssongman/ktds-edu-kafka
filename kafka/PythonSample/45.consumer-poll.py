@@ -67,8 +67,8 @@ def consumer(group_id='edu-topic01-b-cg', auto_offset_reset='latest'):
                 msg = record.value
                 dt_rcv = datetime.fromtimestamp(record.timestamp / 1000).strftime("%H%M%S.%f")[:-3]
                 dt_cre = datetime.now().strftime("%H%M%S.%f")[:-3]
-                msg['rcvDt'] = dt_rcv
-                msg['creDt'] = dt_cre
+                # msg['rcvDt'] = dt_rcv
+                # msg['creDt'] = dt_cre
                 #db.demo.insert_one(msg)
                 kmsgs.append(msg)
 
