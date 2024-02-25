@@ -17,6 +17,15 @@ def producer(range_cnt=10000, ackValue='0'):
     # sasl_plain_password=config["KAFKAINFO"]["sasl_plain_password"]
     # topic_name=config["KAFKAINFO"]["topic_name_b"]
     
+    # print(f"KafkaProducer...")
+    # producer = KafkaProducer(bootstrap_servers=bootstrap_servers,
+    #                         security_protocol="SASL_PLAINTEXT",
+    #                         sasl_mechanism='SCRAM-SHA-512',
+    #                         ssl_check_hostname=True,
+    #                         sasl_plain_username=sasl_plain_username,
+    #                         sasl_plain_password=sasl_plain_password,
+    #                         acks=ackValue)
+
 
     
     bootstrap_servers='my-cluster.kafka.43.203.62.69.nip.io:32100'
@@ -25,8 +34,7 @@ def producer(range_cnt=10000, ackValue='0'):
     topic_name='edu-topic01-b'
     """
     ex) topic_name : edu-topic01
-    """
-
+    """    
 
     print(f"KafkaProducer...")
     producer = KafkaProducer(bootstrap_servers=bootstrap_servers,
@@ -34,9 +42,11 @@ def producer(range_cnt=10000, ackValue='0'):
                             sasl_mechanism='SCRAM-SHA-512',
                             ssl_check_hostname=True,
                             sasl_plain_username=sasl_plain_username,
-                            sasl_plain_password=sasl_plain_password,
-                            acks=ackValue)
+                            sasl_plain_password=sasl_plain_password)
+    
 
+
+    
     # 10000건을 1초에 한번씩 발송
     print(f"topicName[{topic_name}] range_cnt[{range_cnt}] ack[{ackValue}] Producing...")
     for i in range(range_cnt):
