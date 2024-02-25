@@ -43,6 +43,6 @@ def producer(topic_name='edu-topic01-b', range_cnt=10000, ackValue='0'):
         
 if __name__ == '__main__':
     # 타픽명을 아규먼트 로 입력 받는다.
-    # producer(sys.argv[1], int(sys.argv[2]), sys.argv[3])
-    producer()
+    producer(sys.argv[1], int(sys.argv[2]), sys.argv[3])
+    # producer()
 
