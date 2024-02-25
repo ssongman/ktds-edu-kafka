@@ -33,9 +33,9 @@ def producer(topic_name, keyName):
     for i in range(10):
         print(i)
         sleep(1)
-        producer.send(topic=topic_name, value=b'{"eventName":"a","num":%d,"title":"a", "writeId":"", "writeName": "", "writeDate":"" }' % i, key=b'{keyName}')
+        producer.send(topic=topic_name, value=b'{"eventName":"a","num":%d,"title":"a", "writeId":"", "writeName": "", "writeDate":"" }' % i, key=b'%s' % keyName)
 
-    # 테스트를 끝내려면 Ctrl + C 로 중지하자.
+    # 테스트를 끝내려면 Ctrl + C 로 중지
         
 if __name__ == '__main__':
     # key를 아규먼트 로 입력 받는다.
