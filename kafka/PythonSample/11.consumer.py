@@ -48,5 +48,5 @@ def consumer(topic_name, group_id):
         
 if __name__ == '__main__':
     # 타픽명을 아규먼트 로 입력 받는다.
-    consumer(sys.argv[1])
+    consumer(sys.argv[1], sys.argv[2])
     # consumer()
