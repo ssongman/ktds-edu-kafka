@@ -229,7 +229,11 @@ drwxr-xr-x 1 ssong 197609 0 Feb 24 12:02 ktds-edu-kafka/
 C:\githubrepo\ktds-edu-kafka\README.md
 ```
 
-![image-20220702160433029](beforebegin.assets/image-20220702160433029.png)
+![image-20240225215314856](beforebegin.assets/image-20240225215314856.png)
+
+
+
+
 
 
 
@@ -280,7 +284,9 @@ Mobaxterm 을 실행하여 VM 접속정보를 위한 신규 session 을 생성�
 
   - SSH : 팝업창 상단 아이콘 클릭
 
-![image-20230514022214007](beforebegin.assets/image-20230514022214007.png)
+![image-20240225214646366](beforebegin.assets/image-20240225214646366.png)
+
+
 
 빨간색 영역을 주의해서 입력한 후 접속하자.
 
@@ -288,7 +294,7 @@ Mobaxterm 을 실행하여 VM 접속정보를 위한 신규 session 을 생성�
 
 - Romote host
   - 개인별로 접근 주소가 다르므로 위 수강생별  VM  Server IP 주소를 확인하자.
-  - ex)  bastion03 : 35.247.230.92
+  - ex)  bastion02 : 3.38.104.137
 
 - User
   - Specify username 에 Check
@@ -296,7 +302,8 @@ Mobaxterm 을 실행하여 VM 접속정보를 위한 신규 session 을 생성�
 
 - Port : 22
 - Advanced SSH settings
-  - Use private key : C:\githubrepo\ktds-edu-kafka\vm-key\ktdseduuser
+  - Use private key
+    - C:\githubrepo\ktds-edu-kafka\vm-key\ktdsedu-employee.pem
     - 교육자료 Download 되는 자료에 위 key가 포함되어 있음
 
 
@@ -317,10 +324,19 @@ $ cd ~/githubrepo/ktds-edu-kafka
 $ git pull
 
 
+```
 
-# 만약 pull일 잘 안되는 경우는 모두 삭제후 다시 git clone 받자.
 
-# 삭제
+
+
+
+## [참고] git repo 삭제후 다시 Clone
+
+만약 pull일 잘 안되는 경우는 모두 삭제후 다시 git clone 받자.
+
+```sh
+
+# git repo 삭제
 $ rm -rf ~/githubrepo/ktds-edu-kafka/
 
 $ cd ~/githubrepo
@@ -355,6 +371,8 @@ drwxrwxr-x 8 ktdseduuser ktdseduuser 4096 Sep  2 13:45 redis/
 
 
 
+
+
 ## [참고] git repo 초기화 방법
 
 수정된 파일이 존재하여 git pull 이 잘 안될때는 삭제후 다시 Clone 하는 방법도 있지만
@@ -362,26 +380,26 @@ drwxrwxr-x 8 ktdseduuser ktdseduuser 4096 Sep  2 13:45 redis/
 내용이 많다거나 다른 사유로 인해 clone 작업이 힘들 경우 아래와 같은 명령어를 사용해도 된다.
 
 ```sh
-# 1) 마지막 commit hash 값으로 reset 처리
+
+# 1) stash
+# stash 는 내가 수행한 작업을 commit 하기전 임시로 저장해 놓는 명령이다.
+$ git stash
+$ git pull
+
+
+# 2) 마지막 commit hash 값으로 reset 처리
 ## 아직 staged 에 올라가지 않은 수정파일,  untracked file 까지 모두 사라진다.
 $ git reset --hard HEAD~
 $ git pull
 
 
-
-# 2) untrackted file 을 초기화 해야 하는 경우
+# 3) untrackted file 을 초기화 해야 하는 경우
 $ git clean -f -d
 $ git pull
 
 
-# 3) 파일단위로 restore 를 원할 경우
+# 4) 파일단위로 restore 를 원할 경우
 $ git restore modified_file
-$ git pull
-
-
-# 4) stash
-# stash 는 내가 수행한 작업을 commit 하기전 임시로 저장해 놓는 명령이다.
-$ git stash
 $ git pull
 
 

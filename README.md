@@ -1,8 +1,4 @@
-# README
-
-
-
-## Kakfa on Kubernetes
+# Kakfa on Kubernetes
 
 > Container 기반 Kafka 교육자료 !!
 
@@ -12,9 +8,9 @@
 
 
 
-## 1. 시작전에 ( [가이드 문서 보기](beforebegin/beforebegin.md) )
+# 1. 시작전에 ( [가이드 문서 보기](beforebegin/beforebegin.md) )
 
-### 1) 실습 환경 준비
+## 1) 실습 환경 준비
 
 * MobaxTerm 설치
 * Typora 설치
@@ -23,13 +19,13 @@
 
 
 
-## 2. Kafka 개념 ( [가이드 문서 보기](kafka/1.kafka-개념.md) )
+# 2. Kafka 개념 ( [가이드 문서 보기](kafka/1.kafka-개념.md) )
 
-### 1) Kafka 개요
+## 1) Kafka 개요
 
 * kafka 개요와 특징확인
 
-### 2) Kafka 기본
+## 2) Kafka 기본
 
 * Kafka 구성요소인 Broker, Message, Producer, Consumer ,Topic 의 Concept 대해 확인
 * Broker
@@ -41,7 +37,7 @@
 * Producer/Consumer Partitioning
   * Partion 별로 메세지 수신/ 발신 방법에 대한 개념 확인
 
-### 3) Kafka Replication
+## 3) Kafka Replication
 
 * Replicas
   * Broker 장애시 수신 메시지 분실 방지를 위한 복제(Replication)
@@ -52,43 +48,43 @@
 
 
 
-## 3. Kafka Hands-in ( [가이드 문서 보기](kafka/2.kafka-hands-in.md) )
+# 3. Kafka Hands-in ( [가이드 문서 보기](kafka/2.kafka-hands-in.md) )
 
-### 1) Strimzi
+## 1) Strimzi
 
 * Strimzi / Strimzi Operator 란?
 
-### 2) Strimzi Operator install
+## 2) Strimzi Operator install
 
 * Strmzi download 및 install 방법
 
-### 3) Kafka Cluster 생성
+## 3) Kafka Cluster 생성
 
 * Kafka Cluster 생성
 * Kafka User 생성
 * Kafka Topic 생성
 
-### 4) Accessing Kafka
+## 4) Accessing Kafka
 
 * Broker 접근 방식의 이해
 * Internal / External Access 이해
 * Internal Access Test
 * Node Port 구성 / External Access Test
 
-### 5) Python Test
+## 5) Python Test
 
 * Python Client (Kubernetes / Docker 이용) 설치
 * Internal Access / External Access
 
-### 6) Strimzi Clean up
+## 6) Strimzi Clean up
 
-### 7) Java - Spring Boot
+## 7) Java - Spring Boot
 
 * 개인별로 할당된 Topic 확인
 * kafka-consumer 실습
 * kafka-producer 실습
 
-### 8) Rebalancing Round
+## 8) Rebalancing Round
 
 * Stop The World 내용 확인
 * Rebalancing 시나리오
@@ -98,13 +94,13 @@
 
 
 
-## 4. Kafka Hands-in ( [가이드 문서 보기](kafka/3.kafka-hands-in2.md) )
+# 4. Kafka Hands-in ( [가이드 문서 보기](kafka/3.kafka-hands-in2.md) )
 
-### 1) Producer 실습
+## 1) Producer 실습
 
 * Producer 관련 실습
 
-### 2) Consumer 실습
+## 2) Consumer 실습
 
 * Consumer 관련 실습
 
@@ -112,15 +108,15 @@
 
 
 
-## 별첨. Cloud Setup ( [가이드 문서 보기](cloud-setup/cloud-setup.md) )
+# 별첨. Cloud Setup ( [가이드 문서 보기](cloud-setup/cloud-setup.md) )
 
-### 1) Bastion Server Setup
+## 1) Bastion Server Setup
 
 * kubernetes Install (k3s)
 * Helm Install
 * 기타 Tool Setup
 
-### 2) Kafka Setup(Strimzi) on Cloud
+## 2) Kafka Setup(Strimzi) on Cloud
 
 * Strimzi Cluster Operator Install
 * Kafka Cluster 생성
