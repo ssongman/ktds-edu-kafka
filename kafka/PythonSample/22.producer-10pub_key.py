@@ -29,12 +29,12 @@ def producer(keyName):
                             sasl_plain_password=sasl_plain_password)
 
     # 10000건을 1초에 한번씩 발송해보자.
-    print(f"topicName[{topic_name}] keyName[{keyName}]subscribed!")
+    print(f"topicName[{topic_name}] keyName[{keyName}]")
     print(f"Producing...")
     for i in range(10):
         print(i)
         sleep(1)
-        producer.send(topic_name, b'{"eventName":"a","num":%d,"title":"a", "writeId":"", "writeName": "", "writeDate":"" }' % i, keyName)
+        producer.send(topic=topic_name, value=b'{"eventName":"a","num":%d,"title":"a", "writeId":"", "writeName": "", "writeDate":"" }' % i, key=b'{keyName}')
 
     # 테스트를 끝내려면 Ctrl + C 로 중지하자.
         
