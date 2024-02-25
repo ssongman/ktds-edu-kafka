@@ -30,10 +30,10 @@ def producer(ackValue=0):
                             sasl_plain_password=sasl_plain_password,
                             acks=ackValue)
 
-    # 10000건 테스트
+    # 30000건 테스트
     print(f"topicName[{topic_name}] ack[{ackValue}] Producing...")
     start_time = time.time() # 시작시간
-    for i in range(10000):
+    for i in range(30000):
         # print(i)
         producer.send(topic_name, b'{"eventName":"a","num":%d,"title":"a", "writeId":"", "writeName": "", "writeDate":"" }' % i)
 
