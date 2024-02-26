@@ -84,12 +84,6 @@
 * kafka-consumer 실습
 * kafka-producer 실습
 
-## 8) Rebalancing Round
-
-* Stop The World 내용 확인
-* Rebalancing 시나리오
-* 시나리오 테스트 수행
-
 
 
 
