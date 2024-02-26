@@ -258,7 +258,7 @@ C:\githubrepo\ktds-edu-kafka\README.md
 |  7   | 김무한 | 미디어서비스팀      | moohan.kim@kt.com      | bastion07  | 3.39.236.40    | edu-topic07  | edu-topic07-cg |      |
 |  8   | 김민수 | 아키텍처팀          | minsu74@kt.com         | bastion08  | 15.165.18.187  | edu-topic08  | edu-topic08-cg |      |
 |  9   | 김지훈 | 경영인프라팀        | jihun094.kim@kt.com    | bastion09  | 43.203.201.58  | edu-topic09  | edu-topic09-cg |      |
-|  10  | 박승섭 | 데이터DX개발팀      | seungseob.park@kt.com  | bastion10  | 54.180.134.132 | edu-topic10  | edu-topic10-cg |      |
+|  10  | 박승섭 | 데이터DX개발팀      | seungseob.park@kt.com  | bastion10  | 54.180.134.132 | edu-topic10  | edu-topic10-cg | 미참 |
 |  11  | 백연희 | 플랫폼CoE팀         | yh.baek@kt.com         | bastion11  | 43.203.121.58  | edu-topic11  | edu-topic11-cg |      |
 |  12  | 양동기 | 환경DX플랫폼팀      | dong_gi.yang@kt.com    | bastion12  | 3.35.19.209    | edu-topic12  | edu-topic12-cg |      |
 |  13  | 여준영 | 미디어플랫폼팀      | junyeong.yeo@kt.com    | bastion13  | 3.38.96.136    | edu-topic13  | edu-topic13-cg |      |
