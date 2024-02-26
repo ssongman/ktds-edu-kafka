@@ -15,7 +15,7 @@
 * MobaxTerm 설치
 * Typora 설치
 * 교육자료 Download
-* 실흡환경준비(Cloiud)
+* 실습환경준비(Cloud)
 
 
 
