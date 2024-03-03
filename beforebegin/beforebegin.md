@@ -247,29 +247,29 @@ C:\githubrepo\ktds-edu-kafka\README.md
 
 개인별 VM Server 접속 환경 및 Kafka 실습을 위한 개인 Topic 정보를 확인하자.
 
-|  NO  | 담당자 | 소속                | email                  | VM  Server | VM  Server IP  | kafka  Topic | kafka  Group   | 비고 |
-| :--: | :----: | :------------------ | ---------------------- | ---------- | -------------- | ------------ | -------------- | ---- |
-|  1   | 송양종 | ICIS Tr 아키텍처팀  | yj.song@kt.com         | bastion01  | 34.xx.xx.xx    | edu-topic01  | edu-topic01-cg |      |
-|  2   | 송양종 | ICIS  Tr 아키텍처팀 | yj.song@kt.com         | bastion02  | 3.38.104.137   | edu-topic02  | edu-topic02-cg |      |
-|  3   | 강미혜 | Genie서비스팀       | mi-hye.kang@kt.com     | bastion03  | 3.36.59.8      | edu-topic03  | edu-topic03-cg |      |
-|  4   | 강정현 | 미디어플랫폼팀      | jeonghyeon.kang@kt.com | bastion04  | 3.35.207.16    | edu-topic04  | edu-topic04-cg |      |
-|  5   | 김경호 | 보안정책팀          | gyeong-ho.kim@kt.com   | bastion05  | 3.38.210.174   | edu-topic05  | edu-topic05-cg |      |
-|  6   | 김나경 | 플랫폼CoE팀         | na_kyoung.kim@kt.com   | bastion06  | 13.125.47.12   | edu-topic06  | edu-topic06-cg |      |
-|  7   | 김무한 | 미디어서비스팀      | moohan.kim@kt.com      | bastion07  | 3.39.236.40    | edu-topic07  | edu-topic07-cg |      |
-|  8   | 김민수 | 아키텍처팀          | minsu74@kt.com         | bastion08  | 15.165.18.187  | edu-topic08  | edu-topic08-cg |      |
-|  9   | 김지훈 | 경영인프라팀        | jihun094.kim@kt.com    | bastion09  | 43.203.201.58  | edu-topic09  | edu-topic09-cg |      |
-|  10  | 박승섭 | 데이터DX개발팀      | seungseob.park@kt.com  | bastion10  | 54.180.134.132 | edu-topic10  | edu-topic10-cg | 미참 |
-|  11  | 백연희 | 플랫폼CoE팀         | yh.baek@kt.com         | bastion11  | 43.203.121.58  | edu-topic11  | edu-topic11-cg |      |
-|  12  | 양동기 | 환경DX플랫폼팀      | dong_gi.yang@kt.com    | bastion12  | 3.35.19.209    | edu-topic12  | edu-topic12-cg |      |
-|  13  | 여준영 | 미디어플랫폼팀      | junyeong.yeo@kt.com    | bastion13  | 3.38.96.136    | edu-topic13  | edu-topic13-cg |      |
-|  14  | 우예원 | 플랫폼CoE팀         | yw.woo@kt.com          | bastion14  | 3.34.193.130   | edu-topic14  | edu-topic14-cg |      |
-|  15  | 유광선 | 플랫폼컨설팅팀      | ksyoo@kt.com           | bastion15  | 43.201.14.234  | edu-topic15  | edu-topic15-cg |      |
-|  16  | 이은석 | 에듀DX플랫폼팀      | es.lee@kt.com          | bastion16  | 54.180.151.230 | edu-topic16  | edu-topic16-cg |      |
-|  17  | 이화경 | DX인프라팀          | hwakyung.lee@kt.com    | bastion17  | 54.180.151.179 | edu-topic17  | edu-topic17-cg |      |
-|  18  | 장진호 | 데이터DX개발팀      | jinhoss.jang@kt.com    | bastion18  | 43.202.68.150  | edu-topic18  | edu-topic18-cg |      |
-|  19  | 조민정 | 고객DX솔루션팀      | hs-cho@kt.com          | bastion19  | 3.35.170.55    | edu-topic19  | edu-topic19-cg |      |
-|  20  | 조은하 | 플랫폼인프라팀      | eunha.cho@kt.com       | bastion20  | 13.124.191.13  | edu-topic20  | edu-topic20-cg |      |
-|  21  | 최정우 | SI개발팀            | jwoo.choi@kt.com       | bastion21  | 13.125.3.197   | edu-topic21  | edu-topic21-cg |      |
+|  NO  | 담당자 | 소속                | email          | VM  Server | VM  Server IP | kafka  Topic | kafka  Group   | 비고 |
+| :--: | :----: | :------------------ | -------------- | ---------- | ------------- | ------------ | -------------- | ---- |
+|  1   | 송양종 | ICIS Tr 아키텍처팀  | yj.song@kt.com | bastion01  | 34.xx.xx.xx   | edu-topic01  | edu-topic01-cg |      |
+|  2   | 송양종 | ICIS  Tr 아키텍처팀 | yj.song@kt.com | bastion02  |               | edu-topic02  | edu-topic02-cg |      |
+|  3   |        |                     |                |            |               |              |                |      |
+|      |        |                     |                |            |               |              |                |      |
+|      |        |                     |                |            |               |              |                |      |
+|      |        |                     |                |            |               |              |                |      |
+|      |        |                     |                |            |               |              |                |      |
+|      |        |                     |                |            |               |              |                |      |
+|      |        |                     |                |            |               |              |                |      |
+|      |        |                     |                |            |               |              |                |      |
+|      |        |                     |                |            |               |              |                |      |
+|      |        |                     |                |            |               |              |                |      |
+|      |        |                     |                |            |               |              |                |      |
+|      |        |                     |                |            |               |              |                |      |
+|      |        |                     |                |            |               |              |                |      |
+|      |        |                     |                |            |               |              |                |      |
+|      |        |                     |                |            |               |              |                |      |
+|      |        |                     |                |            |               |              |                |      |
+|      |        |                     |                |            |               |              |                |      |
+|      |        |                     |                |            |               |              |                |      |
+|      |        |                     |                |            |               |              |                |      |
 
 
 
