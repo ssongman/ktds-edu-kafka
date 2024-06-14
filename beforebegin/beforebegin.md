@@ -8,7 +8,7 @@
 
 우리는 Kubernetes 기반에 Kafka / Redis 설치하는 실습을 진행할 것이다.
 
-Cloud 환경에 Kubernetes가 설치된 VM 이 개인별 하나씩 준비되어 있어 있다.
+Cloud 환경에 Kubernetes가 설치된 VM 이 개인별 하나씩 준비되어 있다.
 
 그러므로 개인 PC에서 VM 접속할 수 있는 Terminal 을 설치해야 한다.
 
@@ -275,36 +275,37 @@ C:\githubrepo\ktds-edu-kafka\README.md
 
 
 
-## 3.2 ssh (Mobaxterm) 실행
+## 3.2 SSH (Mobaxterm) 실행
 
 Mobaxterm 을 실행하여 VM 접속정보를 위한 신규 session 을 생성하자.
 
 - 메뉴
-  - Session  : 상단 좌측아이콘 클릭
+  - session  : 상단 좌측아이콘 클릭
 
   - SSH : 팝업창 상단 아이콘 클릭
 
-![image-20240225214646366](beforebegin.assets/image-20240225214646366.png)
+
+
+![image-20240609163324386](./beforebegin.assets/image-20240609163324386.png)
 
 
 
-빨간색 영역을 주의해서 입력한 후 접속하자.
+빨간색 영역을 주의해서 입력한후 접속하자.
 
 
 
 - Romote host
   - 개인별로 접근 주소가 다르므로 위 수강생별  VM  Server IP 주소를 확인하자.
-  - ex)  bastion02 : 3.38.104.137
+  - ex)  bastion03 : 4.217.xxx.117  (각자 자신 VM IP 를 입력해야 함)
 
 - User
   - Specify username 에 Check
-  - User : ubuntu 입력
+  - User : ktdseduuser입력
+    - Password 는 별도 공지
 
 - Port : 22
-- Advanced SSH settings
-  - Use private key
-    - C:\githubrepo\ktds-edu-kafka\vm-key\ktdsedu-employee.pem
-    - 교육자료 Download 되는 자료에 위 key가 포함되어 있음
+
+
 
 
 
@@ -322,7 +323,6 @@ Mobaxterm 을 실행하여 VM 접속정보를 위한 신규 session 을 생성�
 # 최신 데이터를 한번 더 받는다.
 $ cd ~/githubrepo/ktds-edu-kafka
 $ git pull
-
 
 ```
 

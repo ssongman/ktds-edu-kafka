@@ -1,9 +1,5 @@
 
 
-
-
-
-
 # < Bastion Server Setup >
 
 

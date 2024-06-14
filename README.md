@@ -1,4 +1,4 @@
-# Kakfa on Kubernetes
+# Kafka on Kubernetes
 
 > Container 기반 Kafka 교육자료 !!
 
@@ -8,7 +8,9 @@
 
 
 
-# 1. 시작전에 ( [가이드 문서 보기](beforebegin/beforebegin.md) )
+
+
+# 1. 시작전에 ([바로가기](beforebegin/beforebegin.md) )
 
 ## 1) 실습 환경 준비
 
@@ -19,7 +21,7 @@
 
 
 
-# 2. Kafka 개념 ( [가이드 문서 보기](kafka/1.kafka-개념.md) )
+# 2. Kafka 개념 ([바로가기](kafka/1.kafka-개념.md) )
 
 ## 1) Kafka 개요
 
@@ -48,7 +50,7 @@
 
 
 
-# 3. Kafka Hands-in ( [가이드 문서 보기](kafka/2.kafka-hands-in.md) )
+# 3. Kafka Hands-in ([바로가기](kafka/2.kafka-hands-in.md) )
 
 ## 1) Strimzi
 
@@ -88,7 +90,7 @@
 
 
 
-# 4. Kafka Hands-in 2 ( [가이드 문서 보기](kafka/3.kafka-hands-in2.md) )
+# 4. Kafka Hands-in 2 ([바로가기](kafka/3.kafka-hands-in2.md) )
 
 ## 1) 테스트 환경준비
 
@@ -119,7 +121,7 @@
 
 
 
-# 별첨. Cloud Setup ( [가이드 문서 보기](cloud-setup/cloud-setup.md) )
+# 별첨. Cloud Setup ([바로가기](cloud-setup/cloud-setup.md) )
 
 ## 1) Bastion Server Setup
 
