@@ -6,7 +6,7 @@ metadata:
   labels:
     app: strimzi
 spec:
-  host: grafana.kafka.43.203.62.69.nip.io
+  host: grafana.kafka.20.249.174.177.nip.io
   to:
     kind: Service
     name: grafana
