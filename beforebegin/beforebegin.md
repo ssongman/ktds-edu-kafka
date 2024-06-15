@@ -127,7 +127,7 @@ Java HotSpot(TM) 64-Bit Server VM (build 17.0.10+11-LTS-240, mixed mode, sharing
 
 - 다운로드 주소
 
-  - 링크: https://cdn.spring.io/spring-tools/release/STS4/4.21.1.RELEASE/dist/e4.30/spring-tool-suite-4-4.21.1.RELEASE-e4.30.0-win32.win32.x86_64.self-extracting.jar
+  - 링크: https://cdn.spring.io/spring-tools/release/STS4/4.23.0.RELEASE/dist/e4.32/spring-tool-suite-4-4.23.0.RELEASE-e4.32.0-win32.win32.x86_64.self-extracting.jar
 
 - 설치
   - 적당한 위치에 압축 해제 하자.
@@ -140,14 +140,14 @@ Java HotSpot(TM) 64-Bit Server VM (build 17.0.10+11-LTS-240, mixed mode, sharing
 
         - ```sh
           # 압축해제 전
-          $ dir      .
+          $ dir
           2024-02-24  오후 01:00       648,346,802 spring-tool-suite-4-4.21.1.RELEASE-e4.30.0-win32.win32.x86_64.self-extracting.jar
           
           # 압축해제
           $ java -jar spring-tool-suite-4-4.21.1.RELEASE-e4.30.0-win32.win32.x86_64.self-extracting.jar
           
           # 압축해제 후
-          $ dir      .
+          $ dir
           2024-02-24  오후 01:00       648,346,802 spring-tool-suite-4-4.21.1.RELEASE-e4.30.0-win32.win32.x86_64.self-extracting.jar
           2024-02-24  오후 01:02    <DIR>          sts-4.21.1.RELEASE
           ```
@@ -156,7 +156,7 @@ Java HotSpot(TM) 64-Bit Server VM (build 17.0.10+11-LTS-240, mixed mode, sharing
 
   - Workspace 설정
     - STS 시작시 위치 변경
-    - 위치 : C:\workspace\sts-4.21.1 
+    - 위치 : C:\workspace\sts-4.23.0 
 
   - JRE 설정
     - STS 메뉴 :  [Window] - [Prefernces] - [Java] - [Installed JREs]
@@ -201,17 +201,16 @@ $ cd /c/githubrepo
 
 $ git clone https://github.com/ssongman/ktds-edu-kafka.git
 Cloning into 'ktds-edu-kafka'...
-remote: Enumerating objects: 181, done.
-remote: Counting objects: 100% (181/181), done.
-remote: Compressing objects: 100% (119/119), done.
-remote: Total 181 (delta 33), reused 175 (delta 30), pack-reused 0
-Receiving objects: 100% (181/181), 7.84 MiB | 6.34 MiB/s, done.
-Resolving deltas: 100% (33/33), done.
-
+remote: Enumerating objects: 786, done.
+remote: Counting objects: 100% (283/283), done.
+remote: Compressing objects: 100% (202/202), done.
+remote: Total 786 (delta 188), reused 160 (delta 79), pack-reused 503
+Receiving objects: 100% (786/786), 9.43 MiB | 7.67 MiB/s, done.
+Resolving deltas: 100% (471/471), done.
 
 
 $ ll /c/githubrepo
-drwxr-xr-x 1 ssong 197609 0 Feb 24 12:02 ktds-edu-kafka/
+drwxr-xr-x 1 송양종 197121 0 Jun 15 23:03 ktds-edu-kafka/
 
 ```
 
