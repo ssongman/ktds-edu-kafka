@@ -108,9 +108,9 @@ java 17이 설치되어 있지 않은 경우에만 수행한다.
 # CMD 명령 프롬프트 windows에서 ...
 
 C:\Users\ssong>java -version
-openjdk version "17.0.5" 2022-10-18
-OpenJDK Runtime Environment Temurin-17.0.5+8 (build 17.0.5+8)
-OpenJDK 64-Bit Server VM Temurin-17.0.5+8 (build 17.0.5+8, mixed mode, sharing)
+java version "17.0.10" 2024-01-16 LTS
+Java(TM) SE Runtime Environment (build 17.0.10+11-LTS-240)
+Java HotSpot(TM) 64-Bit Server VM (build 17.0.10+11-LTS-240, mixed mode, sharing)
 
 ```
 
