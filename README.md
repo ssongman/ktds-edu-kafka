@@ -25,7 +25,7 @@
 
 ## 1) Kafka 개요
 
-* kafka 개요와 특징확인
+* kafka 개요와 특징
 
 ## 2) Kafka 기본
 
@@ -118,6 +118,17 @@
 * Auto / Manual Commit
 
 
+
+
+
+
+
+# 별첨. K9s 활용한 Cluster 관리 ([바로가기](./k9s/K9s.md))  
+
+* K9s의 주요 기능 및 장점
+* K9S 설치 및 기본화면 이해
+* K9s 주요 기능 실습
+  * deploy, svc, pod, xray 등
 
 
 
