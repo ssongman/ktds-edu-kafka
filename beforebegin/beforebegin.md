@@ -276,16 +276,16 @@ C:\githubrepo\ktds-edu-kafka\README.md
 | 3    | 송양종 | AX성장전략팀       | 강사3               | ke-bastion03 | 4.217.238.198 | edu-topic03 | edu-topic03-cg |
 | 11   | 김종원 | 융합데이터플랫폼팀 | jong.won.kim@kt.com | ke-bastion11 | 4.217.234.117 | edu-topic11 | edu-topic11-cg |
 | 12   | 김주신 | ICIS Tr 아키텍처팀 | joosin.kim@kt.com   | ke-bastion12 | 4.230.4.219   | edu-topic12 | edu-topic12-cg |
-| 13   | 김현진 | 고객인프라팀       | kim.hyun-jin@kt.com | ke-bastion13 | 4.230.4.237   | edu-topic13 | edu-topic11-cg |
-| 14   | 박서희 | ICIS Tr 아키텍처팀 | seohui.park@kt.com  | ke-bastion14 | 4.230.4.140   | edu-topic14 | edu-topic12-cg |
-| 15   | 박세미 | 오픈소스인프라팀   | semipark@kt.com     | ke-bastion15 | 20.41.80.190  | edu-topic15 | edu-topic11-cg |
-| 16   | 박재영 | 미디어서비스팀     | jy3250.park@kt.com  | ke-bastion16 | 52.231.93.204 | edu-topic16 | edu-topic12-cg |
-| 17   | 백상열 | ICIS Tr 아키텍처팀 | sy44.baek@kt.com    | ke-bastion17 | 52.231.90.102 | edu-topic17 | edu-topic11-cg |
-| 18   | 이돈민 | ICIS Tr 고객팀     | money.min@kt.com    | ke-bastion18 | 20.41.84.138  | edu-topic18 | edu-topic12-cg |
-| 19   | 이민재 | B2C CRM팀          | minjae.lee@kt.com   | ke-bastion19 | 52.231.89.73  | edu-topic19 | edu-topic11-cg |
-| 20   | 이민주 | 전략운영혁신팀     | min_ju.lee@kt.com   | ke-bastion20 | 20.39.204.70  | edu-topic20 | edu-topic12-cg |
-| 21   | 이선민 | B2C CRM팀          | sun.lee@kt.com      | ke-bastion21 | 52.231.88.161 | edu-topic21 | edu-topic11-cg |
-| 22   | 임성식 | ICIS Tr 빌링팀     | sslim@kt.com        | ke-bastion22 | 52.231.90.205 | edu-topic22 | edu-topic12-cg |
+| 13   | 박서희 | ICIS Tr 아키텍처팀 | seohui.park@kt.com  | ke-bastion13 | 4.230.4.237   | edu-topic13 | edu-topic11-cg |
+| 14   | 박세미 | 오픈소스인프라팀   | semipark@kt.com     | ke-bastion14 | 4.230.4.140   | edu-topic14 | edu-topic12-cg |
+| 15   | 박재영 | 미디어서비스팀     | jy3250.park@kt.com  | ke-bastion15 | 20.41.80.190  | edu-topic15 | edu-topic11-cg |
+| 16   | 백상열 | ICIS Tr 아키텍처팀 | sy44.baek@kt.com    | ke-bastion16 | 52.231.93.204 | edu-topic16 | edu-topic12-cg |
+| 17   | 이돈민 | ICIS Tr 고객팀     | money.min@kt.com    | ke-bastion17 | 52.231.90.102 | edu-topic17 | edu-topic11-cg |
+| 18   | 이민재 | B2C CRM팀          | minjae.lee@kt.com   | ke-bastion18 | 20.41.84.138  | edu-topic18 | edu-topic12-cg |
+| 19   | 이민주 | 전략운영혁신팀     | min_ju.lee@kt.com   | ke-bastion19 | 52.231.89.73  | edu-topic19 | edu-topic11-cg |
+| 20   | 이선민 | B2C CRM팀          | sun.lee@kt.com      | ke-bastion20 | 20.39.204.70  | edu-topic20 | edu-topic12-cg |
+| 21   |        |                    |                     | ke-bastion21 | 52.231.88.161 | edu-topic21 | edu-topic11-cg |
+| 22   |        |                    |                     | ke-bastion22 | 52.231.90.205 | edu-topic22 | edu-topic12-cg |
 | 23   |        |                    |                     | ke-bastion23 | 52.231.93.101 | edu-topic23 | edu-topic11-cg |
 
 
