@@ -14,20 +14,28 @@
 
 ```sh
 # root 권한으로 수행
-$ su
+$ sudo -s
 
-$ curl -sfL https://get.k3s.io | sh -s - --write-kubeconfig-mode 644
 
-or
+# k3s 설치
+$ curl -sfL https://get.k3s.io | sh -s - server \
+    --write-kubeconfig-mode 644 \
+    --cluster-cidr 10.11.0.0/16 \
+    --service-cidr 10.12.0.0/16
 
-$ curl -sfL https://get.k3s.io | sh -
 
-# 확인
+# 확인1
 $ kubectl version
 WARNING: This version information is deprecated and will be replaced with the output from kubectl version --short.  Use --output=yaml|json to get the full version.
 Client Version: version.Info{Major:"1", Minor:"26", GitVersion:"v1.26.5+k3s1", GitCommit:"7cefebeaac7dbdd0bfec131ea7a43a45cb125354", GitTreeState:"clean", BuildDate:"2023-05-27T00:05:40Z", GoVersion:"go1.19.9", Compiler:"gc", Platform:"linux/amd64"}
 Kustomize Version: v4.5.7
 Server Version: version.Info{Major:"1", Minor:"26", GitVersion:"v1.26.5+k3s1", GitCommit:"7cefebeaac7dbdd0bfec131ea7a43a45cb125354", GitTreeState:"clean", BuildDate:"2023-05-27T00:05:40Z", GoVersion:"go1.19.9", Compiler:"gc", Platform:"linux/amd64"}
+
+
+
+# 확인2
+$ systemctl status k3s.service
+$ journalctl -xeu k3s.service
 
 
 # IP/ token 확인
@@ -39,8 +47,6 @@ K10f74ce1e1f309271e78114c63d51d5936249e3d379faf1c5c7b2269218f2f9220::server:459b
 $ kubectl get nodes -o wide
 NAME        STATUS   ROLES                  AGE   VERSION        INTERNAL-IP   EXTERNAL-IP   OS-IMAGE             KERNEL-VERSION    CONTAINER-RUNTIME
 bastion03   Ready    control-plane,master   47s   v1.26.5+k3s1   10.158.0.29   <none>        Ubuntu 22.04.2 LTS   5.19.0-1022-gcp   containerd://1.7.1-k3s1
-
-
 ```
 
 
@@ -53,7 +59,7 @@ k3s 를 설치하면 /etc/rancher/k3s/k3s.yaml 에 정보가 존재하므로 이
 
 ```sh
 ## root 로 실행
-$ su
+$ sudo -s
 
 $ ll /etc/rancher/k3s/k3s.yaml
 -rw------- 1 root root 2961 May 14 03:23 /etc/rancher/k3s/k3s.yaml
@@ -92,6 +98,13 @@ $ kubectl version
 Client Version: version.Info{Major:"1", Minor:"26", GitVersion:"v1.26.5+k3s1", GitCommit:"7cefebeaac7dbdd0bfec131ea7a43a45cb125354", GitTreeState:"clean", BuildDate:"2023-05-27T00:05:40Z", GoVersion:"go1.19.9", Compiler:"gc", Platform:"linux/amd64"}
 Kustomize Version: v4.5.7
 Server Version: version.Info{Major:"1", Minor:"26", GitVersion:"v1.26.5+k3s1", GitCommit:"7cefebeaac7dbdd0bfec131ea7a43a45cb125354", GitTreeState:"clean", BuildDate:"2023-05-27T00:05:40Z", GoVersion:"go1.19.9", Compiler:"gc", Platform:"linux/amd64"}
+---
+#2024.06.15
+Client Version: v1.30.1
+Kustomize Version: v5.0.4-0.20230601165947-6ce0bf390ce3
+Server Version: v1.29.5+k3s1
+
+
 
 ```
 
@@ -99,114 +112,9 @@ root 권한자가 아닌 다른 사용자도 사용하려면 위와 동일하게
 
 
 
-## 3) Helm Install
-
-### (1) helm client download
-
-```sh
-# 개인 PC WSL
-# root 권한으로 수행
-$ su
 
 
-## 임시 디렉토리를 하나 만들자.
-$ mkdir -p ~/temp/helm/
-  cd ~/temp/helm/
-
-# 다운로드
-$ wget https://get.helm.sh/helm-v3.12.0-linux-amd64.tar.gz
-
-# 압축해지
-$ tar -zxvf helm-v3.12.0-linux-amd64.tar.gz
-
-# 확인
-$ ll linux-amd64/helm
--rwxr-xr-x 1 1001 docker 50597888 May 11 01:35 linux-amd64/helm*
-
-# move
-$ mv linux-amd64/helm /usr/local/bin/helm
-
-# 확인
-$ ll /usr/local/bin/helm*
--rwxr-xr-x 1 1001 docker 50597888 May 11 01:35 /usr/local/bin/helm*
-
-
-# 일반유저로 복귀
-$ exit
-
-
-# 확인
-$ helm version
-version.BuildInfo{Version:"v3.12.0", GitCommit:"c9f554d75773799f72ceef38c51210f1842a1dea", GitTreeState:"clean", GoVersion:"go1.20.3"}
-
-
-$ helm -n yjsong ls
-NAME    NAMESPACE       REVISION        UPDATED STATUS  CHART   APP VERSION
-
-```
-
-
-
-### [참고] bitnami repo 추가
-
-- 유명한 charts 들이모여있는 bitnami repo 를 추가해 보자.
-
-```sh
-# test# add stable repo
-$ helm repo add bitnami https://charts.bitnami.com/bitnami
-
-$ helm repo list
-
-$ helm search repo bitnami
-# bitnami 가 만든 다양한 오픈소스 샘플을 볼 수 있다.
-NAME                                            CHART VERSION   APP VERSION     DESCRIPTION
-bitnami/airflow                                 14.1.3          2.6.0           Apache Airflow is a tool to express and execute...
-bitnami/apache                                  9.5.3           2.4.57          Apache HTTP Server is an open-source HTTP serve...
-bitnami/appsmith                                0.3.2           1.9.19          Appsmith is an open source platform for buildin...
-bitnami/argo-cd                                 4.7.2           2.6.7           Argo CD is a continuous delivery tool for Kuber...
-bitnami/argo-workflows                          5.2.1           3.4.7           Argo Workflows is meant to orchestrate Kubernet...
-bitnami/aspnet-core                             4.1.1           7.0.5           ASP.NET Core is an open-source framework for we...
-bitnami/cassandra                               10.2.2          4.1.1           Apache Cassandra is an open source distributed ...
-bitnami/consul                                  10.11.2         1.15.2          HashiCorp Consul is a tool for discovering and ...
-...
-
-$ kubectl create ns yjsong
-
-# 설치테스트(샘플: nginx)
-$ helm -n yjsong install nginx bitnami/nginx
-
-$ kubectl -n yjsong get all
-NAME                         READY   STATUS              RESTARTS   AGE
-pod/nginx-68c669f78d-wgnp4   0/1     ContainerCreating   0          10s
-
-NAME            TYPE           CLUSTER-IP    EXTERNAL-IP   PORT(S)        AGE
-service/nginx   LoadBalancer   10.43.197.4   <pending>     80:32754/TCP   10s
-
-NAME                    READY   UP-TO-DATE   AVAILABLE   AGE
-deployment.apps/nginx   0/1     1            0           10s
-
-NAME                               DESIRED   CURRENT   READY   AGE
-replicaset.apps/nginx-68c669f78d   1         1         0       10s
-
-# 간단하게 nginx 에 관련된 deployment / service / pod 들이 설치되었다.
-
-
-# 설치 삭제
-$ helm -n yjsong delete nginx
-
-$ kubectl -n yjsong  get all
-No resources found in yjsong namespace.
-```
-
-
-
-
-
-
-
-
-
-## 4) alias 정의
+## 3) alias 정의
 
 ```sh
 # user 권한으로
@@ -241,46 +149,7 @@ source ~/env
 
 
 
-
-
-## 5) K9S Setup
-
-kubernetes Cluster를 관리하기 위한 kubernetes cli tool 을 설치해 보자.
-
-```sh
-# root 권한으로
-
-$ mkdir ~/temp/k9s
-  cd  ~/temp/k9s
-
-$ wget https://github.com/derailed/k9s/releases/download/v0.27.4/k9s_Linux_amd64.tar.gz
-$ tar -xzvf k9s_Linux_amd64.tar.gz
-
-$ ll
--rw-r--r-- 1  501 staff    10174 Mar 22  2021 LICENSE
--rw-r--r-- 1  501 staff    35702 May  7 16:54 README.md
--rwxr-xr-x 1  501 staff 60559360 May  7 17:01 k9s*
--rw-r--r-- 1 root root  18660178 May  7 17:03 k9s_Linux_amd64.tar.gz
-
-$ cp ./k9s /usr/local/bin/
-
-$ ll /usr/local/bin/
--rwxr-xr-x  1 root root 60559360 May 15 13:05 k9s*
-
-
-# 일반 사용자로 전환
-$ exit 
-
-# 실행
-$ k9s
-
-```
-
-
-
-
-
-## 6) Clean up
+## 4) Clean up
 
 ### (1) node 제거
 
@@ -372,10 +241,13 @@ $ sh /usr/local/bin/k3s-killall.sh
 
 ```sh
 # root 로
+$ sudo -s
 
 $ apt update
 
-$ apt install vim
+$ apt install vim -y
+$ vim --version
+VIM - Vi IMproved 8.2 (2019 Dec 12, compiled Oct 16 2023 18:15:38)
 
 
 $ apt install tree
@@ -387,25 +259,332 @@ $ apt install net-tools
 
 
 $ apt install netcat
+$ nc -h
+OpenBSD netcat (Debian patchlevel 1.218-4ubuntu1)
 
 
 $ apt install unzip
+$ unzip
+UnZip 6.00 of 20 April 2009, by Debian. Original by Info-ZIP.
+
+
 
 
 $ apt install git
- 
-
-
-$ apt install podman
-$ podman version
-Version:      3.4.2
-API Version:  3.4.2
-Go Version:   go1.15.2
-Built:        Thu Jan  1 09:00:00 1970
-OS/Arch:      linux/amd64
+$ git version
+git version 2.34.1
 
 
 ```
+
+
+
+
+
+## 2) helm install
+
+
+
+#### helm client download
+
+```sh
+# 개인 PC WSL
+# root 권한으로 수행
+$ sudo -s
+
+
+## 임시 디렉토리를 하나 만들자.
+$ mkdir -p ~/temp/helm/
+  cd ~/temp/helm/
+
+# release 확인
+# https://github.com/helm/helm/releases
+
+# 다운로드
+$ wget https://get.helm.sh/helm-v3.15.0-linux-amd64.tar.gz
+
+# 압축해지
+$ tar -zxvf helm-v3.15.0-linux-amd64.tar.gz
+
+# 확인
+$ ll linux-amd64/helm
+-rwxr-xr-x 1 1001 127 52486296 May 15 20:29 linux-amd64/helm*
+
+
+# move
+$ mv linux-amd64/helm /usr/local/bin/helm
+
+# 확인
+$ ll /usr/local/bin/helm*
+-rwxr-xr-x 1 1001 127 52486296 May 15 20:29 /usr/local/bin/helm*
+
+
+
+# 일반유저로 복귀
+$ exit
+
+
+# 확인
+$ helm version
+version.BuildInfo{Version:"v3.12.0", GitCommit:"c9f554d75773799f72ceef38c51210f1842a1dea", GitTreeState:"clean", GoVersion:"go1.20.3"}
+---
+version.BuildInfo{Version:"v3.15.0-rc.2", GitCommit:"c4e37b39dbb341cb3f716220df9f9d306d123a58", GitTreeState:"clean", GoVersion:"go1.22.3"}
+
+
+$ helm -n yjsong ls
+NAME    NAMESPACE       REVISION        UPDATED STATUS  CHART   APP VERSION
+```
+
+
+
+#### [참고] bitnami repo 추가
+
+- 유명한 charts 들이모여있는 bitnami repo 를 추가해 보자.
+
+```sh
+# test# add stable repo
+$ helm repo add bitnami https://charts.bitnami.com/bitnami
+
+$ helm repo list
+
+$ helm search repo bitnami
+# bitnami 가 만든 다양한 오픈소스 샘플을 볼 수 있다.
+NAME                                            CHART VERSION   APP VERSION     DESCRIPTION
+bitnami/airflow                                 14.1.3          2.6.0           Apache Airflow is a tool to express and execute...
+bitnami/apache                                  9.5.3           2.4.57          Apache HTTP Server is an open-source HTTP serve...
+bitnami/appsmith                                0.3.2           1.9.19          Appsmith is an open source platform for buildin...
+bitnami/argo-cd                                 4.7.2           2.6.7           Argo CD is a continuous delivery tool for Kuber...
+bitnami/argo-workflows                          5.2.1           3.4.7           Argo Workflows is meant to orchestrate Kubernet...
+bitnami/aspnet-core                             4.1.1           7.0.5           ASP.NET Core is an open-source framework for we...
+bitnami/cassandra                               10.2.2          4.1.1           Apache Cassandra is an open source distributed ...
+bitnami/consul                                  10.11.2         1.15.2          HashiCorp Consul is a tool for discovering and ...
+...
+
+$ kubectl create ns yjsong
+
+# 설치테스트(샘플: nginx)
+$ helm -n yjsong install nginx bitnami/nginx
+
+$ kubectl -n yjsong get all
+NAME                         READY   STATUS              RESTARTS   AGE
+pod/nginx-68c669f78d-wgnp4   0/1     ContainerCreating   0          10s
+
+NAME            TYPE           CLUSTER-IP    EXTERNAL-IP   PORT(S)        AGE
+service/nginx   LoadBalancer   10.43.197.4   <pending>     80:32754/TCP   10s
+
+NAME                    READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/nginx   0/1     1            0           10s
+
+NAME                               DESIRED   CURRENT   READY   AGE
+replicaset.apps/nginx-68c669f78d   1         1         0       10s
+
+# 간단하게 nginx 에 관련된 deployment / service / pod 들이 설치되었다.
+
+
+# 설치 삭제
+$ helm -n yjsong delete nginx
+
+$ kubectl -n yjsong  get all
+No resources found in yjsong namespace.
+```
+
+
+
+
+
+## 3) K9S Setup
+
+kubernetes Cluster를 관리하기 위한 kubernetes cli tool 을 설치해 보자.
+
+```sh
+# root 권한으로
+
+$ sudo -s
+
+$ mkdir -p ~/temp/k9s
+  cd  ~/temp/k9s
+
+#$ wget https://github.com/derailed/k9s/releases/download/v0.27.4/k9s_Linux_amd64.tar.gz
+
+# relese 확인
+# https://github.com/derailed/k9s/releases
+
+$ wget https://github.com/derailed/k9s/releases/download/v0.32.4/k9s_Linux_amd64.tar.gz
+  tar -xzvf k9s_Linux_amd64.tar.gz
+
+$ ll
+-rw-r--r-- 1  501 staff    10174 Mar 22  2021 LICENSE
+-rw-r--r-- 1  501 staff    40905 Mar 20 19:01 README.md
+-rwxr-xr-x 1  501 staff 93470872 Mar 20 19:17 k9s*
+-rw-r--r-- 1 root root  29966459 Mar 20 19:21 k9s_Linux_amd64.tar.gz
+
+
+
+$ cp ./k9s /usr/local/bin/
+
+$ ll /usr/local/bin/
+-rwxr-xr-x  1 root root 60559360 May 15 13:05 k9s*
+
+
+# 일반 사용자로 전환
+$ exit 
+
+# 실행
+$ k9s
+```
+
+
+
+
+
+
+
+## 4) Docker 설치
+
+### 1. 우분투 시스템 패키지 업데이트
+
+```
+sudo apt-get update
+```
+
+
+
+### 2. 필요한 패키지 설치
+
+```
+sudo apt-get install apt-transport-https ca-certificates curl gnupg-agent software-properties-common
+```
+
+
+
+### 3. Docker의 공식 GPG키를 추가
+
+```
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+```
+
+
+
+### 4. Docker의 공식 apt 저장소를 추가
+
+```
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+```
+
+
+
+### 5. 시스템 패키지 업데이트
+
+```
+sudo apt-get update
+```
+
+
+
+### 6. Docker 설치
+
+```
+sudo apt-get install docker-ce docker-ce-cli containerd.io
+```
+
+
+
+### 7. Docker가 설치 확인
+
+#### 7-1 도커 실행상태 확인
+
+```
+sudo systemctl status docker
+```
+
+
+
+#### 7-2 도커 실행
+
+```
+sudo docker run --name hello hello-world
+
+sudo docker rm -f hello
+```
+
+
+
+### 8. Docker 관련 계정 권한 부여
+
+설치후 기본적으로 root 권한만 사용할 수 있다.
+
+```
+# version 확인
+$ docker version
+Client: Docker Engine - Community
+ Version:           24.0.5
+ API version:       1.43
+ Go version:        go1.20.6
+ Git commit:        ced0996
+ Built:             Fri Jul 21 20:35:18 2023
+ OS/Arch:           linux/amd64
+ Context:           default
+permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Get "http://%2Fvar%2Frun%2Fdocker.sock/v1.24/version": dial unix /var/run/docker.sock: connect: permission denied
+```
+
+
+
+권한 변경해 보자.
+
+```
+# docker 관련 계정 권한 부여
+$ sudo usermod -aG docker ktdseduuser
+
+# service 재시작
+$ sudo service docker restart
+
+# 상태확인
+$ sudo service docker status
+```
+
+
+
+재접속 필요
+
+```
+# version 확인
+$ docker version
+
+Client: Docker Engine - Community
+ Version:           26.1.4
+ API version:       1.45
+ Go version:        go1.21.11
+ Git commit:        5650f9b
+ Built:             Wed Jun  5 11:28:57 2024
+ OS/Arch:           linux/amd64
+ Context:           default
+
+Server: Docker Engine - Community
+ Engine:
+  Version:          26.1.4
+  API version:      1.45 (minimum version 1.24)
+  Go version:       go1.21.11
+  Git commit:       de5c9cf
+  Built:            Wed Jun  5 11:28:57 2024
+  OS/Arch:          linux/amd64
+  Experimental:     false
+ containerd:
+  Version:          1.6.33
+  GitCommit:        d2d58213f83a351ca8f528a95fbd145f5654e957
+ runc:
+  Version:          1.1.12
+  GitCommit:        v1.1.12-0-g51d5e94
+ docker-init:
+  Version:          0.19.0
+  GitCommit:        de40ad0
+
+```
+
+
+
+
+
+
 
 
 
@@ -457,28 +636,35 @@ $ alias kkf='kubectl -n kafka'
 $ mkdir -p ~/temp/strimzi
   cd ~/temp/strimzi
 
+
+
 # download
-$ wget https://github.com/strimzi/strimzi-kafka-operator/releases/download/0.39.0/strimzi-0.39.0.zip
+$ wget https://github.com/strimzi/strimzi-kafka-operator/releases/download/0.41.0/strimzi-0.41.0.zip
+
+# $ wget https://github.com/strimzi/strimzi-kafka-operator/releases/download/0.41.0/strimzi-0.39.0.zip
 # $ wget https://github.com/strimzi/strimzi-kafka-operator/releases/download/0.36.1/strimzi-0.36.1.zip
 
 
 $ ll
 -rw-rw-r-- 1 ubuntu ubuntu 5649439 Dec 20 19:54 strimzi-0.39.0.zip
+-rw-rw-r-- 1 song song 5834906 May 13 16:40 strimzi-0.41.0.zip
 
 
-$ unzip strimzi-0.39.0.zip
+
+$ unzip strimzi-0.41.0.zip
 #unzip 이 없으면 설치
 # apt install unzip
 
 
-$ cd  ~/temp/strimzi/strimzi-0.39.0/
+$ cd  ~/temp/strimzi/strimzi-0.41.0/
 
 
 $ ll
--rw-r--r--  1 ubuntu ubuntu 62045 Dec 20 17:14 CHANGELOG.md
-drwxr-xr-x  4 ubuntu ubuntu  4096 Dec 20 17:15 docs/
-drwxr-xr-x 11 ubuntu ubuntu  4096 Dec 20 17:14 examples/
-drwxr-xr-x  8 ubuntu ubuntu  4096 Dec 20 17:14 install/
+-rw-r--r--  1 song song 67269 May 13 15:21 CHANGELOG.md
+drwxr-xr-x  4 song song  4096 May 13 15:23 docs/
+drwxr-xr-x 11 song song  4096 May 13 15:21 examples/
+drwxr-xr-x  8 song song  4096 May 13 15:21 install/
+
 
 ```
 
@@ -496,8 +682,15 @@ drwxr-xr-x  8 ubuntu ubuntu  4096 Dec 20 17:14 install/
 
 
 ```sh
+$ cd  ~/temp/strimzi/strimzi-0.41.0/
 
-$ cd  ~/temp/strimzi/strimzi-0.39.0/
+
+
+$ ll install/strimzi-admin
+
+-rw-r--r-- 1 song song 1003 May 13 15:21 010-ClusterRole-strimzi-admin.yaml
+-rw-r--r-- 1 song song  604 May 13 15:21 020-ClusterRole-strimzi-view.yaml
+
 
 $ kubectl create -f install/strimzi-admin
 
@@ -521,7 +714,7 @@ $ kubectl create -f install/strimzi-admin
   - 그러므로 아래 중 Single namespace 설정에 해당한다.
 
 ```sh
-$ cd  ~/temp/strimzi/strimzi-0.39.0
+$ cd  ~/temp/strimzi/strimzi-0.41.0
 
 $ sed -i 's/namespace: .*/namespace: kafka/' ./install/cluster-operator/*RoleBinding*.yaml
 
@@ -536,7 +729,7 @@ $ sed -i 's/namespace: .*/namespace: kafka/' ./install/cluster-operator/*RoleBin
 - kafka namespace 를 watch 할 수 있는 권한 부여
 
 ```sh
-$ cd  ~/temp/strimzi/strimzi-0.39.0
+$ cd  ~/temp/strimzi/strimzi-0.41.0
 
 # 1) Deploy the CRDs
 $ kubectl -n kafka create -f ./install/cluster-operator/
@@ -558,25 +751,43 @@ kafkatopics.kafka.strimzi.io               2024-02-24T06:48:08Z
 kafkausers.kafka.strimzi.io                2024-02-24T06:48:08Z
 ...
 
+$ kubectl -n kafka get crd | grep strimzi
+kafkabridges.kafka.strimzi.io               2024-06-14T15:52:43Z
+kafkaconnectors.kafka.strimzi.io            2024-06-14T15:52:43Z
+kafkaconnects.kafka.strimzi.io              2024-06-14T15:52:42Z
+kafkamirrormaker2s.kafka.strimzi.io         2024-06-14T15:52:43Z
+kafkamirrormakers.kafka.strimzi.io          2024-06-14T15:52:43Z
+kafkanodepools.kafka.strimzi.io             2024-06-14T15:52:44Z
+kafkarebalances.kafka.strimzi.io            2024-06-14T15:52:44Z
+kafkas.kafka.strimzi.io                     2024-06-14T15:52:42Z
+kafkatopics.kafka.strimzi.io                2024-06-14T15:52:43Z
+kafkausers.kafka.strimzi.io                 2024-06-14T15:52:43Z
+strimzipodsets.core.strimzi.io              2024-06-14T15:52:42Z
+---
+
+
 #  *.*.strimzi.io 라는 CRD 가 생성되었다.
 
 
 # operator 설치 확인
 $ kubectl -n kafka get deploy
 NAME                       READY   UP-TO-DATE   AVAILABLE   AGE
-strimzi-cluster-operator   0/1     1            0           60s
+strimzi-cluster-operator   1/1     1            1           63s
+
 
 
 $ kubectl -n kafka get pod
-NAME                                        READY   STATUS    RESTARTS   AGE
-strimzi-cluster-operator-7bb5468c59-qlb44   1/1     Running   0          74s
+NAME                                       READY   STATUS    RESTARTS   AGE
+strimzi-cluster-operator-97fd6b494-7mf67   1/1     Running   0          70s
+
 
 
 # operator pod log 확인
 $ kubectl -n kafka logs -f deploy/strimzi-cluster-operator
 ...
-2023-06-10 12:48:42 INFO  ClusterOperator:136 - Setting up periodic reconciliation for namespace kafka
-2023-06-10 12:48:42 INFO  Main:208 - Cluster Operator verticle started in namespace kafka without label selector
+2024-02-25 12:14:53 INFO  ClusterOperator:139 - Setting up periodic reconciliation for namespace kafka
+2024-02-25 12:14:53 INFO  Main:206 - Cluster Operator verticle started in namespace kafka without label selector
+2024-02-25 12:14:54 INFO  StrimziPodSetController:560 - Informers are in-sync
 
 # Cluster Operator verticle started  메세지가 나오면 정상설치 완료 
 
@@ -628,7 +839,7 @@ metadata:
   name: my-cluster
 spec:
   kafka:
-    version: 3.6.1
+    version: 3.7.0
     replicas: 3
     authorization:
       type: simple
@@ -649,7 +860,7 @@ spec:
       transaction.state.log.min.isr: 2
       default.replication.factor: 2
       min.insync.replicas: 1
-      inter.broker.protocol.version: "3.6"
+      inter.broker.protocol.version: "3.7"
     storage:
       type: ephemeral
   zookeeper:
@@ -689,28 +900,25 @@ $ kubectl -n kafka  logs -f deploy/strimzi-cluster-operator
 ### (2) Kafka Cluster 확인
 
 ```sh
-
 $ kkf get pod -w
 
 $ kkf get pod
-NAME                                         READY   STATUS    RESTARTS   AGE
-my-cluster-entity-operator-d44f86494-cqp5b   3/3     Running   0          2m4s
-my-cluster-kafka-0                           1/1     Running   0          2m56s
-my-cluster-kafka-1                           1/1     Running   0          2m56s
-my-cluster-kafka-2                           1/1     Running   0          2m56s
-my-cluster-zookeeper-0                       1/1     Running   0          3m39s
-my-cluster-zookeeper-1                       1/1     Running   0          3m38s
-my-cluster-zookeeper-2                       1/1     Running   0          3m38s
-strimzi-cluster-operator-fd6fb56f6-csrr4     1/1     Running   0          23h
+NAME                                       READY   STATUS    RESTARTS   AGE
+my-cluster-kafka-0                         1/1     Running   0          28s
+my-cluster-kafka-1                         1/1     Running   0          28s
+my-cluster-kafka-2                         1/1     Running   0          28s
+my-cluster-zookeeper-0                     1/1     Running   0          72s
+my-cluster-zookeeper-1                     1/1     Running   0          72s
+my-cluster-zookeeper-2                     1/1     Running   0          72s
+strimzi-cluster-operator-97fd6b494-7mf67   1/1     Running   0          15m
 
 # kafka broker 3개와  zookeeper 3개 실행된것을 확인 할 수 있다.
 
 
-
 # Kafka Cluster 확인
 $ kkf get kafka
-NAME         DESIRED KAFKA REPLICAS   DESIRED ZK REPLICAS   READY   WARNINGS
-my-cluster   3                        3                     True
+NAME         DESIRED KAFKA REPLICAS   DESIRED ZK REPLICAS   READY   METADATA STATE   WARNINGS
+my-cluster   3                        3
 
 # kafka Cluster 의 ready 상태가 True 인것을 확인하자.
 
@@ -888,11 +1096,13 @@ $ kubectl -n kafka get secret my-edu-admin -o jsonpath='{.data.password}' | base
 OHN7HzcDIg9dDlF3NIwAoHRCgvP8oFoo
 WEFbBWUYalMFrcd9WLd8vWvsYCq5Mvdu
 boAjdSR2pb8fftkl2r9GgZN4vOO7kby9
+uMtxiTHyRz2fRmtwhUGyyCJAnA5sfgcG
+
+
 
 
 # user/pass 
-## Cloud 기준 : my-user / WEFbBWUYalMFrcd9WLd8vWvsYCq5Mvdu
-## Cloud 기준 : my-edu-admin / boAjdSR2pb8fftkl2r9GgZN4vOO7kby9
+## Cloud 기준 : my-edu-admin / uMtxiTHyRz2fRmtwhUGyyCJAnA5sfgcG -- 2024.06.15
 
 ```
 
@@ -959,22 +1169,24 @@ my-user        my-cluster   scram-sha-512    simple          True
 
   
 
-#### password 확인
+#### password 확인 - ★
 
 ```sh
 $ kubectl -n kafka get secret my-user
 NAME      TYPE     DATA   AGE
-my-user   Opaque   2      28s
+my-user   Opaque   2      21s
+
 
 
 $ kubectl -n kafka get secret my-user -o jsonpath='{.data.password}' | base64 -d
 McUI8xslZvTgp9ApNWygNDLi0cJLblPD
 NYQN3Hn7W2PF4z5faR5LdJws40AXbLPt
 WQOq7MWlytkD6YItgoMRldW1HfCpuASt
+gb4suMZbPenRbdInQFrm1NMvTU9TkykL
+
 
 # user/pass 
-## Cloud 기준 : my-user / NYQN3Hn7W2PF4z5faR5LdJws40AXbLPt
-## Cloud 기준 : my-user / WQOq7MWlytkD6YItgoMRldW1HfCpuASt
+## Cloud 기준 : my-user / gb4suMZbPenRbdInQFrm1NMvTU9TkykL -- 2024.06.15
 
 ```
 
@@ -1028,7 +1240,6 @@ my-edu-admin   my-cluster   scram-sha-512    simple          True
 my-user        my-cluster   scram-sha-512    simple          True
 
 
-
 # Ready 상태가 True인것을 확인하자.
 ```
 
@@ -1046,19 +1257,20 @@ my-user        my-cluster   scram-sha-512    simple          True
 ```sh
 $ kubectl -n kafka get secret edu-user
 NAME       TYPE     DATA   AGE
-edu-user   Opaque   2      21s
-
+edu-user   Opaque   2      34s
 
 
 $ kubectl -n kafka get secret edu-user -o jsonpath='{.data.password}' | base64 -d
 iUfOLiK9LM4QxwTMYnjOQHrG0gJiwQpa
 nxRcaiHkAOi9YhaFcm3zn6STlWyqivCf
 oXTjENLJMvdKV6CbQmU2NX0e87Rezxhc
+STlXElDAbVbntaoeiHv3Z7nPfgrSa1Dw
+
 
 
 
 # user/pass 
-## Cloud 기준 : edu-user / oXTjENLJMvdKV6CbQmU2NX0e87Rezxhc
+## Cloud 기준 : edu-user / STlXElDAbVbntaoeiHv3Z7nPfgrSa1Dw -- 2024.06.15
 
 ```
 
@@ -1195,16 +1407,30 @@ $ kubectl -n kafka apply -f ./kafka/strimzi/topic/11.kafka-topic.yaml
 # topic 생성 확인
 $ kubectl -n kafka get kafkatopic my-topic
 NAME       CLUSTER      PARTITIONS   REPLICATION FACTOR   READY
-my-topic   my-cluster   3            3                    True
+my-topic   my-cluster   3            2                    True
+
 
 ```
 
 
 
-### (3) Topic  상세 확인
+### (3) [참고] Kafka Topic Data Retention
+
+* retention 기간이 만료되었더라도 데이터가 삭제되지는 않음
+* retention 기간 만료되었을때 해당 데이터가 존재하는 segment파일의 status를 보고 Active 가 아닐때만 데이터가 삭제됨
+* 해당 Segment Active 조건은 별도 설정하는 보관주기와 사이즈값을 or 로 판단하게 됨
+* 위 조건에 만족하지 않더라도 연속해서 유입되는 데이터가 없다면 순간적으로 deActive 됨
+* segment.ms 와 segment.bytes 를 적절히 산정하는 것이 중요함
+
+
+
+
+
+
+
+### (4) Topic  상세 확인
 
 ```sh
-
 $ kubectl -n kafka get kafkatopic my-topic -o yaml
 ---
 apiVersion: kafka.strimzi.io/v1beta2
@@ -1213,7 +1439,7 @@ metadata:
   annotations:
     kubectl.kubernetes.io/last-applied-configuration: |
       {"apiVersion":"kafka.strimzi.io/v1beta2","kind":"KafkaTopic","metadata":{"annotations":{},"labels":{"strimzi.io/cluster":"my-cluster"},"name":"my-topic","namespace":"kafka"},"spec":{"config":{"retention.ms":86400000,"segment.bytes":1073741824},"partitions":3,"replicas":2}}
-  creationTimestamp: "2024-02-24T07:11:52Z"
+  creationTimestamp: "2024-06-14T16:15:41Z"
   finalizers:
   - strimzi.io/topic-operator
   generation: 1
@@ -1221,8 +1447,8 @@ metadata:
     strimzi.io/cluster: my-cluster
   name: my-topic
   namespace: kafka
-  resourceVersion: "626120"
-  uid: 9cebaf5f-241d-4f74-8679-003d4154ecb8
+  resourceVersion: "3362499"
+  uid: 1de56005-be77-4cb9-937e-d94ceee4e28c
 spec:
   config:
     retention.ms: 86400000
@@ -1231,11 +1457,13 @@ spec:
   replicas: 2
 status:
   conditions:
-  - lastTransitionTime: "2024-02-24T07:11:53.031100599Z"
+  - lastTransitionTime: "2024-06-14T16:15:42.508311254Z"
     status: "True"
     type: Ready
   observedGeneration: 1
+  topicId: _P-DHBcXR8mhcnGI8w0ZUg
   topicName: my-topic
+
 ---
 
 
@@ -1248,7 +1476,7 @@ status:
 
 
 
-### [참고] ICIS-TR Topic Name 정책
+### (5) [참고] ICIS-TR Topic Name 정책
 
 topiic 명칭을 어떻게 정하는지에 대해서 다양한 시나리오를 생각해 볼 수 있다. 아래 특정 프로젝트의 topic name 정책을 살펴보자.
 
@@ -1279,6 +1507,8 @@ rater-intl-board-delete
 
 
 
+
+
 # 3. Accessing Kafka
 
 
@@ -1294,35 +1524,35 @@ rater-intl-board-delete
 ```sh
 $ kubectl -n kafka get svc
 NAME                          TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)                                        AGE
-my-cluster-kafka-bootstrap    ClusterIP   10.43.36.193   <none>        9091/TCP,9092/TCP,9093/TCP                     7m27s
-my-cluster-kafka-brokers      ClusterIP   None           <none>        9090/TCP,9091/TCP,8443/TCP,9092/TCP,9093/TCP   7m27s
-my-cluster-zookeeper-client   ClusterIP   10.43.185.61   <none>        2181/TCP                                       8m1s
-my-cluster-zookeeper-nodes    ClusterIP   None           <none>        2181/TCP,2888/TCP,3888/TCP                     8m1s
+my-cluster-kafka-bootstrap    ClusterIP   10.43.189.54   <none>        9091/TCP,9092/TCP,9093/TCP                     8m29s
+my-cluster-kafka-brokers      ClusterIP   None           <none>        9090/TCP,9091/TCP,8443/TCP,9092/TCP,9093/TCP   8m29s
+my-cluster-zookeeper-client   ClusterIP   10.43.48.166   <none>        2181/TCP                                       9m14s
+my-cluster-zookeeper-nodes    ClusterIP   None           <none>        2181/TCP,2888/TCP,3888/TCP                     9m14s
 
 
 
 $ kubectl -n kafka get pod
-NAME                                         READY   STATUS    RESTARTS   AGE
-my-cluster-entity-operator-d44f86494-cqp5b   3/3     Running   0          11m
-my-cluster-kafka-0                           1/1     Running   0          12m
-my-cluster-kafka-1                           1/1     Running   0          12m
-my-cluster-kafka-2                           1/1     Running   0          12m
-my-cluster-zookeeper-0                       1/1     Running   0          13m
-my-cluster-zookeeper-1                       1/1     Running   0          13m
-my-cluster-zookeeper-2                       1/1     Running   0          13m
-strimzi-cluster-operator-fd6fb56f6-csrr4     1/1     Running   0          23h
+NAME                                          READY   STATUS    RESTARTS   AGE     IP           NODE          NOMINATED NODE   READINESS GATES
+my-cluster-entity-operator-798fb97bc9-qvd6r   2/2     Running   0          8m23s   10.42.1.75   ke-master02   <none>           <none>
+my-cluster-kafka-0                            1/1     Running   0          8m52s   10.42.1.74   ke-master02   <none>           <none>
+my-cluster-kafka-1                            1/1     Running   0          8m52s   10.42.2.39   ke-master03   <none>           <none>
+my-cluster-kafka-2                            1/1     Running   0          8m52s   10.42.0.62   ke-master01   <none>           <none>
+my-cluster-zookeeper-0                        1/1     Running   0          9m36s   10.42.1.73   ke-master02   <none>           <none>
+my-cluster-zookeeper-1                        1/1     Running   0          9m36s   10.42.2.38   ke-master03   <none>           <none>
+my-cluster-zookeeper-2                        1/1     Running   0          9m36s   10.42.0.61   ke-master01   <none>           <none>
+strimzi-cluster-operator-97fd6b494-7mf67      1/1     Running   0          23m     10.42.1.72   ke-master02   <none>           <none>
 
 
 $ kubectl -n kafka get pod -o wide
 NAME                                          READY   STATUS    RESTARTS   AGE     IP           NODE          NOMINATED NODE   READINESS GATES
-my-cluster-entity-operator-5cc7644697-2fvkc   2/2     Running   0          6m18s   10.42.8.5    worker03      <none>           <none>
-my-cluster-kafka-0                            1/1     Running   0          6m49s   10.42.8.4    worker03      <none>           <none>
-my-cluster-kafka-1                            1/1     Running   0          6m49s   10.42.7.4    worker02      <none>           <none>
-my-cluster-kafka-2                            1/1     Running   0          6m49s   10.42.6.4    worker01      <none>           <none>
-my-cluster-zookeeper-0                        1/1     Running   0          7m23s   10.42.8.3    worker03      <none>           <none>
-my-cluster-zookeeper-1                        1/1     Running   0          7m23s   10.42.7.3    worker02      <none>           <none>
-my-cluster-zookeeper-2                        1/1     Running   0          7m23s   10.42.1.28   master02.c1   <none>           <none>
-strimzi-cluster-operator-7bb5468c59-qlb44     1/1     Running   0          25m     10.42.6.3    worker01      <none>           <none>
+my-cluster-entity-operator-798fb97bc9-qvd6r   2/2     Running   0          8m33s   10.42.1.75   ke-master02   <none>           <none>
+my-cluster-kafka-0                            1/1     Running   0          9m2s    10.42.1.74   ke-master02   <none>           <none>
+my-cluster-kafka-1                            1/1     Running   0          9m2s    10.42.2.39   ke-master03   <none>           <none>
+my-cluster-kafka-2                            1/1     Running   0          9m2s    10.42.0.62   ke-master01   <none>           <none>
+my-cluster-zookeeper-0                        1/1     Running   0          9m46s   10.42.1.73   ke-master02   <none>           <none>
+my-cluster-zookeeper-1                        1/1     Running   0          9m46s   10.42.2.38   ke-master03   <none>           <none>
+my-cluster-zookeeper-2                        1/1     Running   0          9m46s   10.42.0.61   ke-master01   <none>           <none>
+strimzi-cluster-operator-97fd6b494-7mf67      1/1     Running   0          24m     10.42.1.72   ke-master02   <none>           <none>
 
 
 
@@ -1357,8 +1587,8 @@ $ kubectl -n kafka create deploy kafkacat \
 
 # 설치진행 확인
 $ kubectl -n kafka get pod
-NAME                                         READY   STATUS              RESTARTS   AGE
-kafkacat-5b845776c4-c7tmh                     0/1     ContainerCreating   0               4s
+NAME                                          READY   STATUS              RESTARTS   AGE
+kafkacat-f7fccf-j82x8                         0/1     ContainerCreating   0          5s
 
 
 ## READY 상태가 1/1 로 변할때까지 대기...
@@ -1367,8 +1597,6 @@ kafkacat-5b845776c4-c7tmh                     0/1     ContainerCreating   0     
 # pod 내부로 진입( bash 명령 수행)
 $ kubectl -n kafka exec -it deploy/kafkacat -- bash
 [appuser@kafkacat-7648db7f48-wg4hn ~]$
-
-
 
 ```
 
@@ -1397,14 +1625,13 @@ $ winpty kubectl -n kafka exec -it deploy/kafkacat -- bash
 id/pass 가 필요
 
 ```sh
-
 # pod 내부로 진입( bash 명령 수행)
 $ kubectl -n kafka exec -it deploy/kafkacat -- bash
 
 
 export BROKERS=my-cluster-kafka-bootstrap:9092
 export KAFKAUSER=my-user
-export PASSWORD=WQOq7MWlytkD6YItgoMRldW1HfCpuASt        ## 개인별 passwrod 붙여넣자.   위 3.2 KafkaUser 를 참고하자. 
+export PASSWORD=gb4suMZbPenRbdInQFrm1NMvTU9TkykL        ## 개인별 passwrod 붙여넣자.   위 2.2.3 KafkaUser 를 참고하자. 
 export TOPIC=my-topic
 export GROUP=my-topic-group
  
@@ -1424,10 +1651,9 @@ Metadata for all topics (from broker -1: sasl_plaintext://my-cluster-kafka-boots
   broker 1 at my-cluster-kafka-1.my-cluster-kafka-brokers.kafka.svc:9092 (controller)
  1 topics:
   topic "my-topic" with 3 partitions:
-    partition 0, leader 1, replicas: 1,0, isrs: 1,0
-    partition 1, leader 0, replicas: 0,2, isrs: 0,2
-    partition 2, leader 2, replicas: 2,1, isrs: 2,1
-
+    partition 0, leader 0, replicas: 0,2, isrs: 0,2
+    partition 1, leader 2, replicas: 2,1, isrs: 2,1
+    partition 2, leader 1, replicas: 1,0, isrs: 1,0
 
 
 
@@ -1659,14 +1885,13 @@ Type "help", "copyright", "credits" or "license" for more information.
 CLI 환경에서 아래  Python 명령을 하나씩 실행해 보자.
 
 ```python
-
 from kafka import KafkaConsumer
 
 
 # 개인환경으로 변경
 bootstrap_servers='my-cluster-kafka-bootstrap:9092'
 sasl_plain_username='my-user'
-sasl_plain_password='WQOq7MWlytkD6YItgoMRldW1HfCpuASt'             ## 개인별 passwrod 붙여넣자.   위 3.2 KafkaUser 를 참고하자. 
+sasl_plain_password='gb4suMZbPenRbdInQFrm1NMvTU9TkykL'             ## 개인별 passwrod 붙여넣자.   위 3.2 KafkaUser 를 참고하자. 
 topic_name='my-topic' 
 group_id='my-topic-group'
 
@@ -1745,14 +1970,13 @@ Type "help", "copyright", "credits" or "license" for more information.
 internal 에서 접근시에는 인증서가 없는  9092 port 접근이므로 사용되는 protocol은 SASL_PLAINTEXT 이다.CLI 환경에서 아래  Python 명령을 하나씩 실행해 보자.
 
 ```python
-
 from kafka import KafkaProducer
 from time import sleep
 
 # 개인환경으로 변경
 bootstrap_servers='my-cluster-kafka-bootstrap:9092'
 sasl_plain_username='my-user'
-sasl_plain_password='WQOq7MWlytkD6YItgoMRldW1HfCpuASt'             ## 개인별 passwrod 붙여넣자.   위 3.2 KafkaUser 를 참고하자. 
+sasl_plain_password='gb4suMZbPenRbdInQFrm1NMvTU9TkykL'             ## 개인별 passwrod 붙여넣자.   위 3.2 KafkaUser 를 참고하자. 
 topic_name='my-topic'
 
 
@@ -1783,12 +2007,11 @@ for i in range(10000):
 - 대량 발송(성능테스트)
 
 ```python
-
 # 만건 테스트
 import time
 start_time = time.time() # 시작시간
 for i in range(10000):
-    print(i)
+    # print(i)
     producer.send('my-topic', b'{"eventName":"a","num":%d,"title":"a", "writeId":"", "writeName": "", "writeDate":"" }' % i)
 
 end_time = time.time() # 종료시간
@@ -1806,6 +2029,59 @@ print("duration time :", end_time - start_time)  # 현재시각 - 시작시간 =
 
 # 속도 : 약 2,000 TPS
 ```
+
+
+
+* 파일 생성
+
+```sh
+
+
+$ mkdir -p ~/app
+  cd ~/app
+
+$ cat > kafkaPubBig.py
+---
+import time
+from kafka import KafkaProducer
+from time import sleep
+
+# 개인환경으로 변경
+bootstrap_servers='my-cluster-kafka-bootstrap:9092'
+sasl_plain_username='my-user'
+sasl_plain_password='gb4suMZbPenRbdInQFrm1NMvTU9TkykL'             ## 개인별 passwrod 붙여넣자.   위 3.2 KafkaUser 를 참고하자. 
+topic_name='my-topic'
+
+
+producer = KafkaProducer(bootstrap_servers=bootstrap_servers,
+                        security_protocol="SASL_PLAINTEXT",
+                        sasl_mechanism='SCRAM-SHA-512',
+                        sasl_plain_username=sasl_plain_username,
+                        sasl_plain_password=sasl_plain_password)
+
+
+start_time = time.time() # 시작시간
+for i in range(10000):
+    # print(i)
+    producer.send('my-topic', b'{"eventName":"a","num":%d,"title":"a", "writeId":"", "writeName": "", "writeDate":"" }' % i)
+
+end_time = time.time() # 종료시간
+print("duration time :", end_time - start_time)  # 현재시각 - 시작시간 = 실행 시간
+
+---
+
+
+$ python kafkaPubBig.py
+
+
+# 테스트 결과
+# duration time : 4.796786785125732
+# duration time : 3.633896827697754
+
+
+```
+
+
 
 
 
@@ -1848,7 +2124,7 @@ for i in range(10001, 20000):
 
 
 
-### (1) GCP LB 확인
+### (1) Cloud(CSP) LB 확인
 
 #### Node IP 확인
 
@@ -1859,20 +2135,19 @@ for i in range(10001, 20000):
 ```sh
 # GCP Cloud 에서 Load Balancer 셋팅 및 방화벽 설정 수행
 
-43.203.62.69 32100
-43.203.62.69 32200
-43.203.62.69 32201
-43.203.62.69 32202
+20.249.174.177 32100
+20.249.174.177 32200
+20.249.174.177 32201
+20.249.174.177 32202
 
-ubuntu@bastion01:~$ nc -zv 43.203.62.69 32100
-Connection to 43.203.62.69 32100 port [tcp/*] succeeded!
-ubuntu@bastion01:~$ nc -zv 43.203.62.69 32200
-Connection to 43.203.62.69 32200 port [tcp/*] succeeded!
-ubuntu@bastion01:~$ nc -zv 43.203.62.69 32201
-Connection to 43.203.62.69 32201 port [tcp/*] succeeded!
-ubuntu@bastion01:~$ nc -zv 43.203.62.69 32202
-Connection to 43.203.62.69 32202 port [tcp/*] succeeded!
-
+ubuntu@bastion01:~$ nc -zv 20.249.174.177 32100
+Connection to 20.249.174.177 32100 port [tcp/*] succeeded!
+ubuntu@bastion01:~$ nc -zv 20.249.174.177 32200
+Connection to 20.249.174.177 32200 port [tcp/*] succeeded!
+ubuntu@bastion01:~$ nc -zv 20.249.174.177 32201
+Connection to 20.249.174.177 32201 port [tcp/*] succeeded!
+ubuntu@bastion01:~$ nc -zv 20.249.174.177 32202
+Connection to 20.249.174.177 32202 port [tcp/*] succeeded!
 
 ```
 
@@ -1921,13 +2196,13 @@ spec:
           nodePort: 32100
         brokers:
         - broker: 0
-          advertisedHost: my-cluster.kafka.43.203.62.69.nip.io    # LB IP 사용
+          advertisedHost: my-cluster.kafka.20.249.174.177.nip.io    # LB IP 사용
           nodePort: 32200
         - broker: 1
-          advertisedHost: my-cluster.kafka.43.203.62.69.nip.io    # LB IP 사용
+          advertisedHost: my-cluster.kafka.20.249.174.177.nip.io    # LB IP 사용
           nodePort: 32201
         - broker: 2
-          advertisedHost: my-cluster.kafka.43.203.62.69.nip.io    # LB IP 사용
+          advertisedHost: my-cluster.kafka.20.249.174.177.nip.io    # LB IP 사용
           nodePort: 32202
 
 ...
@@ -1948,30 +2223,33 @@ spec:
 # strimzi operator 확인
 $ kubectl -n kafka  logs -f -l name=strimzi-cluster-operator
 $ kubectl -n kafka  logs -f deploy/strimzi-cluster-operator
-2023-06-04 06:07:25 INFO  StrimziPodSetController:313 - Reconciliation #93(watch) StrimziPodSet(kafka/my-cluster-kafka): StrimziPodSet will be reconciled
-2023-06-04 06:07:25 INFO  StrimziPodSetController:349 - Reconciliation #93(watch) StrimziPodSet(kafka/my-cluster-kafka): reconciled
-2023-06-04 06:07:25 INFO  StrimziPodSetController:313 - Reconciliation #94(watch) StrimziPodSet(kafka/my-cluster-kafka): StrimziPodSet will be reconciled
-2023-06-04 06:07:25 INFO  StrimziPodSetController:349 - Reconciliation #94(watch) StrimziPodSet(kafka/my-cluster-kafka): reconciled
-2023-06-04 06:07:26 INFO  StrimziPodSetController:313 - Reconciliation #95(watch) StrimziPodSet(kafka/my-cluster-kafka): StrimziPodSet will be reconciled
-2023-06-04 06:07:26 INFO  StrimziPodSetController:349 - Reconciliation #95(watch) StrimziPodSet(kafka/my-cluster-kafka): reconciled
-2023-06-04 06:07:29 INFO  StrimziPodSetController:313 - Reconciliation #96(watch) StrimziPodSet(kafka/my-cluster-kafka): StrimziPodSet will be reconciled
-2023-06-04 06:07:29 INFO  StrimziPodSetController:349 - Reconciliation #96(watch) StrimziPodSet(kafka/my-cluster-kafka): reconciled
-2023-06-04 06:07:31 INFO  StrimziPodSetController:313 - Reconciliation #97(watch) StrimziPodSet(kafka/my-cluster-kafka): StrimziPodSet will be reconciled
-2023-06-04 06:07:31 INFO  StrimziPodSetController:349 - Reconciliation #97(watch) StrimziPodSet(kafka/my-cluster-kafka): reconciled
+...
+2024-06-14 16:37:09 INFO  StrimziPodSetController:378 - Reconciliation #78(watch) StrimziPodSet(kafka/my-cluster-kafka): StrimziPodSet will be reconciled
+2024-06-14 16:37:09 INFO  StrimziPodSetController:414 - Reconciliation #78(watch) StrimziPodSet(kafka/my-cluster-kafka): reconciled
+2024-06-14 16:37:09 INFO  StrimziPodSetController:378 - Reconciliation #79(watch) StrimziPodSet(kafka/my-cluster-kafka): StrimziPodSet will be reconciled
+2024-06-14 16:37:09 INFO  StrimziPodSetController:414 - Reconciliation #79(watch) StrimziPodSet(kafka/my-cluster-kafka): reconciled
+2024-06-14 16:37:11 INFO  StrimziPodSetController:378 - Reconciliation #80(watch) StrimziPodSet(kafka/my-cluster-kafka): StrimziPodSet will be reconciled
+2024-06-14 16:37:11 INFO  StrimziPodSetController:414 - Reconciliation #80(watch) StrimziPodSet(kafka/my-cluster-kafka): reconciled
+2024-06-14 16:37:17 INFO  StrimziPodSetController:378 - Reconciliation #81(watch) StrimziPodSet(kafka/my-cluster-kafka): StrimziPodSet will be reconciled
+2024-06-14 16:37:17 INFO  StrimziPodSetController:414 - Reconciliation #81(watch) StrimziPodSet(kafka/my-cluster-kafka): reconciled
+2024-06-14 16:37:18 INFO  StrimziPodSetController:378 - Reconciliation #82(watch) StrimziPodSet(kafka/my-cluster-kafka): StrimziPodSet will be reconciled
+2024-06-14 16:37:18 INFO  StrimziPodSetController:414 - Reconciliation #82(watch) StrimziPodSet(kafka/my-cluster-kafka): reconciled
 
 
 # strimzi pod 확인
 $ kubectl -n kafka get pod
-NAME                                         READY   STATUS    RESTARTS   AGE
-kafkacat-686d9c5977-bdsgw                    1/1     Running   0          26m
-my-cluster-entity-operator-d44f86494-cqp5b   3/3     Running   0          39m
-my-cluster-kafka-0                           1/1     Running   0          47s
-my-cluster-kafka-1                           1/1     Running   0          2m41s
-my-cluster-kafka-2                           1/1     Running   0          100s
-my-cluster-zookeeper-0                       1/1     Running   0          40m
-my-cluster-zookeeper-1                       1/1     Running   0          40m
-my-cluster-zookeeper-2                       1/1     Running   0          40m
-strimzi-cluster-operator-fd6fb56f6-csrr4     1/1     Running   0          24h
+NAME                                          READY   STATUS     RESTARTS   AGE
+kafkacat-f7fccf-j82x8                         1/1     Running    0          20m
+my-cluster-entity-operator-798fb97bc9-qvd6r   2/2     Running    0          29m
+my-cluster-kafka-0                            1/1     Running    0          38s
+my-cluster-kafka-1                            1/1     Running    0          29m
+my-cluster-kafka-2                            0/1     Init:0/1   0          4s
+my-cluster-zookeeper-0                        1/1     Running    0          30m
+my-cluster-zookeeper-1                        1/1     Running    0          30m
+my-cluster-zookeeper-2                        1/1     Running    0          30m
+python-5847f48f6c-z4m5t                       1/1     Running    0          15m
+strimzi-cluster-operator-97fd6b494-7mf67      1/1     Running    0          45m
+
 
 # pod들이 재기동 되면서 node port 들이 적용된다.
 # 시간이 다소 소요됨. 약 5분 이내
@@ -1991,18 +2269,19 @@ $ kubectl -n kafka get kafka my-cluster
 NAME         DESIRED KAFKA REPLICAS   DESIRED ZK REPLICAS   READY   WARNINGS
 my-cluster   3                        3                     True
 
+NAME         DESIRED KAFKA REPLICAS   DESIRED ZK REPLICAS   READY   METADATA STATE   WARNINGS
+my-cluster   3                        3                     True    ZooKeeper
+
 
 $ kubectl -n kafka get kafka my-cluster -o yaml
 ...
 status:
 ...
   - addresses:
-    - host: my-cluster.kafka.43.203.62.69.nip.io
+    - host: my-cluster.kafka.20.249.174.177.nip.io
       port: 32100
-    bootstrapServers: my-cluster.kafka.43.203.62.69.nip.io:32100
+    bootstrapServers: my-cluster.kafka.20.249.174.177.nip.io:32100
     name: external
-  observedGeneration: 2
-  operatorLastSuccessfulVersion: 0.39.0
 
 ---
 
@@ -2010,15 +2289,15 @@ status:
 
 
 $ kubectl -n kafka get svc
-NAME                                  TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                                        AGE
-my-cluster-kafka-0                    NodePort    10.43.173.138   <none>        9094:32200/TCP                                 29m
-my-cluster-kafka-1                    NodePort    10.43.250.0     <none>        9094:32201/TCP                                 29m
-my-cluster-kafka-2                    NodePort    10.43.230.147   <none>        9094:32202/TCP                                 29m
-my-cluster-kafka-bootstrap            ClusterIP   10.43.36.193    <none>        9091/TCP,9092/TCP,9093/TCP                     62m
-my-cluster-kafka-brokers              ClusterIP   None            <none>        9090/TCP,9091/TCP,8443/TCP,9092/TCP,9093/TCP   62m
-my-cluster-kafka-external-bootstrap   NodePort    10.43.146.76    <none>        9094:32100/TCP                                 29m
-my-cluster-zookeeper-client           ClusterIP   10.43.185.61    <none>        2181/TCP                                       63m
-my-cluster-zookeeper-nodes            ClusterIP   None            <none>        2181/TCP,2888/TCP,3888/TCP                     63
+NAME                                  TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)                                        AGE
+my-cluster-kafka-0                    NodePort    10.43.87.143   <none>        9094:32200/TCP                                 3m12s
+my-cluster-kafka-1                    NodePort    10.43.106.31   <none>        9094:32201/TCP                                 3m12s
+my-cluster-kafka-2                    NodePort    10.43.83.213   <none>        9094:32202/TCP                                 3m12s
+my-cluster-kafka-bootstrap            ClusterIP   10.43.189.54   <none>        9091/TCP,9092/TCP,9093/TCP                     32m
+my-cluster-kafka-brokers              ClusterIP   None           <none>        9090/TCP,9091/TCP,8443/TCP,9092/TCP,9093/TCP   32m
+my-cluster-kafka-external-bootstrap   NodePort    10.43.64.129   <none>        9094:32100/TCP                                 3m12s
+my-cluster-zookeeper-client           ClusterIP   10.43.48.166   <none>        2181/TCP                                       33m
+my-cluster-zookeeper-nodes            ClusterIP   None           <none>        2181/TCP,2888/TCP,3888/TCP                     33m
 
 
 ```
@@ -2026,10 +2305,10 @@ my-cluster-zookeeper-nodes            ClusterIP   None            <none>        
 - 외부에서 접근시 아래 주소로 cluster내부에 있는 kafka 에 접근 할 수 있다.
 
   ```
-  bootstrap  : my-cluster.kafka.localhost.43.203.62.69.nip.io:32100
-  broker0    : my-cluster.kafka.localhost.43.203.62.69.nip.io:32200
-  broker1    : my-cluster.kafka.localhost.43.203.62.69.nip.io:32201
-  broker2    : my-cluster.kafka.localhost.43.203.62.69.nip.io:32202
+  bootstrap  : my-cluster.kafka.localhost.20.249.174.177.nip.io:32100
+  broker0    : my-cluster.kafka.localhost.20.249.174.177.nip.io:32200
+  broker1    : my-cluster.kafka.localhost.20.249.174.177.nip.io:32201
+  broker2    : my-cluster.kafka.localhost.20.249.174.177.nip.io:32202
   ```
 
 
@@ -2075,10 +2354,12 @@ nc: connect to 10.128.0.35 port 32203 (tcp) failed: Connection refused
 # local pc에서 확인
 
 # port 가 살아 있는지 master01 node 로 connect test 하여 검사해보자.
-$ nc -zv 43.203.62.69 32100
+$ nc -zv 20.249.174.177 32100
+Connection to 20.249.174.177 32100 port [tcp/*] succeeded!
+
 
 # 존재하지 않는 port 는 아래와 같이 refused 된다.
-$ nc -zv 43.203.62.69 32203
+$ nc -zv 20.249.174.177 32203
 nc: connect to 10.128.0.35 port 32203 (tcp) failed: Connection refused
 
 
@@ -2124,20 +2405,19 @@ $ docker exec -it kafkacat bash
 password  와 주소를 확인한 후 변경하자.
 
 ```sh
-
 # docker 내부로 진입( bash 명령 수행)
 $ docker exec -it kafkacat bash
 
-export BROKERS=my-cluster.kafka.43.203.62.69.nip.io:32100,\
-my-cluster.kafka.43.203.62.69.nip.io:32200,\
-my-cluster.kafka.43.203.62.69.nip.io:32201,\
-my-cluster.kafka.43.203.62.69.nip.io:32202
+export BROKERS=my-cluster.kafka.20.249.174.177.nip.io:32100,\
+my-cluster.kafka.20.249.174.177.nip.io:32200,\
+my-cluster.kafka.20.249.174.177.nip.io:32201,\
+my-cluster.kafka.20.249.174.177.nip.io:32202
 
 or
 
-export BROKERS=my-cluster.kafka.43.203.62.69.nip.io:32100
+export BROKERS=my-cluster.kafka.20.249.174.177.nip.io:32100
 export KAFKAUSER=my-user
-export PASSWORD=WQOq7MWlytkD6YItgoMRldW1HfCpuASt        ## passwrod 붙여넣자.   위 3.2 KafkaUser 를 참고하자. 
+export PASSWORD=gb4suMZbPenRbdInQFrm1NMvTU9TkykL        ## passwrod 붙여넣자.   위 3.2 KafkaUser 를 참고하자. 
 export TOPIC=my-topic
 export GROUP=my-topic-group
 
@@ -2151,27 +2431,39 @@ kafkacat -b $BROKERS \
   -X sasl.username=$KAFKAUSER \
   -X sasl.password=$PASSWORD -L
 ---
-Metadata for all topics (from broker -1: sasl_plaintext://my-cluster.kafka.43.203.62.69.nip.io:32100/bootstrap):
+Metadata for all topics (from broker -1: sasl_plaintext://my-cluster.kafka.20.249.174.177.nip.io:32100/bootstrap):
  3 brokers:
-  broker 0 at my-cluster.kafka.43.203.62.69.nip.io:32200
-  broker 2 at my-cluster.kafka.43.203.62.69.nip.io:32202
-  broker 1 at my-cluster.kafka.43.203.62.69.nip.io:32201 (controller)
+  broker 0 at my-cluster.kafka.20.249.174.177.nip.io:32200
+  broker 2 at my-cluster.kafka.20.249.174.177.nip.io:32202
+  broker 1 at my-cluster.kafka.20.249.174.177.nip.io:32201 (controller)
  1 topics:
   topic "my-topic" with 3 partitions:
     partition 0, leader 0, replicas: 0,1,2, isrs: 0,1,2
     partition 1, leader 2, replicas: 2,0,1, isrs: 0,1,2
     partition 2, leader 1, replicas: 1,2,0, isrs: 0,1,2
 ---
-Metadata for all topics (from broker -1: sasl_plaintext://my-cluster.kafka.43.203.62.69.nip.io:32100/bootstrap):
+Metadata for all topics (from broker -1: sasl_plaintext://my-cluster.kafka.20.249.174.177.nip.io:32100/bootstrap):
  3 brokers:
-  broker 0 at my-cluster.kafka.43.203.62.69.nip.io:32200
-  broker 2 at my-cluster.kafka.43.203.62.69.nip.io:32202 (controller)
-  broker 1 at my-cluster.kafka.43.203.62.69.nip.io:32201
+  broker 0 at my-cluster.kafka.20.249.174.177.nip.io:32200
+  broker 2 at my-cluster.kafka.20.249.174.177.nip.io:32202 (controller)
+  broker 1 at my-cluster.kafka.20.249.174.177.nip.io:32201
  1 topics:
   topic "my-topic" with 3 partitions:
     partition 0, leader 1, replicas: 1,0, isrs: 0,1
     partition 1, leader 0, replicas: 0,2, isrs: 0,2
     partition 2, leader 2, replicas: 2,1, isrs: 2,1
+---
+
+Metadata for all topics (from broker -1: sasl_plaintext://my-cluster.kafka.20.249.174.177.nip.io:32100/bootstrap):
+ 3 brokers:
+  broker 0 at my-cluster.kafka.20.249.174.177.nip.io:32200 (controller)
+  broker 2 at my-cluster.kafka.20.249.174.177.nip.io:32202
+  broker 1 at my-cluster.kafka.20.249.174.177.nip.io:32201
+ 1 topics:
+  topic "my-topic" with 3 partitions:
+    partition 0, leader 0, replicas: 0,2, isrs: 0,2
+    partition 1, leader 2, replicas: 2,1, isrs: 2,1
+    partition 2, leader 1, replicas: 1,0, isrs: 0,1
 
 
 # 3개의 brokers 를 확인하자.
@@ -2276,10 +2568,10 @@ $ pip install kafka-python
 $ apt update
   apt install netcat-openbsd
 
-nc -zv my-cluster.kafka.43.203.62.69.nip.io 32100
-nc -zv my-cluster.kafka.43.203.62.69.nip.io 32200
-nc -zv my-cluster.kafka.43.203.62.69.nip.io 32201
-nc -zv my-cluster.kafka.43.203.62.69.nip.io 32202
+nc -zv my-cluster.kafka.20.249.174.177.nip.io 32100
+nc -zv my-cluster.kafka.20.249.174.177.nip.io 32200
+nc -zv my-cluster.kafka.20.249.174.177.nip.io 32201
+nc -zv my-cluster.kafka.20.249.174.177.nip.io 32202
 
 
 ```
@@ -2312,9 +2604,9 @@ CLI 환경에서 아래  Python 명령을 하나씩 실행해 보자.
 from kafka import KafkaConsumer
 
 # 개인환경으로 변경
-bootstrap_servers='my-cluster.kafka.43.203.62.69.nip.io:32100'
+bootstrap_servers='my-cluster.kafka.20.249.174.177.nip.io:32100'
 sasl_plain_username='my-user'
-sasl_plain_password='WQOq7MWlytkD6YItgoMRldW1HfCpuASt'             ## 개인별 passwrod 붙여넣자.   위 3.2 KafkaUser 를 참고하자. 
+sasl_plain_password='gb4suMZbPenRbdInQFrm1NMvTU9TkykL'             ## 개인별 passwrod 붙여넣자.   위 3.2 KafkaUser 를 참고하자. 
 topic_name='my-topic'
 group_id='my-topic-group'
 
@@ -2395,9 +2687,9 @@ from kafka import KafkaProducer
 from time import sleep
 
 # 개인환경으로 변경
-bootstrap_servers='my-cluster.kafka.43.203.62.69.nip.io:32100'
+bootstrap_servers='my-cluster.kafka.20.249.174.177.nip.io:32100'
 sasl_plain_username='my-user'
-sasl_plain_password='WQOq7MWlytkD6YItgoMRldW1HfCpuASt'             ## 개인별 passwrod 붙여넣자.   위 3.2 KafkaUser 를 참고하자. 
+sasl_plain_password='gb4suMZbPenRbdInQFrm1NMvTU9TkykL'             ## 개인별 passwrod 붙여넣자.   위 3.2 KafkaUser 를 참고하자. 
 topic_name='my-topic'
 
 
@@ -2477,7 +2769,7 @@ for i in range(10001, 20000):
 
 
 
-# 3. Strimzi Clean up
+# 4. Strimzi Clean up
 
 Bastion Server 에서의 Strimzi 실습이 완료되었다. 불필요한 리소스 사용을 없애기 위해서 깨끗히 삭제하도록 하자.
 
@@ -2587,7 +2879,7 @@ $ docker ps -a
 
 
 
-# 4. Monitoring(Grafana)
+# 5. Monitoring(Grafana)
 
 모니터링이 필요할 경우 exporter 를 설치후 promtheus와 연동할 수 있다. 
 
@@ -2757,7 +3049,7 @@ $ curl my-cluster-kafka-exporter.kafka.svc/metrics
 
 - openshift 에서 수행시 anyuid 권한이 필요하다.
 
-```
+```sh
 # 권한부여시
 oc adm policy add-scc-to-user    anyuid -z prometheus-server -n kafka
 
@@ -2773,17 +3065,22 @@ oc adm policy remove-scc-from-user anyuid  -z prometheus-server -n kafka
 ```sh
 # repo추가
 $ helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-$ helm repo list
+  helm repo list
+  
 $ helm repo update
 
 
 # 설치전 기설치여부 확인
 $ helm -n kafka list
+NAME    NAMESPACE       REVISION        UPDATED STATUS  CHART   APP VERSION
+
 
 $ helm search repo prometheus
 ...
 prometheus-community/prometheus                         25.13.0         v2.49.1         Prometheus is a monitoring system and time seri...
 ...
+prometheus-community/prometheus                         25.21.0         v2.52.0         Prometheus is a monitoring system and time seri...
+
 
 
 
@@ -2799,10 +3096,12 @@ $ ll
 -rw-r--r-- 1 ktdseduuser ktdseduuser 59331 Jun  4 12:39 prometheus-22.6.2.tgz
 -rw-r--r-- 1 ktdseduuser ktdseduuser 69825 Sep  2 16:34 prometheus-23.4.0.tgz
 -rw-r--r-- 1 ubuntu ubuntu 75037 Feb 24 08:45 prometheus-25.13.0.tgz
+-rw-r--r-- 1 song song 79422 Jun 14 17:17 prometheus-25.21.0.tgz
 
 
 
-$ tar -zxvf prometheus-25.13.0.tgz
+
+$ tar -zxvf prometheus-25.21.0.tgz
 
 $ cd ~/temp/helm/charts/prometheus
 
@@ -2813,7 +3112,7 @@ $ helm -n kafka install prometheus . \
   --set server.image.repository=quay.io/prometheus/prometheus \
   --set server.namespaces[0]=kafka \
   --set server.ingress.enabled=true \
-  --set server.ingress.hosts[0]=prometheus.kafka.43.203.62.69.nip.io \
+  --set server.ingress.hosts[0]=prometheus.kafka.20.249.174.177.nip.io \
   --set server.persistentVolume.enabled=false \
   --set alertmanager.enabled=false \
   --set kube-state-metrics.enabled=false \
@@ -2837,6 +3136,9 @@ prometheus      kafka           1               2023-09-02 16:35:39.831272244 +0
 
 NAME            NAMESPACE       REVISION        UPDATED                                 STATUS          CHART                   APP VERSION
 prometheus      kafka           1               2024-02-24 08:48:00.012127268 +0000 UTC deployed        prometheus-25.13.0      v2.49.1
+
+NAME            NAMESPACE       REVISION        UPDATED                                 STATUS          CHART                   APP VERSION
+prometheus      kafka           1               2024-06-14 17:18:49.039512168 +0000 UTC deployed        prometheus-25.21.0      v2.52.0
 
 
 
@@ -2896,6 +3198,8 @@ NAME                                          READY   STATUS    RESTARTS      AG
 prometheus-server-5b5d787f8d-rb8zz            1/1     Running   0             4m36s
 ---
 prometheus-server-6676478584-cdqlc            2/2     Running   0          87s
+---
+prometheus-server-8476c8485-qn8cv             1/2     Running   0             18s
 
 
 # pod log 확인
@@ -2910,6 +3214,8 @@ NAME                                  TYPE        CLUSTER-IP       EXTERNAL-IP  
 prometheus-server                     ClusterIP   10.43.124.104   <none>        80/TCP                                117s
 ---
 prometheus-server                     ClusterIP   10.43.3.91      <none>        80/TCP                                         118s
+---
+prometheus-server                     ClusterIP   10.43.156.58   <none>        80/TCP                                         39s
 
 
 
@@ -2918,6 +3224,8 @@ prometheus-server                     ClusterIP   10.43.3.91      <none>        
 $ kkf get ClusterRoleBinding prometheus-server
 NAME                ROLE                            AGE
 prometheus-server   ClusterRole/prometheus-server   36s
+
+Error from server (NotFound): clusterrolebindings.rbac.authorization.k8s.io "prometheus-server" not found
 
 
 $ kubectl -n kafka get ClusterRoleBinding | grep prometheus
@@ -2932,6 +3240,8 @@ prometheus                                             ClusterRole/prometheus   
 
 ### (4) ingress
 
+helm  install 시 생성했으므로 추가로 생성할 필요 없음.  
+
 ````sh
 $ cd ~/githubrepo/ktds-edu-kafka
 
@@ -2944,7 +3254,7 @@ metadata:
 spec:
   ingressClassName: traefik
   rules:
-  - host: "prometheus.kafka.43.203.62.69.nip.io"
+  - host: "prometheus.kafka.20.249.174.177.nip.io"
     http:
       paths:
       - path: /
@@ -2963,9 +3273,10 @@ $ kubectl -n kafka apply -f ./kafka/strimzi/monitoring/21.prometheus-ingress.yam
 ````
 
 - 확인
-  - URL : http://prometheus.kafka.43.203.62.69.nip.io
+  - URL : http://prometheus.kafka.20.249.174.177.nip.io
 
-![image-20220626124323035](./cloud-setup.assets/image-20220626124323035.png)
+
+![image-20220626124323035](./cloud-setup.assets/image-20220626124323035-1718529496350-1.png)
 
 
 
@@ -2991,7 +3302,7 @@ metadata:
     heritage: Helm
     release: prometheus
 spec:
-  host: prometheus.kafka.43.203.62.69.nip.io
+  host: prometheus.kafka.20.249.174.177.nip.io
   to:
     kind: Service
     name: prometheus-server
@@ -3057,24 +3368,25 @@ prometheus-server-5dc67b6855-cdm54            1/1     Running   0             24
 ...
 
 
-$ kkf delete pod prometheus-server-5dc67b6855-cdm54
-pod "prometheus-server-5dc67b6855-cdm54" deleted
+# 재기동
+$ kkf rollout restart deploy/prometheus-server
+deployment.apps/prometheus-server restarted
 
 
 $ kkf get pod
 NAME                                          READY   STATUS    RESTARTS      AGE
-my-cluster-kafka-exporter-79b8c986f8-wg259    1/1     Running   1 (60m ago)   60m
-prometheus-server-5dc67b6855-67xts            0/1     Running   0             9s
+...
+prometheus-server-7b49cdbb5b-q5lrp            1/2     Running   0             21s
 
 ```
 
 
 
 - target 확인 
-  - URL : http://prometheus.kafka.43.203.62.69.nip.io
+  - URL : http://prometheus.kafka.20.249.174.177.nip.io
   - 메뉴 : status / target 에서 아래와 같이 kafka-exporter 가 추가된것을 확인한다.
 
-![image-20220626124700665](./cloud-setup.assets/image-20220626124700665.png)
+![image-20220626124700665](./cloud-setup.assets/image-20220626124700665-1718529496351-2.png)
 
 
 
@@ -3348,7 +3660,7 @@ kubectl -n kafka delete ClusterRoleBinding prometheus-server
 
 
 
-# 5. Monitoring(Kafdrop)
+# 6. Monitoring(Kafdrop)
 
 참조링크 : https://ricardo-aires.github.io/helm-charts/charts/kafdrop/
 
@@ -3361,11 +3673,12 @@ kubectl -n kafka delete ClusterRoleBinding prometheus-server
 #### kafka-my-cluster.properties
 
 ```sh
-
 # 1) user / password 확인
 $ kubectl -n kafka get secret my-edu-admin -o jsonpath='{.data.sasl\.jaas\.config}' | base64 -d
 
-org.apache.kafka.common.security.scram.ScramLoginModule required username="my-edu-admin" password="boAjdSR2pb8fftkl2r9GgZN4vOO7kby9";
+org.apache.kafka.common.security.scram.ScramLoginModule required username="my-edu-admin" password="uMtxiTHyRz2fRmtwhUGyyCJAnA5sfgcG";
+
+
 
 
 
@@ -3379,7 +3692,8 @@ $ mkdir -p ~/temp/kafka
 $ cat > kafka-my-edu-admin.properties
 security.protocol=SASL_PLAINTEXT
 sasl.mechanism=SCRAM-SHA-512
-sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required username="my-edu-admin" password="boAjdSR2pb8fftkl2r9GgZN4vOO7kby9";
+sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required username="my-edu-admin" password="uMtxiTHyRz2fRmtwhUGyyCJAnA5sfgcG";
+
 
 
 
@@ -3406,19 +3720,19 @@ $ cd ~/temp/kafka/kafdrop/chart
 
 
 # dry-run
-# $ helm -n kafka install kafdrop .\
-$ helm -n kafka upgrade --install kafdrop .\
+$ helm -n kafka install kafdrop .\
     --set kafka.brokerConnect=my-cluster-kafka-bootstrap:9092 \
     --set kafka.properties="$kafka_properties_base64_enc" \
     --set server.servlet.contextPath="/" \
     --set cmdArgs="--topic.deleteEnabled=true --topic.createEnabled=true" \
-    --set jvm.opts="-Xms32M -Xmx64M" \
+    --set jvm.opts="-Xms256M -Xmx1024M" \
     --set ingress.enabled="true" \
     --set ingress.apiVersion="networking.k8s.io/v1" \
     --set ingress.ingressClassName="traefik" \
-    --set ingress.hosts[0]="kafdrop.kafka.43.203.62.69.nip.io" \
+    --set ingress.hosts[0]="kafdrop.kafka.20.249.174.177.nip.io" \
     --set ingress.path="/" \
     --set ingress.pathType="Prefix" \
+    --set service.nodePort=30901 \
     --dry-run=true
 
 
@@ -3431,23 +3745,19 @@ $ helm -n kafka upgrade --install kafdrop .\
 
 # helm 설치
 
-
 NAME: kafdrop
-LAST DEPLOYED: Sat Feb 24 09:24:39 2024
+LAST DEPLOYED: Fri Jun 14 17:50:30 2024
 NAMESPACE: kafka
 STATUS: deployed
 REVISION: 1
 TEST SUITE: None
 NOTES:
 1. Get the application URL by running these commands:
-  export NODE_PORT=$(kubectl get --namespace kafka -o jsonpath="{.spec.ports[0].nodePort}" services kafdrop)
-  export NODE_IP=$(kubectl get nodes --namespace kafka -o jsonpath="{.items[0].status.addresses[0].address}")
-  echo http://$NODE_IP:$NODE_PORT
+  http://kafdrop.kafka.20.249.174.177.nip.io/
+
 
 ---
 
-1. Get the application URL by running these commands:
-  http://kafdrop.kafka.43.203.62.69.nip.io/
 
 
 
@@ -3459,9 +3769,14 @@ NAME            NAMESPACE       REVISION        UPDATED                         
 kafdrop         kafka           1               2024-02-24 09:24:39.6500492 +0000 UTC   deployed        kafdrop-0.1.0           3.x
 kafdrop         kafka           3               2024-02-24 09:35:33.089752637 +0000 UTC deployed        kafdrop-0.1.0           3.x
 
+kafdrop         kafka           1               2024-06-14 17:46:44.341487686 +0000 UTC failed          kafdrop-0.1.0           3.x
+
+kafdrop         kafka           1               2024-06-14 17:50:30.741678052 +0000 UTC deployed        kafdrop-0.1.0           3.x
+
 
 # 삭제시...
 $ helm -n kafka uninstall kafdrop
+
 
 ```
 
@@ -3470,38 +3785,16 @@ $ helm -n kafka uninstall kafdrop
 ####  확인
 
 ```sh
-
 # log 확인
 $ kubectl -n kafka logs -f deploy/kafdrop
 
-Writing Kafka properties into kafka.properties
-2023-06-10 05:48:38.384  INFO ${sys:PID} [           main] k.Kafdrop$EnvironmentSetupListener       : Initializing JAAS config
-2023-06-10 05:48:38.400  INFO ${sys:PID} [           main] k.Kafdrop$EnvironmentSetupListener       : env: null .isSecured kafka: false
-2023-06-10 05:48:38.401  INFO ${sys:PID} [           main] k.Kafdrop$EnvironmentSetupListener       : Env: null
-2023-06-10 05:48:38.608  INFO 1 [kground-preinit] o.h.v.i.u.Version                        : HV000001: Hibernate Validator 6.2.5.Final
-2023-06-10 05:48:38.713  INFO 1 [           main] o.s.b.StartupInfoLogger                  : Starting application using Java 11.0.18 on kafdrop-6d4fb5db44-6944k with PID 1 (started by root in /)
-2023-06-10 05:48:38.800  INFO 1 [           main] o.s.b.SpringApplication                  : No active profile set, falling back to 1 default profile: "default"
-2023-06-10 05:48:44.260  INFO 1 [           main] i.u.s.s.ServletContextImpl               : Initializing Spring embedded WebApplicationContext
-2023-06-10 05:48:44.261  INFO 1 [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 5251 ms
-2023-06-10 05:48:44.865  INFO 1 [           main] k.c.KafkaConfiguration                   : Checking truststore file kafka.truststore.jks
-2023-06-10 05:48:44.866  INFO 1 [           main] k.c.KafkaConfiguration                   : Checking keystore file kafka.keystore.jks
-2023-06-10 05:48:44.867  INFO 1 [           main] k.c.KafkaConfiguration                   : Checking properties file kafka.properties
-2023-06-10 05:48:44.867  INFO 1 [           main] k.c.KafkaConfiguration                   : Loading properties from kafka.properties
-2023-06-10 05:48:45.287  INFO 1 [           main] k.c.KafkaConfiguration                   : Checking truststore file kafka.truststore.jks
-2023-06-10 05:48:45.288  INFO 1 [           main] k.c.KafkaConfiguration                   : Checking keystore file kafka.keystore.jks
-2023-06-10 05:48:45.288  INFO 1 [           main] k.c.KafkaConfiguration                   : Checking properties file kafka.properties
-2023-06-10 05:48:45.290  INFO 1 [           main] k.c.KafkaConfiguration                   : Loading properties from kafka.properties
-2023-06-10 05:48:45.415  INFO 1 [           main] k.s.BuildInfo                            : Kafdrop version: 3.31.0, build time: 2023-03-20T17:07:14.026Z
-2023-06-10 05:48:47.606  INFO 1 [           main] o.s.b.a.e.w.EndpointLinksResolver        : Exposing 13 endpoint(s) beneath base path '/actuator'
-2023-06-10 05:48:49.548  INFO 1 [           main] i.u.Undertow                             : starting server: Undertow - 2.2.20.Final
-2023-06-10 05:48:49.586  INFO 1 [           main] o.x.Xnio                                 : XNIO version 3.8.7.Final
-2023-06-10 05:48:49.602  INFO 1 [           main] o.x.n.NioXnio                            : XNIO NIO Implementation Version 3.8.7.Final
-2023-06-10 05:48:49.654  INFO 1 [           main] o.j.t.Version                            : JBoss Threads version 3.1.0.Final
-2023-06-10 05:48:49.738  INFO 1 [           main] o.s.b.w.e.u.UndertowWebServer            : Undertow started on port(s) 9000 (http)
-2023-06-10 05:48:50.813  INFO 1 [           main] o.s.b.StartupInfoLogger                  : Started application in 13.148 seconds (JVM running for 15.8)
-2023-06-10 05:48:56.114  INFO 1 [  XNIO-1 task-1] i.u.s.s.ServletContextImpl               : Initializing Spring DispatcherServlet 'dispatcherServlet'
-2023-06-10 05:48:56.117  INFO 1 [  XNIO-1 task-1] o.s.w.s.FrameworkServlet                 : Initializing Servlet 'dispatcherServlet'
-2023-06-10 05:48:56.134  INFO 1 [  XNIO-1 task-1] o.s.w.s.FrameworkServlet                 : Completed initialization in 17 ms
+2024-06-14 17:50:56.413  INFO 1 [  XNIO-1 task-2] i.u.s.s.ServletContextImpl               : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2024-06-14 17:50:56.414  INFO 1 [  XNIO-1 task-2] o.s.w.s.FrameworkServlet                 : Initializing Servlet 'dispatcherServlet'
+2024-06-14 17:50:56.417  INFO 1 [  XNIO-1 task-2] o.s.w.s.FrameworkServlet                 : Completed initialization in 2 ms
+2024-06-14 17:51:41.118  INFO 1 [  XNIO-1 task-3] k.c.BasicErrorController                 : errorAtts: {timestamp=2024-06-14T17:51:41.118+0000, status=404, error=Not Found, message=Not Found, path=/favicon.ico}
+2024-06-14 17:51:56.925  INFO 1 [  XNIO-1 task-3] nfiguration$ProtobufDescriptorProperties : No descriptor folder configured, skip the setting!!
+2024-06-14 17:51:56.928  INFO 1 [  XNIO-1 task-3] nfiguration$ProtobufDescriptorProperties : No descriptor folder configured, skip the setting!!
+
 
 
 
@@ -3521,7 +3814,7 @@ $ kubectl -n kafka exec -it deploy/kafdrop -- curl localhost:9000/actuator/healt
 
 ## 2) ingress 
 
-
+helm 으로 ingress 까지 설치 되었으므로 무시히자.
 
 ```sh
 $ cd ~/temp/kafka
@@ -3530,12 +3823,13 @@ $ cat > 11.kafdrop-ingress.yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  annotations:
-    kubernetes.io/ingress.class: traefik
+  #annotations:
+  #  kubernetes.io/ingress.class: traefik
   name: kafdrop-ingress
 spec:
+  ingressClassName: traefik
   rules:
-  - host: kafdrop.kafka.43.203.62.69.nip.io
+  - host: kafdrop.kafka.20.249.174.177.nip.io
     http:
       paths:
       - backend:
@@ -3554,7 +3848,7 @@ $ kubectl -n kafka apply -f 11.kafdrop-ingress.yaml
 
 $ kubectl -n kafka get ingress
 NAME                CLASS     HOSTS                                   ADDRESS                                                                 PORTS   AGE
-kafdrop-ingress     <none>    kafdrop.kafka.43.203.62.69.nip.io      10.128.0.35,10.128.0.36,10.128.0.38,10.128.0.39,10.208.0.2,10.208.0.3   80      12s
+kafdrop-ingress     <none>    kafdrop.kafka.20.249.174.177.nip.io      10.128.0.35,10.128.0.36,10.128.0.38,10.128.0.39,10.208.0.2,10.208.0.3   80      12s
 ...
 
 
@@ -3572,7 +3866,6 @@ kafdrop-ingress     <none>    kafdrop.kafka.43.203.62.69.nip.io      10.128.0.35
 
 ```sh
 
-
 # 1) kafdrop 삭제
 $ helm -n kafka uninstall kafdrop
 
@@ -3582,5 +3875,13 @@ $ kubectl -n kafka delete ingress kafdrop-ingress
 
 # 3) 
 $ rm -rf ~/temp/kafka
+
+
+# 확인
+$ helm -n kafka ls
+
   
 ```
+
+
+
